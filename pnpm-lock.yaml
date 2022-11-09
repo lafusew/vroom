@@ -10,15 +10,9 @@ importers:
       shared: workspace:*
       vite: ^3.2.3
     dependencies:
-      shared: link:../packages/shared
+      shared: link:../shared
     devDependencies:
       vite: 3.2.3
-
-  packages/shared:
-    specifiers:
-      typescript: ^4.7.3
-    devDependencies:
-      typescript: 4.7.3
 
   server:
     specifiers:
@@ -27,10 +21,16 @@ importers:
       ts-node: ^10.8.1
       typescript: ^4.7.3
     dependencies:
-      shared: link:../packages/shared
+      shared: link:../shared
     devDependencies:
       nodemon: 2.0.20
       ts-node: 10.9.1_typescript@4.7.3
+      typescript: 4.7.3
+
+  shared:
+    specifiers:
+      typescript: ^4.7.3
+    devDependencies:
       typescript: 4.7.3
 
 packages:
