@@ -1,16 +1,11 @@
 {
-    "name": "shared",
-    "version": "1.0.0",
-    "description": "A code library for validation, reusable in the frontend and backend.",
-    "main": "build/index.js",
-    "scripts": {
-        "clean": "rm -rf build tsconfig.tsbuildinfo",
-        "build": "tsc --incremental"
-    },
-    "keywords": [],
-    "author": "ashley@codecapers.com.au",
-    "license": "MIT",
-    "devDependencies": {
-        "typescript": "^4.7.3"
-    }
+  "name": "@vroom/shared",
+  "version": "1.0.0",
+  "description": "",
+  "private": "true",
+  "main": "index.ts",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
