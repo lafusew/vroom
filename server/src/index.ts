@@ -1,5 +1,3 @@
-import { shared } from 'shared';
+import { shared } from "@vroom/shared";
 
 shared();
-
-export {};

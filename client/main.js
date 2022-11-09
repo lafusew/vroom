@@ -1,4 +1,7 @@
+import { shared } from '@vroom/shared';
+import app from 'scripts/App.js';
+import 'styles/app.scss';
 
-import * as shared from 'shared';
+shared();
 
-console.log(shared);
+app.init();
