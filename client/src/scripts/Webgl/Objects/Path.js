@@ -115,7 +115,8 @@ export default class Path extends stateMixin(Group) {
 
 		points = tempPoints.filter((el) => el !== undefined);
 
-		this.geometry = new TubeGeometry(new CatmullRomCurve3(points, true, 'catmullrom', trackConfig.smoothness), 1000, 0.003, 4, true);
+		this.curve = new CatmullRomCurve3(points, true, 'catmullrom', trackConfig.smoothness);
+		this.geometry = new TubeGeometry(this.curve, 1000, 0.003, 4, true);
 		this.material = new PathMaterial();
 		this.mesh = new Mesh(this.geometry, this.material);
 		this.add(this.mesh);

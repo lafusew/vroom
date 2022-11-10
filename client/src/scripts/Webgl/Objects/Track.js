@@ -1,5 +1,6 @@
 import app from 'scripts/App.js';
 import { Group, Vector3 } from 'three';
+import gameConfig from 'utils/gameConfig.js';
 import { disposeMesh, mod } from 'utils/misc.js';
 import stateMixin from 'utils/stateMixin.js';
 import trackConfig from 'utils/trackConfig.js';
@@ -7,10 +8,11 @@ import Path from './Path.js';
 
 /** @extends Group */
 export default class Track extends stateMixin(Group) {
-	constructor() {
+	constructor(splineName) {
 		super();
 
-		this.splineName = trackConfig.splines.find((el) => el.default).name;
+		this.splineName = splineName;
+		this.paths = [];
 
 		this._createPaths();
 	}
@@ -19,12 +21,13 @@ export default class Track extends stateMixin(Group) {
 		if (this.children.length > 0) {
 			this._dispose();
 		}
+		console.log(1);
 
 		const spline = trackConfig.splines.find((el) => el.name === this.splineName);
 		const nbPoints = spline.points.length;
 		spline.normals = [];
 
-		let previousPoint, nextPoint, tangent, normal;
+		let previousPoint, nextPoint, tangent, normal, path;
 
 		for (let i = 0; i < nbPoints; i++) {
 			previousPoint = spline.points[mod(i - 1, nbPoints)];
@@ -36,8 +39,10 @@ export default class Track extends stateMixin(Group) {
 			spline.normals.push(normal);
 		}
 
-		for (let i = 0; i < trackConfig.numberOfPaths; i++) {
-			this.add(new Path(1 + i * trackConfig.spaceBetweenPaths, spline, i === 0));
+		for (let i = 0; i < gameConfig.numberOfPlayers; i++) {
+			path = new Path(1 + i * trackConfig.spaceBetweenPaths, spline, i === 0);
+			this.paths.push(path);
+			this.add(path);
 		}
 	}
 
@@ -47,9 +52,7 @@ export default class Track extends stateMixin(Group) {
 		Path.dispose();
 	}
 
-	onAttach() {
-		app.debug?.pane.add(this, 'Track', 0);
-	}
+	onAttach() {}
 
 	onTick() {}
 
