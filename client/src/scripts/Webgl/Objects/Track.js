@@ -21,7 +21,6 @@ export default class Track extends stateMixin(Group) {
 		if (this.children.length > 0) {
 			this._dispose();
 		}
-		console.log(1);
 
 		const spline = trackConfig.splines.find((el) => el.name === this.splineName);
 		const nbPoints = spline.points.length;
