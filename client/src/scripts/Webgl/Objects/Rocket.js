@@ -37,13 +37,13 @@ export default class Rocket extends stateMixin(Group) {
 		this.angleV3 = this.curve.getPointAt((et * 0.0001 * this.speed + 0.01) % 1).sub(this.mesh.position);
 		this.dot = this.directionV3.x * -this.angleV3.z + this.directionV3.z * this.angleV3.x;
 
-		this.centrifugalV3 = this.target.clone().sub(this.mesh.position).cross(new Vector3(0, 1, 0).sub(this.mesh.position));
+		this.centrifugalV3 = this.target.clone().sub(this.mesh.position).cross(new Vector3(0, 1, 0).sub(this.mesh.position)).multiplyScalar(this.dot);
 
 		// this.remove(this.directionHelper, this.angleHelper, this.centrifugalHelper);
 		this.remove(this.centrifugalHelper);
 		// this.directionHelper = new ArrowHelper(directionV3, this.mesh.position, 0.5, 0x0000ff);
 		// this.angleHelper = new ArrowHelper(angleV3, this.mesh.position, 0.5, 0xffff00);
-		this.centrifugalHelper = new ArrowHelper(this.centrifugalV3, this.mesh.position, this.dot * 2000, 0x00ffff);
+		this.centrifugalHelper = new ArrowHelper(this.centrifugalV3, this.mesh.position, Math.abs(this.dot) * 2000, 0x00ffff);
 		// this.add(this.directionHelper, this.angleHelper, this.centrifugalHelper);
 		this.add(this.centrifugalHelper);
 	}
