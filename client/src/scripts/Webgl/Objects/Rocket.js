@@ -1,6 +1,6 @@
 import app from 'scripts/App.js';
 import store from 'scripts/Store.js';
-import { ArrowHelper, BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { ArrowHelper, BoxGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import stateMixin from 'utils/stateMixin.js';
 
 /** @extends Group */
@@ -11,12 +11,14 @@ export default class Rocket extends stateMixin(Group) {
 		this.curve = store.get('currentTrack').paths[0].curve;
 		this.speed = 0.5;
 		this.target = new Vector3();
+		this.progress = 0;
 
 		this.directionHelper = null;
 		this.centrifugalHelper = null;
 		this.angleHelper = null;
 
 		this._init();
+		this._setInputs();
 	}
 
 	_init() {
@@ -26,15 +28,27 @@ export default class Rocket extends stateMixin(Group) {
 		this.add(this.mesh);
 	}
 
-	_updatePosition(et) {
-		this.mesh.position.copy(this.curve.getPointAt((et * 0.0001 * this.speed) % 1));
-		this.target = this.curve.getPointAt((et * 0.0001 * this.speed + 0.001) % 1);
+	// tkt Titou ça sera clean un jour, ça va bien se passer jte jure
+	_setInputs() {
+		window.addEventListener('keydown', (e) => {
+			if (e.code === 'ArrowDown') {
+				this.speed -= 0.1;
+			} else if (e.code === 'ArrowUp') {
+				this.speed += 0.1;
+			}
+		});
+	}
+
+	_updatePosition() {
+		this.progress += 0.001 * this.speed;
+		this.mesh.position.copy(this.curve.getPointAt(this.progress % 1));
+		this.target = this.curve.getPointAt((this.progress + 0.001) % 1);
 		this.mesh.lookAt(this.target);
 	}
 
-	_computeCentrifugal(et) {
+	_computeCentrifugal() {
 		this.directionV3 = this.target.clone().sub(this.mesh.position);
-		this.angleV3 = this.curve.getPointAt((et * 0.0001 * this.speed + 0.01) % 1).sub(this.mesh.position);
+		this.angleV3 = this.curve.getPointAt((this.progress + 0.01) % 1).sub(this.mesh.position);
 		this.dot = this.directionV3.x * -this.angleV3.z + this.directionV3.z * this.angleV3.x;
 
 		this.centrifugalV3 = this.target.clone().sub(this.mesh.position).cross(new Vector3(0, 1, 0).sub(this.mesh.position)).multiplyScalar(this.dot);
@@ -48,14 +62,19 @@ export default class Rocket extends stateMixin(Group) {
 		this.add(this.centrifugalHelper);
 	}
 
+	_checkEjection() {
+		this.material.color = Math.floor(Math.abs(this.dot) * this.speed * 10000000) > 1000 ? new Color(0xff0000) : new Color(0x00ff00);
+	}
+
 	onAttach() {
 		// app.debug?.pane.add(this, 'Rocket', 0);
 	}
 
 	onTick() {}
 
-	onRender(time) {
-		this._updatePosition(time.et);
-		this._computeCentrifugal(time.et);
+	onRender() {
+		this._updatePosition();
+		this._computeCentrifugal();
+		this._checkEjection();
 	}
 }
