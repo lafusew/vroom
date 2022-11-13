@@ -1,0 +1,29 @@
+{
+    "name": "@vroom/shared",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "type": "module",
+    "exports": {
+        ".": {
+            "import": "./dist/main.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "./src/main.ts"
+            ]
+        }
+    },
+    "scripts": {
+        "dev": "tsc --watch",
+        "build": "tsc",
+        "check": "npx tsc",
+        "lint": "npx eslint src/**/*.ts"
+    },
+    "devDependencies": {
+        "@vroom/config": "workspace:*",
+        "fast-glob": "^3.2.12"
+    }
+}
