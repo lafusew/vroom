@@ -1,0 +1,14 @@
+{
+    "extends": "@vroom/config/typescript/tsconfig.node.json",
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "baseUrl": ".",
+        "declaration": true,
+    },
+    "include": ["src/**/*"],
+    "exclude": [
+        "**/node_modules",
+        "**/.*/"
+    ]
+}

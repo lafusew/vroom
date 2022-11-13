@@ -1,0 +1,6 @@
+{
+    "verbose": false,
+    "watch": ["src", "../../packages/shared/src"],
+    "ext": "ts",
+    "exec": "ts-node --esm ./src/main.ts"
+}

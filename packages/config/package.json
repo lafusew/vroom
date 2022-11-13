@@ -1,0 +1,15 @@
+{
+    "name": "@vroom/config",
+    "version": "1.0.0",
+    "description": "Configurations",
+    "license": "ISC",
+    "type": "module",
+    "files": [
+        "esbuild/build-node.mjs",
+        "typescript/tsconfig.node.json"
+    ],
+    "devDependencies": {
+        "esbuild": "^0.15.13",
+        "fast-glob": "^3.2.12"
+    }
+}

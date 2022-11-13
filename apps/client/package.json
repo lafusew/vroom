@@ -1,8 +1,7 @@
 {
   "name": "@vroom/client",
-  "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite -m development -c config/vite.config.js",
     "build": "vite build -m production -c config/vite.config.js",
@@ -19,7 +18,9 @@
     "prettier": "^2.7.1",
     "sass": "^1.56.1",
     "vite": "^3.2.3",
-    "vite-plugin-handlebars": "^1.6.0"
+    "vite-plugin-handlebars": "^1.6.0",
+    "@vroom/config": "workspace:*"
+
   },
   "dependencies": {
     "stats-js": "^1.0.1",
