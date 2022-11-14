@@ -80,6 +80,10 @@ export default class Rocket extends stateMixin(Group) {
 		this.progress = nearestIndex / this.paths[this.laneNumber].spacedPoints.length;
 	}
 
+	onFingerSpeed(speed) {
+		this.speed = speed * 5;
+	}
+
 	_updatePosition() {
 		this.progress += 0.001 * this.speed;
 		this.mesh.position.copy(this.curve.getPointAt(this.progress % 1));

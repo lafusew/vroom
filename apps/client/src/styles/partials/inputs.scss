@@ -1,0 +1,38 @@
+@use '../tools/breakpoints';
+
+.inputs-areas {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	pointer-events: all;
+	display: flex;
+	justify-content: space-between;
+	opacity: 0.2;
+
+	@include breakpoints.desktop {
+		display: none;
+	}
+
+	.lane-button {
+		height: 100%;
+		flex: 0.3;
+		display: flex;
+
+		.left-button {
+			flex: 0.5;
+			background-color: red;
+		}
+
+		.right-button {
+			flex: 0.5;
+			background-color: blue;
+		}
+	}
+
+	.speed-slider {
+		background-color: green;
+		height: 100%;
+		flex: 0.5;
+	}
+}
