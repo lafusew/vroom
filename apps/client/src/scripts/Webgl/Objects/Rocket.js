@@ -1,14 +1,16 @@
 import app from 'scripts/App.js';
 import store from 'scripts/Store.js';
 import { ArrowHelper, BoxGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import gameConfig from 'utils/gameConfig.js';
 import stateMixin from 'utils/stateMixin.js';
 
 /** @extends Group */
 export default class Rocket extends stateMixin(Group) {
-	constructor() {
+	constructor(laneNumber) {
 		super();
 
-		this.curve = store.get('currentTrack').paths[0].curve;
+		this.laneNumber = laneNumber;
+		this.curve = store.get('currentTrack').paths[this.laneNumber].curve;
 		this.speed = 0.5;
 		this.target = new Vector3();
 		this.progress = 0;
@@ -35,8 +37,18 @@ export default class Rocket extends stateMixin(Group) {
 				this.speed -= 0.1;
 			} else if (e.code === 'ArrowUp') {
 				this.speed += 0.1;
+			} else if (e.code === 'ArrowLeft') {
+				this._changeLane(-1);
+			} else if (e.code === 'ArrowRight') {
+				this._changeLane(1);
 			}
 		});
+	}
+
+	_changeLane(direction) {
+		this.laneNumber += direction;
+		this.laneNumber = Math.min(Math.max(this.laneNumber, 0), gameConfig.numberOfPlayers - 1);
+		this.curve = store.get('currentTrack').paths[this.laneNumber].curve;
 	}
 
 	_updatePosition() {
@@ -63,7 +75,7 @@ export default class Rocket extends stateMixin(Group) {
 	}
 
 	_checkEjection() {
-		this.material.color = Math.floor(Math.abs(this.dot) * this.speed * 10000000) > 1000 ? new Color(0xff0000) : new Color(0x00ff00);
+		this.material.color = Math.abs(this.dot) * this.speed * 1000 > gameConfig.ejectionThreshold ? new Color(0xff0000) : new Color(0x00ff00);
 	}
 
 	onAttach() {

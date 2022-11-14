@@ -43,6 +43,7 @@ export default class Track extends stateMixin(Group) {
 			this.paths.push(path);
 			this.add(path);
 		}
+		console.log(this.paths);
 	}
 
 	_dispose() {
