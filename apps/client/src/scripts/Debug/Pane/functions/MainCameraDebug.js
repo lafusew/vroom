@@ -52,7 +52,6 @@ export default function (pane, instance, name) {
 
 	folder.addInput(instance, 'fov');
 	folder.addInput(instance, 'near');
-	folder.addInput(instance, '_position');
 
 	folder.on('change', () => instance.updateProjectionMatrix());
 
