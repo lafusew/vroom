@@ -21,11 +21,11 @@ export default class Inputs {
 
 	_touchMove = (e) => {
 		if (!e.touches) return;
-		for (let i = 0; i < 2; i++) if (e.touches[i]?.clientX > app.tools.viewport.width * 0.5) this._speedMove(e.touches[i].clientY);
+		else if (e.touches[e.touches.length - 1]?.clientX > app.tools.viewport.width * 0.5) this._speedMove(e.touches[e.touches.length - 1].clientY);
 	};
 
 	_speedMove = (y) => {
-		state.emit(EVENTS.FINGER_SPEED, MathUtils.clamp((app.tools.viewport.height - y) / app.tools.viewport.height, 0, 1));
+		state.emit(EVENTS.FINGER_SPEED, MathUtils.mapLinear(MathUtils.clamp((app.tools.viewport.height - y) / app.tools.viewport.height, 0.3, 0.7), 0.3, 0.7, 0, 1));
 	};
 
 	_clickButton = (e) => {
