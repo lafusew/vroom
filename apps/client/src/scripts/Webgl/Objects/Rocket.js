@@ -1,4 +1,3 @@
-import app from 'scripts/App.js';
 import store from 'scripts/Store.js';
 import { ArrowHelper, BoxGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import stateMixin from 'utils/stateMixin.js';
@@ -37,6 +36,10 @@ export default class Rocket extends stateMixin(Group) {
 				this.speed += 0.1;
 			}
 		});
+	}
+
+	onFingerSpeed(speed) {
+		this.speed = speed * 5;
 	}
 
 	_updatePosition() {
