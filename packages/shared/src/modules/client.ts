@@ -27,11 +27,10 @@ class Client extends BaseTicker implements Ticker {
     this.horizontalInput = Math.random() > 0.5 ? 1 : -1;
     this.verticalInput = Math.random() > 0.5 ? 1 : -1;
 
-    this.tickUpdate(this.processTick.bind(this));
+    this.tickUpdate();
   }
 
-  private processTick() {
-    console.log(this.lastProcessedState)
+  protected processTick() {
     if (this.shouldReconcile()) {
       this.reconcile();
     }
@@ -66,7 +65,7 @@ class Client extends BaseTicker implements Ticker {
   }
 
   private async fakeAsync(): Promise<unknown> {
-    return new Promise(() => setTimeout(() => { }, 200));
+    return new Promise((resolve) => setTimeout(() => resolve({}), 200));
   }
 
   private reconcile() {
@@ -104,7 +103,6 @@ class Client extends BaseTicker implements Ticker {
 
   private async send(payload: InputPayload) {
     await this.fakeAsync();
-    console.log('sent', payload);
 
     Server.getInstance().onClientInput(payload);
   }

@@ -23,7 +23,7 @@ class BaseTicker {
     this.lastUpdate = Date.now();
   }
 
-  protected tickUpdate(processTick: () => void) {
+  protected tickUpdate() {
     const now = Date.now();
     const delta = (now - this.lastUpdate) / 1000;
     this.lastUpdate = now;
@@ -31,11 +31,14 @@ class BaseTicker {
     this.timer += delta;
     if (this.timer >= this.minTimeBetweenTicks) {
       this.timer -= this.minTimeBetweenTicks;
-      processTick();
+      this.processTick();
 
-      console.log(this.position);
       this.currentTick++;
     }
+  }
+
+  protected processTick() {
+    throw 'Not implemented'
   }
 
   getPosition() {

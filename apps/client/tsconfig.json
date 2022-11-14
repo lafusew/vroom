@@ -1,33 +1,65 @@
 {
-	"compilerOptions": {
-		"outDir": "dist",
-		"types": ["vite/client"],
-		"allowJs": true,
-		"module": "CommonJS",
+    "compilerOptions": {
+        "outDir": "dist",
+        "types": [
+            "vite/client"
+        ],
+        "allowJs": true,
+        "module": "CommonJS",
         "target": "ESNext",
-		"lib": ["ESNext"],
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
         "forceConsistentCasingInFileNames": true,
-
         "esModuleInterop": true,
         "isolatedModules": true,
         "resolveJsonModule": true,
-
-		"baseUrl": ".",
-		"paths": {
-			"styles/*": ["./src/style/*"],
-			"assets/*": ["./src/assets/*"],
-			"views/*": ["./src/views/*"],
-			"Core/*": ["./src/scripts/Core/*"],
-			"Shared/*": ["./src/scripts/Shared/*"],
-			"Dom/*": ["./src/scripts/Dom/*"],
-			"Debug/*": ["./src/scripts/Debug/*"],
-			"Tools/*": ["./src/scripts/Tools/*"],
-			"utils/*": ["./src/scripts/utils/*"],
-			"vendors/*": ["./src/scripts/vendors/*"],
-			"Webgl/*": ["./src/scripts/Webgl/*"],
-			"scripts/*": ["./src/scripts/*"]
-		}
-	},
-	"include": ["./src/"],
-	"exclude": ["node_modules", "dist/**/*"]
+        "baseUrl": ".",
+        "paths": {
+            "styles/*": [
+                "./src/style/*"
+            ],
+            "assets/*": [
+                "./src/assets/*"
+            ],
+            "views/*": [
+                "./src/views/*"
+            ],
+            "Core/*": [
+                "./src/scripts/Core/*"
+            ],
+            "Shared/*": [
+                "./src/scripts/Shared/*"
+            ],
+            "Dom/*": [
+                "./src/scripts/Dom/*"
+            ],
+            "Debug/*": [
+                "./src/scripts/Debug/*"
+            ],
+            "Tools/*": [
+                "./src/scripts/Tools/*"
+            ],
+            "utils/*": [
+                "./src/scripts/utils/*"
+            ],
+            "vendors/*": [
+                "./src/scripts/vendors/*"
+            ],
+            "Webgl/*": [
+                "./src/scripts/Webgl/*"
+            ],
+            "scripts/*": [
+                "./src/scripts/*"
+            ]
+        }
+    },
+    "include": [
+        "./src/"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist/**/*"
+    ]
 }

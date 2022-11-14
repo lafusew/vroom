@@ -9,11 +9,11 @@ class Server extends BaseTicker implements Ticker {
   private inputQueue: InputPayload[] = [];
 
   private constructor() {
-    super()
+    super();
   }
 
   update() {
-    this.tickUpdate(this.processTick.bind(this));
+    this.tickUpdate();
   }
 
   processTick() {
@@ -33,7 +33,7 @@ class Server extends BaseTicker implements Ticker {
   }
 
   private async fakeAsync(): Promise<unknown> {
-    return new Promise(() => setTimeout(() => { }, 200));
+    return new Promise((resolve) => setTimeout(() => resolve({}), 200));
   }
 
   async send(payload: StatePayload) {
