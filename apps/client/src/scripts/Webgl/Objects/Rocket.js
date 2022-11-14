@@ -1,17 +1,20 @@
 import store from 'scripts/Store.js';
-import { ArrowHelper, BoxGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3, Raycaster } from 'three';
+import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import gameConfig from 'utils/gameConfig.js';
 import stateMixin from 'utils/stateMixin.js';
 import trackConfig from 'utils/trackConfig.js';
 
 /** @extends Group */
 export default class Rocket extends stateMixin(Group) {
-	constructor(laneNumber) {
+	constructor(laneNumber, color, name) {
 		super();
+
+		this.color = color;
+		this.name = name;
 
 		this.laneNumber = laneNumber;
 		this.curve = store.get('currentTrack').paths[this.laneNumber].curve;
-		this.speed = 0.5;
+		this.speed = Math.random() * 0.1 + 0.1;
 		this.target = new Vector3();
 		this.progress = 0;
 
@@ -22,14 +25,17 @@ export default class Rocket extends stateMixin(Group) {
 		this.paths = store.get('currentTrack').paths;
 
 		this._init();
-		window.addEventListener('keydown', this._handleInputs);
 	}
 
 	_init() {
 		this.geometry = new BoxGeometry(0.03, 0.03, 0.03);
-		this.material = new MeshBasicMaterial({ color: 0x00ff00 });
+		this.material = new MeshBasicMaterial({ color: this.color });
 		this.mesh = new Mesh(this.geometry, this.material);
 		this.add(this.mesh);
+	}
+
+	setInputs() {
+		window.addEventListener('keydown', this._handleInputs);
 	}
 
 	// tkt Titou ça sera clean un jour, ça va bien se passer jte jure
@@ -67,9 +73,11 @@ export default class Rocket extends stateMixin(Group) {
 		let nearestDistance = Infinity;
 		let nearestIndex = 0;
 
+		let distance, progressDiff;
+
 		this.paths[this.laneNumber].spacedPoints.forEach((point, index) => {
-			let distance = point.distanceTo(newPos);
-			let progressDiff = Math.abs((this.progress % 1) - index / this.paths[this.laneNumber].spacedPoints.length);
+			distance = point.distanceTo(newPos);
+			progressDiff = Math.abs((this.progress % 1) - index / this.paths[this.laneNumber].spacedPoints.length);
 
 			if (distance < nearestDistance && progressDiff < gameConfig.progressDifferenceThreshold) {
 				nearestDistance = distance;
@@ -82,6 +90,10 @@ export default class Rocket extends stateMixin(Group) {
 
 	onFingerSpeed(speed) {
 		this.speed = speed * 5;
+	}
+
+	onCollision() {
+		this.progress = 0;
 	}
 
 	_updatePosition() {
@@ -104,7 +116,8 @@ export default class Rocket extends stateMixin(Group) {
 	}
 
 	_checkEjection() {
-		this.material.color = Math.abs(this.dot) * this.speed * 1000 > gameConfig.ejectionThreshold ? new Color(0xff0000) : new Color(0x00ff00);
+		let ejected = Math.abs(this.dot) * this.speed * 1000 > gameConfig.ejectionThreshold;
+		if (ejected) console.log('ejected');
 	}
 
 	dispose() {

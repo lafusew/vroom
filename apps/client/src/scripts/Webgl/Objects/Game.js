@@ -14,6 +14,7 @@ export default class Game extends stateMixin(Group) {
 		super();
 
 		this.splineName = trackConfig.splines.find((el) => el.default).name;
+		this.rockets = [];
 
 		this._createGame();
 	}
@@ -25,10 +26,35 @@ export default class Game extends stateMixin(Group) {
 
 		this.currentTrack = new Track(this.splineName);
 
-		let lane = Math.floor(Math.random() * gameConfig.numberOfPlayers);
-		this.currentRocket = new Rocket(lane);
+		this.currentRocket = new Rocket(0, 0x00ff00, 'player');
+		this.currentRocket.setInputs();
+		this.rockets.push(this.currentRocket);
+
+		let newRocket;
+
+		for (let i = 1; i < gameConfig.numberOfPlayers; i++) {
+			newRocket = new Rocket(i, 0xff0000, i);
+			this.add(newRocket);
+			this.rockets.push(newRocket);
+		}
 
 		this.add(this.currentTrack, this.currentRocket);
+	}
+
+	_checkCollisions(origins) {
+		let distance;
+
+		origins.forEach((origin) => {
+			this.rockets.forEach((rocket) => {
+				if (rocket !== origin) {
+					distance = origin.mesh.position.distanceTo(rocket.mesh.position);
+
+					if (distance < gameConfig.rocketBoundingRadius) {
+						rocket.onCollision();
+					}
+				}
+			});
+		});
 	}
 
 	_dispose() {
@@ -45,5 +71,7 @@ export default class Game extends stateMixin(Group) {
 
 	onTick() {}
 
-	onRender() {}
+	onRender() {
+		this._checkCollisions([this.currentRocket]);
+	}
 }
