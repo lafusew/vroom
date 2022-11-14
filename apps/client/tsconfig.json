@@ -4,13 +4,13 @@
 		"types": ["vite/client"],
 		"allowJs": true,
 		"module": "CommonJS",
-        "target": "ESNext",
-		"lib": ["ESNext"],
-        "forceConsistentCasingInFileNames": true,
+		"target": "ESNext",
+		"lib": ["ESNext", "DOM"],
+		"forceConsistentCasingInFileNames": true,
 
-        "esModuleInterop": true,
-        "isolatedModules": true,
-        "resolveJsonModule": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"resolveJsonModule": true,
 
 		"baseUrl": ".",
 		"paths": {
