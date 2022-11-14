@@ -1,5 +1,3 @@
-import Server from "./server.js";
-
 import { BaseTicker } from "./ticker.js";
 import { StatePayload, InputPayload, Ticker } from "../types/index.js";
 
@@ -17,8 +15,8 @@ class Client extends BaseTicker implements Ticker {
   private horizontalInput: number = 0
   private verticalInput: number = 0;
 
-  private constructor() {
-    super();
+  private constructor(id: string) {
+    super(id);
 
     this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
   }
@@ -104,16 +102,16 @@ class Client extends BaseTicker implements Ticker {
   private async send(payload: InputPayload) {
     await this.fakeAsync();
 
-    Server.getInstance().onClientInput(payload);
+    // Server.getInstance().onClientInput(payload);
   }
 
   public onServerState(state: StatePayload) {
     this.latestServerState = state;
   }
 
-  public static getInstance(): Client {
+  public static getInstance(id: string): Client {
     if (!Client._) {
-      Client._ = new Client();
+      Client._ = new Client(id);
     }
 
     return Client._;

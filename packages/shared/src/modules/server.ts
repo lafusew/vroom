@@ -4,12 +4,10 @@ import { BaseTicker } from "./ticker.js";
 import { StatePayload, InputPayload, Ticker } from "../types/index.js";
 
 class Server extends BaseTicker implements Ticker {
-  private static _: Server;
-
   private inputQueue: InputPayload[] = [];
 
-  private constructor() {
-    super();
+  constructor(id: string) {
+    super(id);
   }
 
   update() {
@@ -39,19 +37,11 @@ class Server extends BaseTicker implements Ticker {
   async send(payload: StatePayload) {
     await this.fakeAsync();
 
-    Client.getInstance().onServerState(payload);
+    Client.getInstance(this.id).onServerState(payload);
   }
 
   public async onClientInput(input: InputPayload) {
     this.inputQueue.push(input);
-  }
-
-  public static getInstance(): Server {
-    if (!Server._) {
-      Server._ = new Server();
-    }
-
-    return Server._;
   }
 }
 
