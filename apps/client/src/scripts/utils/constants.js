@@ -10,6 +10,10 @@ const EVENTS = {
 	ROUTE_CHANGE: i++,
 	SCROLL_TOP: i++,
 
+	FINGER_SPEED: i++,
+	SWITCH_LEFT: i++,
+	SWITCH_RIGHT: i++,
+
 	TICK: i++,
 	RENDER: i++,
 
