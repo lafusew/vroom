@@ -6,16 +6,14 @@ import { EVENTS } from 'utils/constants.js';
 export default class Inputs {
 	constructor() {
 		state.register(this);
-		this._inputsAreas = document.querySelector('.inputs-areas');
+		this._speedSlider = document.querySelector('.speed-slider');
 
 		this._leftLaneSwitchBtn = document.querySelector('.left-button');
 		this._rightLaneSwitchBtn = document.querySelector('.right-button');
-
-		this._leftPressed = this._rightPressed = false;
 	}
 
 	onAttach() {
-		this._inputsAreas.addEventListener('touchmove', this._touchMove);
+		this._speedSlider.addEventListener('touchmove', this._touchMove);
 
 		this._leftLaneSwitchBtn.addEventListener('click', this._clickButton);
 		this._rightLaneSwitchBtn.addEventListener('click', this._clickButton);
