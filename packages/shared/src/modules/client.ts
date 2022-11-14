@@ -26,6 +26,8 @@ class Client extends BaseTicker implements Ticker {
     this.verticalInput = Math.random() > 0.5 ? 1 : -1;
 
     this.tickUpdate();
+
+    this.update();
   }
 
   protected processTick() {

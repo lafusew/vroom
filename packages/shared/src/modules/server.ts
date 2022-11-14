@@ -12,6 +12,7 @@ class Server extends BaseTicker implements Ticker {
 
   update() {
     this.tickUpdate();
+    this.update();
   }
 
   processTick() {

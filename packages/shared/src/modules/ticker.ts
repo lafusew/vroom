@@ -68,6 +68,10 @@ class BaseTicker {
       position: newPosition
     }
   }
+
+  // public startLooping(loopingMethod: () void) {
+  //   loopingMethod(this.update)
+  // }
 }
 
 export { BaseTicker };

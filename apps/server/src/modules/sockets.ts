@@ -23,7 +23,9 @@ class Sockets {
   public start(): void {
     this.io.on('connection', (socket) => {
       socket.on('join', (id: string) => {
-        this.joinRoom(id, socket);
+        const instance = this.joinRoom(id, socket);
+
+        this.startGameInstance(instance);
       });
 
       socket.on('data', (id: string, payload: InputPayload) => {
@@ -34,6 +36,16 @@ class Sockets {
     this.http.listen(this.port, () => {
       console.log(`listening on *:${this.port}`);
     })
+  }
+
+  private startGameInstance(instance: GameInstance): void {
+    const instanceId = instance.getId();
+    console.log(`Starting game instance ${instanceId} in 5s`);
+    setTimeout(() => {
+      this.io.to(instanceId).emit('start');
+
+      instance.update();
+    }, 5000);
   }
 
   private createRoom(id: string, socket: IO.Socket): GameInstance {
