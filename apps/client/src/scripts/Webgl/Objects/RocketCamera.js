@@ -21,7 +21,7 @@ export default class RocketCamera extends PerspectiveCamera {
 	onAttach() {
 		app.webgl.camera.targetCamera = this;
 
-		app.debug?.pane.add(this, 'RocketCamera', 0);
+		// app.debug?.pane.add(this, 'RocketCamera', 0);
 	}
 
 	onTick() {

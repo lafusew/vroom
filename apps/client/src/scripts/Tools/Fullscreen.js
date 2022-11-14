@@ -1,4 +1,3 @@
-import app from 'scripts/App.js';
 import state from 'scripts/State.js';
 
 export default class Fullscreen {
@@ -7,7 +6,8 @@ export default class Fullscreen {
 	}
 
 	onAttach() {
-		app.$app.addEventListener('click', this._click);
+		return;
+		// app.$app.addEventListener('click', this._click);
 	}
 
 	_click = () => {
