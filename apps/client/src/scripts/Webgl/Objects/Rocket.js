@@ -3,6 +3,7 @@ import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import gameConfig from 'utils/gameConfig.js';
 import stateMixin from 'utils/stateMixin.js';
 import trackConfig from 'utils/trackConfig.js';
+import RocketCamera from './RocketCamera.js';
 
 /** @extends Group */
 export default class Rocket extends stateMixin(Group) {
@@ -11,6 +12,8 @@ export default class Rocket extends stateMixin(Group) {
 
 		this.color = color;
 		this.name = name;
+
+		this.camera = new RocketCamera(this);
 
 		this.laneNumber = laneNumber;
 		this.curve = store.get('currentTrack').paths[this.laneNumber].curve;
