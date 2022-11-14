@@ -1,2 +1,22 @@
-node_modules
+# Node modules
+**/node_modules/
+
+# Turbo cache files
+
+# For turborepo caching to work, it's essential that all .turbo
+# directories across the monorepo are properly ignored.
+/cache/
+/**/.turbo/
+
+# Application dynamically generated files
+/apps/**/dist/
+/packages/**/dist/
+
+# Environmental variables and secrets
+/**/process.env
+
+# Other
+/.vscode/
+/notes.md
+
 .DS_Store
