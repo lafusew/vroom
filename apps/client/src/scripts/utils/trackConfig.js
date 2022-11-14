@@ -4,6 +4,7 @@ const trackConfig = {
 	spaceBetweenPaths: 0.04,
 	distanceThreshold: 0.03,
 	smoothness: 0.5,
+	laneDivide: 1000,
 	splines: [
 		{
 			name: 'bone',

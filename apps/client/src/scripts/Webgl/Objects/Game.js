@@ -1,5 +1,4 @@
 import app from 'scripts/App.js';
-import store from 'scripts/Store.js';
 import { Group } from 'three';
 import gameConfig from 'utils/gameConfig.js';
 import { disposeMesh } from 'utils/misc.js';
@@ -25,7 +24,6 @@ export default class Game extends stateMixin(Group) {
 		}
 
 		this.currentTrack = new Track(this.splineName);
-		store.set('currentTrack', this.currentTrack);
 
 		let lane = Math.floor(Math.random() * gameConfig.numberOfPlayers);
 		this.currentRocket = new Rocket(lane);
@@ -37,6 +35,7 @@ export default class Game extends stateMixin(Group) {
 		disposeMesh(this);
 		this.clear();
 		Path.dispose();
+		this.currentRocket.dispose();
 	}
 
 	onAttach() {

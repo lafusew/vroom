@@ -1,4 +1,4 @@
-import app from 'scripts/App.js';
+import store from 'scripts/Store.js';
 import { Group, Vector3 } from 'three';
 import gameConfig from 'utils/gameConfig.js';
 import { disposeMesh, mod } from 'utils/misc.js';
@@ -13,6 +13,8 @@ export default class Track extends stateMixin(Group) {
 
 		this.splineName = splineName;
 		this.paths = [];
+
+		store.set('currentTrack', this);
 
 		this._createPaths();
 	}
@@ -43,7 +45,6 @@ export default class Track extends stateMixin(Group) {
 			this.paths.push(path);
 			this.add(path);
 		}
-		console.log(this.paths);
 	}
 
 	_dispose() {
