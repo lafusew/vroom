@@ -1,14 +1,18 @@
 import store from 'scripts/Store.js';
-import { ArrowHelper, BoxGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3, Raycaster } from 'three';
+import { BoxGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import gameConfig from 'utils/gameConfig.js';
 import stateMixin from 'utils/stateMixin.js';
 import trackConfig from 'utils/trackConfig.js';
+import RocketCamera from './RocketCamera.js';
 
 /** @extends Group */
 export default class Rocket extends stateMixin(Group) {
 	constructor(laneNumber) {
 		super();
 
+		this.camera = new RocketCamera(this);
+
+		this.curve = store.get('currentTrack').paths[0].curve;
 		this.laneNumber = laneNumber;
 		this.curve = store.get('currentTrack').paths[this.laneNumber].curve;
 		this.speed = 0.5;
