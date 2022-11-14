@@ -35,7 +35,7 @@ declare module "virtual-scroll";
 declare module "stats-js";
 
 interface HotShader {
-    instances: Set<any, any>;
+    instances: Set<any>;
     use: (material : any) => void;
     unuse: (material : any) => void;
     clear: (material : any) => void;

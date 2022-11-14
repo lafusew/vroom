@@ -3,7 +3,6 @@
 ## Setup
 
 ``` bash
-nvm use
 pnpm i
 pnpm dev
 ```
@@ -12,6 +11,12 @@ pnpm dev
 
 ``` bash
 pnpm build
+```
+
+## Preview/start
+
+``` bash
+pnpm start
 ```
 
 ---

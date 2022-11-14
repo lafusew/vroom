@@ -3,7 +3,6 @@
 ## Setup
 
 ``` bash
-nvm use
 pnpm i
 pnpm dev
 ```
