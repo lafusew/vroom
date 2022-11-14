@@ -6,6 +6,7 @@ import stateMixin from 'utils/stateMixin.js';
 import trackConfig from 'utils/trackConfig.js';
 import Path from './Path.js';
 import Rocket from './Rocket.js';
+import RocketCamera from './RocketCamera.js';
 import Track from './Track.js';
 
 /** @extends Group */
@@ -27,6 +28,8 @@ export default class Game extends stateMixin(Group) {
 		this.currentTrack = new Track(this.splineName);
 
 		this.currentRocket = new Rocket(0, 0x00ff00, 'player');
+		this.rocketCamera = new RocketCamera(this.currentRocket);
+
 		this.currentRocket.setInputs();
 		this.rockets.push(this.currentRocket);
 
