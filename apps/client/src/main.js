@@ -1,7 +1,9 @@
-// import { Client, Server } from '@vroom/shared';
-
+// import { Client } from '@vroom/shared';
+// import { io } from 'socket.io-client';
 import app from 'scripts/App.js';
 import 'styles/app.scss';
+
+// const socket = io('http://localhost:8888');
 
 console.log("😎 I'm the vite client");
 
@@ -9,8 +11,12 @@ app.init();
 
 /* TESTS TICKS GAME LOOP SERVER CLIENT
 
-const server = Server.getInstance();
-const client = Client.getInstance();
+const client = Client.getInstance('test', (input) => {
+	console.log('OUTCOMING INPUT: ', input);
+	socket.emit('data', 'test', input);
+});
+
+socket.emit('join', 'test');
 
 //create a div element that can be moved around in js
 const clientDiv = document.createElement('div');
@@ -35,21 +41,29 @@ serverDiv.style.backgroundColor = 'blue';
 serverDiv.style.zIndex = '99';
 document.body.appendChild(serverDiv);
 
+socket.on('data', (state) => {
+	console.log('INCOMING STATE:', state);
+	client.onServerState(state);
+});
+
 function test() {
 	client.update();
-	server.update();
 
 	const [cx, cy] = client.getPosition();
 	clientDiv.style.top = cy + 'px';
 	clientDiv.style.left = cx + 'px';
 
-	const [sx, sy] = server.getPosition();
+	const {
+		position: [sx, sy],
+	} = client.getLatestServerState();
 	serverDiv.style.top = sy + 'px';
 	serverDiv.style.left = sx + 'px';
 
 	requestAnimationFrame(test);
 }
 
-test();
+socket.on('start', () => {
+	test();
+});
 
 */

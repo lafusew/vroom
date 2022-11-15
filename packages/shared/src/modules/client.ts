@@ -15,9 +15,11 @@ class Client extends BaseTicker implements Ticker {
   private horizontalInput: number = 0
   private verticalInput: number = 0;
 
-  private constructor(id: string) {
-    super(id);
+  private send: (payload: InputPayload) => void;
 
+  private constructor(id: string, send: (payload: InputPayload) => void) {
+    super(id);
+    this.send = send
     this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
   }
 
@@ -26,8 +28,6 @@ class Client extends BaseTicker implements Ticker {
     this.verticalInput = Math.random() > 0.5 ? 1 : -1;
 
     this.tickUpdate();
-
-    this.update();
   }
 
   protected processTick() {
@@ -46,7 +46,7 @@ class Client extends BaseTicker implements Ticker {
 
     this.stateBuffer[bufferIndex] = this.processState(inputPaylaod);
 
-    this.send(inputPaylaod);
+    this.dispatch(inputPaylaod);
   }
 
   private shouldReconcile(): boolean {
@@ -62,10 +62,6 @@ class Client extends BaseTicker implements Ticker {
     }
 
     return false;
-  }
-
-  private async fakeAsync(): Promise<unknown> {
-    return new Promise((resolve) => setTimeout(() => resolve({}), 200));
   }
 
   private reconcile() {
@@ -101,19 +97,21 @@ class Client extends BaseTicker implements Ticker {
     }
   }
 
-  private async send(payload: InputPayload) {
-    await this.fakeAsync();
-
-    // Server.getInstance().onClientInput(payload);
+  private dispatch(payload: InputPayload) {
+    this.send(payload);
   }
 
   public onServerState(state: StatePayload) {
     this.latestServerState = state;
   }
 
-  public static getInstance(id: string): Client {
+  public getLatestServerState(): StatePayload {
+    return this.latestServerState;
+  }
+
+  public static getInstance(id: string, send: (input: InputPayload) => void): Client {
     if (!Client._) {
-      Client._ = new Client(id);
+      Client._ = new Client(id, send);
     }
 
     return Client._;

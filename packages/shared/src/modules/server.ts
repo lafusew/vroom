@@ -6,13 +6,15 @@ import { StatePayload, InputPayload, Ticker } from "../types/index.js";
 class Server extends BaseTicker implements Ticker {
   private inputQueue: InputPayload[] = [];
 
-  constructor(id: string) {
+  private send: (id: string, payload: StatePayload) => void;
+
+  constructor(id: string, send: (id: string, payload: StatePayload) => void) {
     super(id);
+    this.send = send
   }
 
   update() {
     this.tickUpdate();
-    this.update();
   }
 
   processTick() {
@@ -27,7 +29,7 @@ class Server extends BaseTicker implements Ticker {
     }
 
     if (bufferIndex !== -1) {
-      this.send(this.stateBuffer[bufferIndex]);
+      this.dispatch(this.stateBuffer[bufferIndex]);
     }
   }
 
@@ -35,13 +37,13 @@ class Server extends BaseTicker implements Ticker {
     return new Promise((resolve) => setTimeout(() => resolve({}), 200));
   }
 
-  async send(payload: StatePayload) {
-    await this.fakeAsync();
-
-    Client.getInstance(this.id).onServerState(payload);
+  async dispatch(payload: StatePayload) {
+    console.log("SENDING STATE: ", payload);
+    this.send(this.id, payload);
   }
 
   public async onClientInput(input: InputPayload) {
+    console.log("RECEIVED INPUT: ", input);
     this.inputQueue.push(input);
   }
 }

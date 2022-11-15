@@ -1,6 +1,6 @@
 import * as IO from 'socket.io';
 import { Rooms } from '../types/index.js';
-import { Server as GameInstance, InputPayload } from '@vroom/shared';
+import { Server as GameInstance, InputPayload, StatePayload } from '@vroom/shared';
 import http from 'http';
 
 class Sockets {
@@ -11,20 +11,26 @@ class Sockets {
 
   private rooms: Rooms;
 
+  private send?: (id: string, payload: StatePayload) => void;
+
   private constructor(http: http.Server, port: number) {
     this.port = port;
 
     this.http = http;
-    this.io = new IO.Server(http);
+    this.io = new IO.Server(
+      http,
+      { cors: { origin: "*", methods: ["GET", "POST"] } }
+    );
 
     this.rooms = {};
-  }
 
-  public start(): void {
+    this.send = (id: string, payload: StatePayload) => {
+      this.io.to(id).emit('data', payload)
+    };
+
     this.io.on('connection', (socket) => {
       socket.on('join', (id: string) => {
         const instance = this.joinRoom(id, socket);
-
         this.startGameInstance(instance);
       });
 
@@ -32,7 +38,9 @@ class Sockets {
         this.rooms[id].onClientInput(payload)
       });
     });
+  }
 
+  public start(): void {
     this.http.listen(this.port, () => {
       console.log(`listening on *:${this.port}`);
     })
@@ -44,15 +52,19 @@ class Sockets {
     setTimeout(() => {
       this.io.to(instanceId).emit('start');
 
-      instance.update();
-    }, 5000);
+      setInterval(instance.update.bind(instance), 1000 / 60);
+    }, 3000);
   }
 
   private createRoom(id: string, socket: IO.Socket): GameInstance {
     socket.join(id);
 
-    this.rooms[id] = new GameInstance(id);
+    if (!this.send) {
+      throw new Error('Send function not initialized');
+    }
 
+    this.rooms[id] = new GameInstance(id, this.send);
+    console.log(this.rooms)
     return this.rooms[id];
   }
 
