@@ -1,26 +1,45 @@
 import { Ticker } from "./ticker.js";
-import { StatePayload, InputPayload, Game } from "../types/index.js";
+import { StatesPayload, InputPayload, Game } from "../types/index.js";
 
-import { DEFAULT_STATE_PAYLOAD } from "../types/index.js";
 import { deepEqual, isDistanceDifferenceAcceptable } from "../utils/index.js";
 
 class Client extends Ticker implements Game {
   private static _: Client;
 
+  private playerId: string;
+
   private inputBuffer: InputPayload[] = [];
 
-  private latestServerState: StatePayload = DEFAULT_STATE_PAYLOAD;
-  private lastProcessedState: StatePayload = DEFAULT_STATE_PAYLOAD;
+  private latestServerState: StatesPayload;
+  private lastProcessedState: StatesPayload;
+
+  private DEFAULT_STATE_PAYLOAD: StatesPayload;
 
   private horizontalInput: number = 0
   private verticalInput: number = 0;
 
   private send: (payload: InputPayload) => void;
 
-  private constructor(roomId: string, send: (payload: InputPayload) => void) {
-    super(roomId);
-    this.send = send
+  private constructor(
+    roomId: string,
+    currentPlayerId: string,
+    otherPlayersIds: string[],
+    send: (payload: InputPayload) => void,
+  ) {
+    super(roomId, otherPlayersIds);
+
     this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
+
+    this.playerId = currentPlayerId;
+    this.states[this.playerId] = {
+      position: [0, 0],
+    }
+
+    this.latestServerState = { tick: 0, states: this.states };
+    this.lastProcessedState = { tick: 0, states: this.states };
+    this.DEFAULT_STATE_PAYLOAD = { tick: 0, states: this.states };
+
+    this.send = send;
   }
 
   update() {
@@ -37,6 +56,7 @@ class Client extends Ticker implements Game {
 
         const inputPaylaod: InputPayload = {
           tick: this.currentTick,
+          playerId: this.playerId,
           inputVector: [this.horizontalInput, this.verticalInput]
         }
 
@@ -51,8 +71,8 @@ class Client extends Ticker implements Game {
 
   private shouldReconcile(): boolean {
     if (
-      !deepEqual(this.latestServerState, DEFAULT_STATE_PAYLOAD) &&
-      deepEqual(this.lastProcessedState, DEFAULT_STATE_PAYLOAD)
+      !deepEqual(this.latestServerState, this.DEFAULT_STATE_PAYLOAD) &&
+      deepEqual(this.lastProcessedState, this.DEFAULT_STATE_PAYLOAD)
     ) {
       return true;
     }
@@ -71,14 +91,14 @@ class Client extends Ticker implements Game {
 
     const isPositionCorrect = isDistanceDifferenceAcceptable(
       100,
-      this.latestServerState.position,
-      this.stateBuffer[serverStateBufferIndex].position
+      this.latestServerState.states[this.playerId].position,
+      this.stateBuffer[serverStateBufferIndex].states[this.playerId].position
     );
 
     if (!isPositionCorrect) {
       console.log('time to reconcile');
 
-      this.position = this.latestServerState.position;
+      this.states[this.playerId].position = this.latestServerState.states[this.playerId].position;
 
       this.stateBuffer[serverStateBufferIndex] = this.latestServerState;
 
@@ -97,18 +117,31 @@ class Client extends Ticker implements Game {
     }
   }
 
-  public onServerState(state: StatePayload) {
+  // IDEALLY THIS SHOULD NOT BE USED AND GAME MUST BE CREATED
+  // WHEN LOBBY IS READY AND ALL PLAYERS ARE CONNECTED AND FIXED
+  addPlayer(playerId: string) {
+    this.states[playerId] = {
+      position: [0, 0],
+    }
+
+    this.latestServerState = { tick: 0, states: this.states };
+    this.lastProcessedState = { tick: 0, states: this.states };
+    this.DEFAULT_STATE_PAYLOAD = { tick: 0, states: this.states };
+  }
+
+
+  public onServerState(state: StatesPayload) {
     this.latestServerState = state;
   }
 
   // For testing purposes
-  public getLatestServerState(): StatePayload {
+  public getLatestServerStates(): StatesPayload {
     return this.latestServerState;
   }
 
-  public static getInstance(id: string, send: (input: InputPayload) => void): Client {
+  public static getInstance(roomId: string, playerId: string, send: (input: InputPayload) => void): Client {
     if (!Client._) {
-      Client._ = new Client(id, send);
+      Client._ = new Client(roomId, playerId, [], send);
     }
 
     return Client._;

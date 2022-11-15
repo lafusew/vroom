@@ -1,9 +1,9 @@
 import Client from "./modules/client.js";
 import Server from "./modules/server.js";
-import { InputPayload, StatePayload } from "./types/index.js";
+import { InputPayload, StatesPayload } from "./types/index.js";
 
 export { Client, Server };
-export type { InputPayload, StatePayload };
+export type { InputPayload, StatesPayload };
 
 // const server = Server.getInstance();
 // const client = Client.getInstance();

@@ -1,13 +1,18 @@
 interface InputPayload {
   tick: number;
   inputVector: [number, number];
+  playerId: string;
 }
 
-interface StatePayload {
+interface StatesPayload {
   tick: number;
-  position: [number, number];
+  states: { [playerId: string]: State };
   // speed: number;
   // currentLane: number;
+}
+
+interface State {
+  position: [number, number];
 }
 
 interface Game {
@@ -15,18 +20,7 @@ interface Game {
   update(...args: any): void;
 
   // GETTERS TO ACCESS STATE
-  getPosition(): [number, number];
+  getStates(): { [playerId: string]: State };
 }
 
-const DEFAUT_INPUT_PAYLOAD: InputPayload = {
-  tick: 0,
-  inputVector: [0, 0]
-}
-
-const DEFAULT_STATE_PAYLOAD: StatePayload = {
-  tick: 0,
-  position: [0, 0]
-}
-
-export type { InputPayload, StatePayload, Game };
-export { DEFAULT_STATE_PAYLOAD, DEFAUT_INPUT_PAYLOAD };
+export type { InputPayload, State, StatesPayload, Game };

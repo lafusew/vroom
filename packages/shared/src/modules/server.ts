@@ -1,16 +1,20 @@
 import Client from "./client.js";
 
 import { Ticker } from "./ticker.js";
-import { StatePayload, InputPayload, Game } from "../types/index.js";
+import { StatesPayload, InputPayload, Game } from "../types/index.js";
 
 class Server extends Ticker implements Game {
   private inputQueue: InputPayload[] = [];
 
-  private send: (id: string, payload: StatePayload) => void;
+  private send: (id: string, payload: StatesPayload) => void;
 
-  constructor(id: string, send: (id: string, payload: StatePayload) => void) {
-    super(id);
-    this.send = send
+  constructor(
+    id: string,
+    playersIds: string[],
+    send: (id: string, payload: StatesPayload) => void
+  ) {
+    super(id, playersIds);
+    this.send = send;
   }
 
   update() {
@@ -32,6 +36,14 @@ class Server extends Ticker implements Game {
         }
       },
     );
+  }
+
+  // IDEALLY THIS SHOULD NOT BE USED AND GAME MUST BE CREATED
+  // WHEN LOBBY IS READY AND ALL PLAYERS ARE CONNECTED AND FIXED
+  addPlayer(playerId: string) {
+    this.states[playerId] = {
+      position: [0, 0],
+    }
   }
 
   public async onClientInput(input: InputPayload) {

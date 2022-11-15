@@ -1,4 +1,4 @@
-import { StatePayload, InputPayload } from "../types/index.js";
+import { StatesPayload, InputPayload, State } from "../types/index.js";
 
 class Ticker {
   protected roomId: string;
@@ -12,18 +12,24 @@ class Ticker {
   protected readonly SERVER_TICK_RATE = 2;
   protected readonly BUFFER_SIZE = 1024;
 
-  protected stateBuffer: StatePayload[] = [];
+  protected stateBuffer: StatesPayload[] = [];
 
-  protected position: [number, number] = [0, 0];
+  protected states: { [playerId: string]: State } = {};
 
-  constructor(roomId: string) {
+  constructor(roomId: string, playersIds: string[]) {
     this.roomId = roomId;
-    this.stateBuffer = new Array<StatePayload>(this.BUFFER_SIZE);
+    this.stateBuffer = new Array<StatesPayload>(this.BUFFER_SIZE);
 
     this.minTimeBetweenTicks = 1 / this.SERVER_TICK_RATE;
     this.timer = 0;
 
     this.lastUpdate = Date.now();
+
+    playersIds.forEach((id) => {
+      this.states[id] = {
+        position: [0, 0],
+      }
+    });
   }
 
   protected onTick(processTick: (dt: number, serverTick: boolean) => void, ...args: any) {
@@ -47,16 +53,16 @@ class Ticker {
     // processTick(delta, false);
   }
 
-  public getPosition() {
-    return this.position;
+  getStates() {
+    return this.states;
   }
 
   public getRoomId() {
     return this.roomId;
   }
 
-  protected processState(input: InputPayload, dt: number): StatePayload {
-    const [x, y] = this.position;
+  protected processState(input: InputPayload, dt: number): StatesPayload {
+    const [x, y] = this.states[input.playerId].position;
     const [horizontalInput, verticalInput] = input.inputVector;
 
     const newPosition: [number, number] = [
@@ -64,11 +70,14 @@ class Ticker {
       y + verticalInput * 30 * dt    // * this.minTimeBetweenTicks
     ];
 
-    this.position = newPosition;
+    this.states[input.playerId].position = newPosition;
 
     return {
       tick: input.tick,
-      position: newPosition
+      states: {
+        ...this.states,
+        [input.playerId]: { position: newPosition }
+      }
     }
   }
 }
