@@ -1,5 +1,11 @@
+@use '../tools/fonts.scss';
+
 #index {
 	a {
 		color: #fff;
+	}
+
+	* {
+		@include fonts.superfont;
 	}
 }

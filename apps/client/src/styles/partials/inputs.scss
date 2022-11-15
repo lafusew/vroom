@@ -9,6 +9,7 @@
 	display: flex;
 	justify-content: space-between;
 	opacity: 0.2;
+	display: none;
 
 	@include breakpoints.desktop {
 		display: none;

@@ -1,0 +1,42 @@
+@use '../../tools/breakpoints';
+@use '../../tools/mixins';
+
+.btn {
+	@include mixins.flex-center;
+	pointer-events: all;
+	background-size: contain;
+	font-size: 24px;
+
+	&.primary {
+		background: url('/assets/images/btn-primary-default.png') no-repeat center center;
+		text-transform: uppercase;
+		width: 264px;
+		height: 75px;
+	
+		&:active {
+			background: url('/assets/images/btn-primary-pressed.png') no-repeat center center;
+		}
+	
+		&:disabled {
+			background: url('/assets/images/btn-primary-disabled.png') no-repeat center center;
+		}
+	}
+
+	&.secondary {
+		background: url('/assets/images/btn-secondary-default.png') no-repeat center center;
+		width: 261px;
+		height: 57px;
+	
+		&:active {
+			background: url('/assets/images/btn-secondary-pressed.png') no-repeat center center;
+		}
+	
+		&:disabled {
+			background: url('/assets/images/btn-secondary-disabled.png') no-repeat center center;
+		}
+	}
+
+	@include breakpoints.desktop {
+		display: none;
+	}
+}
