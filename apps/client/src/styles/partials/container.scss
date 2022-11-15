@@ -1,0 +1,23 @@
+@use '../tools/breakpoints';
+@use '../tools/mixins';
+
+.ui-container {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	pointer-events: all;
+	background: url('/assets/images/bg.png') no-repeat center center fixed;
+	background-size: cover;
+	@include mixins.flex-center;
+
+	@include breakpoints.desktop {
+		display: none;
+	}
+
+	.hidden {
+		display: none;
+	}
+}

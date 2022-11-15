@@ -16,6 +16,8 @@ export default class PageComponent {
 		this.componentsManager.attachComponents();
 	}
 
+	detach() {}
+
 	open() {}
 
 	close() {}
