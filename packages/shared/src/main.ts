@@ -1,6 +1,9 @@
+import { Track } from "./entities/Track.js";
 import Client from "./modules/client.js";
 import Server from "./modules/server.js";
 import { InputPayload, StatePayload } from "./types/index.js";
+
+console.log(new Track("bone"));
 
 export { Client, Server };
 export type { InputPayload, StatePayload };

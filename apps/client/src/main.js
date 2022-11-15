@@ -1,15 +1,15 @@
-// import { Client } from '@vroom/shared';
-// import { io } from 'socket.io-client';
+import { Client } from '@vroom/shared';
 import app from 'scripts/App.js';
+import { io } from 'socket.io-client';
 import 'styles/app.scss';
 
-// const socket = io('http://localhost:8888');
+const socket = io('http://localhost:8888');
 
 console.log("😎 I'm the vite client");
 
 app.init();
 
-/* TESTS TICKS GAME LOOP SERVER CLIENT
+// /* TESTS TICKS GAME LOOP SERVER CLIENT
 
 const client = Client.getInstance('test', (input) => {
 	console.log('OUTCOMING INPUT: ', input);
@@ -66,4 +66,4 @@ socket.on('start', () => {
 	test();
 });
 
-*/
+// */

@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 interface InputPayload {
   tick: number;
   inputVector: [number, number];
@@ -18,6 +20,13 @@ interface Ticker {
   getPosition(): [number, number];
 }
 
+interface Spline {
+  name: string;
+  points: Vector3[];
+  normals: Vector3[];
+  default?: boolean;
+}
+
 const DEFAUT_INPUT_PAYLOAD: InputPayload = {
   tick: 0,
   inputVector: [0, 0]
@@ -28,5 +37,6 @@ const DEFAULT_STATE_PAYLOAD: StatePayload = {
   position: [0, 0]
 }
 
-export type { InputPayload, StatePayload, Ticker };
+export type { InputPayload, StatePayload, Ticker, Spline };
 export { DEFAULT_STATE_PAYLOAD, DEFAUT_INPUT_PAYLOAD };
+
