@@ -1,20 +1,23 @@
 import { StatePayload, InputPayload } from "../types/index.js";
 
 class BaseTicker {
+  protected id: string;
+
   protected timer: number;
   protected currentTick = 0;
   protected minTimeBetweenTicks: number;
 
   protected lastUpdate = 0;
 
-  protected readonly SERVER_TICK_RATE = 2;
+  protected readonly SERVER_TICK_RATE = 60;
   protected readonly BUFFER_SIZE = 1024;
 
   protected stateBuffer: StatePayload[] = [];
 
   protected position: [number, number] = [0, 0];
 
-  constructor() {
+  constructor(id: string) {
+    this.id = id;
     this.stateBuffer = new Array<StatePayload>(this.BUFFER_SIZE);
 
     this.minTimeBetweenTicks = 1 / this.SERVER_TICK_RATE;
@@ -41,8 +44,12 @@ class BaseTicker {
     throw 'Not implemented'
   }
 
-  getPosition() {
+  public getPosition() {
     return this.position;
+  }
+
+  public getId() {
+    return this.id;
   }
 
   protected processState(input: InputPayload): StatePayload {

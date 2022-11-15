@@ -6,6 +6,8 @@ interface InputPayload {
 interface StatePayload {
   tick: number;
   position: [number, number];
+  // speed: number;
+  // currentLane: number;
 }
 
 interface Ticker {

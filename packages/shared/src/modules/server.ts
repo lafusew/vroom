@@ -4,12 +4,13 @@ import { BaseTicker } from "./ticker.js";
 import { StatePayload, InputPayload, Ticker } from "../types/index.js";
 
 class Server extends BaseTicker implements Ticker {
-  private static _: Server;
-
   private inputQueue: InputPayload[] = [];
 
-  private constructor() {
-    super();
+  private send: (id: string, payload: StatePayload) => void;
+
+  constructor(id: string, send: (id: string, payload: StatePayload) => void) {
+    super(id);
+    this.send = send
   }
 
   update() {
@@ -28,7 +29,7 @@ class Server extends BaseTicker implements Ticker {
     }
 
     if (bufferIndex !== -1) {
-      this.send(this.stateBuffer[bufferIndex]);
+      this.dispatch(this.stateBuffer[bufferIndex]);
     }
   }
 
@@ -36,22 +37,14 @@ class Server extends BaseTicker implements Ticker {
     return new Promise((resolve) => setTimeout(() => resolve({}), 200));
   }
 
-  async send(payload: StatePayload) {
-    await this.fakeAsync();
-
-    Client.getInstance().onServerState(payload);
+  async dispatch(payload: StatePayload) {
+    console.log("SENDING STATE: ", payload);
+    this.send(this.id, payload);
   }
 
   public async onClientInput(input: InputPayload) {
+    console.log("RECEIVED INPUT: ", input);
     this.inputQueue.push(input);
-  }
-
-  public static getInstance(): Server {
-    if (!Server._) {
-      Server._ = new Server();
-    }
-
-    return Server._;
   }
 }
 
