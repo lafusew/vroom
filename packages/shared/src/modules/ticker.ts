@@ -1,71 +1,66 @@
-import { StatePayload, InputPayload } from "../types/index.js";
+import { Vector3 } from "three";
+import { StatePayload, InputPayload, Input, State } from "../types/index.js";
 
 class BaseTicker {
-  protected id: string;
+  protected roomId: string;
 
   protected timer: number;
   protected currentTick = 0;
   protected minTimeBetweenTicks: number;
 
-  protected lastUpdate = 0;
+  // protected lastUpdate = 0;
 
   protected readonly SERVER_TICK_RATE = 60;
   protected readonly BUFFER_SIZE = 1024;
 
   protected stateBuffer: StatePayload[] = [];
 
-  protected position: [number, number] = [0, 0];
+  protected states: { [playerId: string]: State } = {};
 
-  constructor(id: string) {
-    this.id = id;
+  constructor(roomId: string) {
+    this.roomId = roomId;
     this.stateBuffer = new Array<StatePayload>(this.BUFFER_SIZE);
 
     this.minTimeBetweenTicks = 1 / this.SERVER_TICK_RATE;
     this.timer = 0;
 
-    this.lastUpdate = Date.now();
+    // this.lastUpdate = Date.now();
   }
 
-  protected tickUpdate() {
-    const now = Date.now();
-    const delta = (now - this.lastUpdate) / 1000;
-    this.lastUpdate = now;
+  protected tickUpdate(dt: number) {
+    // NE PAS TOUCHER -> A REVOIR
 
-    this.timer += delta;
+    // const now = Date.now();
+    // const delta = (now - this.lastUpdate) / 1000;
+    // this.lastUpdate = now;
+
+    this.timer += dt;
     if (this.timer >= this.minTimeBetweenTicks) {
       this.timer -= this.minTimeBetweenTicks;
-      this.processTick();
+      this.processTick(dt);
 
       this.currentTick++;
     }
   }
 
-  protected processTick() {
-    throw 'Not implemented'
+  protected processTick(_dt: number) {
+    throw 'Need to be implemented by either client or server';
   }
 
-  public getPosition() {
-    return this.position;
+  public getStates() {
+    return this.states;
   }
 
-  public getId() {
-    return this.id;
+  public getRoomId() {
+    return this.roomId;
   }
 
-  protected processState(input: InputPayload): StatePayload {
-    const [x, y] = this.position;
-    const [horizontalInput, verticalInput] = input.inputVector;
-
-    const newPosition: [number, number] = [
-      x + horizontalInput * 5 * this.minTimeBetweenTicks,
-      y + verticalInput * 5 * this.minTimeBetweenTicks
-    ];
-
-    this.position = newPosition;
+  protected processState(input: Input, state: State, dt: number): State {
+    // A IMPLEMENTER AVEC LOGIC DE VROOM
 
     return {
-      tick: input.tick,
-      position: newPosition
+      position: [(state?.position[0] || 0) + input.speed * dt, 0, 0],
+      speed: 0.8,
     }
   }
 }

@@ -1,3 +1,5 @@
+import { Vector3 } from "three";
+
 function utility() {
   return '🌈 I\'m a utility function from the shared package !';
 }
@@ -10,14 +12,12 @@ function deepEqual(x: Record<string, any>, y: Record<string, any>): boolean {
   ) : (x === y);
 }
 
-function isDistanceDifferenceAcceptable(threshold: number, v1: [number, number], v2: [number, number]): boolean {
-  const [x1, y1] = v1;
-  const [x2, y2] = v2;
-
-  var dx = x1 - x2;
-  var dy = y1 - y2;
-
-  return dx * dx + dy * dy < threshold * threshold
+function isDistanceDifferenceAcceptable(threshold: number, v1: Vector3, v2: Vector3): boolean {
+  return v1.distanceTo(v2) < threshold;
 }
 
-export { deepEqual, isDistanceDifferenceAcceptable, utility };
+function isSpeedDifferenceAcceptable(threshold: number, s1: number, s2: number): boolean {
+  return Math.abs(s1 - s2) < threshold;
+}
+
+export { deepEqual, isDistanceDifferenceAcceptable, isSpeedDifferenceAcceptable, utility };

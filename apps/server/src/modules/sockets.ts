@@ -47,12 +47,12 @@ class Sockets {
   }
 
   private startGameInstance(instance: GameInstance): void {
-    const instanceId = instance.getId();
+    const instanceId = instance.getRoomId();
     console.log(`Starting game instance ${instanceId} in 5s`);
     setTimeout(() => {
       this.io.to(instanceId).emit('start');
 
-      setInterval(instance.update.bind(instance), 1000 / 60);
+      setInterval(instance.update.bind(instance, 1000 / 80), 1000 / 80);
     }, 3000);
   }
 

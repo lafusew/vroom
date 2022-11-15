@@ -1,5 +1,3 @@
-import Client from "./client.js";
-
 import { BaseTicker } from "./ticker.js";
 import { StatePayload, InputPayload, Ticker } from "../types/index.js";
 
@@ -8,24 +6,37 @@ class Server extends BaseTicker implements Ticker {
 
   private send: (id: string, payload: StatePayload) => void;
 
-  constructor(id: string, send: (id: string, payload: StatePayload) => void) {
+  constructor(
+    id: string,
+    send: (id: string, payload: StatePayload) => void
+  ) {
     super(id);
     this.send = send
   }
 
-  update() {
-    this.tickUpdate();
+  update(dt: number) {
+    this.tickUpdate(dt);
   }
 
-  processTick() {
+  processTick(dt: number) {
     let bufferIndex = -1;
 
     while (this.inputQueue.length > 0) {
-      const inputPaylaod = this.inputQueue.shift() as InputPayload;
-      bufferIndex = inputPaylaod.tick % this.BUFFER_SIZE;
+      const inputPayload = this.inputQueue.shift() as InputPayload;
+      bufferIndex = inputPayload.tick % this.BUFFER_SIZE;
 
-      let statePayload = this.processState(inputPaylaod);
-      this.stateBuffer[bufferIndex] = statePayload;
+      let statePayload = this.processState(
+        inputPayload.input,
+        this.states[inputPayload.playerId],
+        dt
+      );
+      this.stateBuffer[bufferIndex] = {
+        tick: inputPayload.tick,
+        states: {
+          ...this.stateBuffer[bufferIndex]?.states || {},
+          [inputPayload.playerId]: statePayload,
+        },
+      };
     }
 
     if (bufferIndex !== -1) {
@@ -33,13 +44,9 @@ class Server extends BaseTicker implements Ticker {
     }
   }
 
-  private async fakeAsync(): Promise<unknown> {
-    return new Promise((resolve) => setTimeout(() => resolve({}), 200));
-  }
-
   async dispatch(payload: StatePayload) {
     console.log("SENDING STATE: ", payload);
-    this.send(this.id, payload);
+    this.send(this.roomId, payload);
   }
 
   public async onClientInput(input: InputPayload) {

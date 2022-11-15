@@ -28,6 +28,7 @@
         "fast-glob": "^3.2.12"
     },
     "dependencies": {
+        "nanoid": "^4.0.0",
         "three": "^0.146.0"
     }
 }
