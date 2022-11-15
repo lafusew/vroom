@@ -1,14 +1,20 @@
-export default class StaticComponent {
+import ComponentsManager from './ComponentsManager.js';
+
+export default class PageComponent {
 	/** @param {HTMLElement} el */
 	constructor(el) {
 		this.el = el;
+		this.componentsManager = new ComponentsManager({ parentEl: el });
+		this.componentsManager.createComponents();
 	}
 
-	init() {}
+	init() {
+		this.componentsManager.initComponents();
+	}
 
-	attach() {}
-
-	onResize() {}
+	attach() {
+		this.componentsManager.attachComponents();
+	}
 
 	open() {}
 

@@ -17,7 +17,7 @@ export default class Router {
 	}
 
 	onAttach() {
-		app.debug?.pane.add(this, 'Router', 2);
+		// app.debug?.pane.add(this, 'Router', 2);
 	}
 
 	async goTo(pathName) {
