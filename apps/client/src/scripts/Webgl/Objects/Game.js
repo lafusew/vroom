@@ -1,11 +1,12 @@
 import app from 'scripts/App.js';
-import store from 'scripts/Store.js';
 import { Group } from 'three';
+import gameConfig from 'utils/gameConfig.js';
 import { disposeMesh } from 'utils/misc.js';
 import stateMixin from 'utils/stateMixin.js';
 import trackConfig from 'utils/trackConfig.js';
 import Path from './Path.js';
 import Rocket from './Rocket.js';
+import RocketCamera from './RocketCamera.js';
 import Track from './Track.js';
 
 /** @extends Group */
@@ -14,6 +15,7 @@ export default class Game extends stateMixin(Group) {
 		super();
 
 		this.splineName = trackConfig.splines.find((el) => el.default).name;
+		this.rockets = [];
 
 		this._createGame();
 	}
@@ -24,17 +26,45 @@ export default class Game extends stateMixin(Group) {
 		}
 
 		this.currentTrack = new Track(this.splineName);
-		store.set('currentTrack', this.currentTrack);
 
-		this.currentRocket = new Rocket();
+		this.currentRocket = new Rocket(0, 0x00ff00, 'player');
+		this.rocketCamera = new RocketCamera(this.currentRocket);
+
+		this.currentRocket.setInputs();
+		this.rockets.push(this.currentRocket);
+
+		let newRocket;
+
+		for (let i = 1; i < gameConfig.numberOfPlayers; i++) {
+			newRocket = new Rocket(i, 0xff0000, i);
+			this.add(newRocket);
+			this.rockets.push(newRocket);
+		}
 
 		this.add(this.currentTrack, this.currentRocket);
+	}
+
+	_checkCollisions(origins) {
+		let distance;
+
+		origins.forEach((origin) => {
+			this.rockets.forEach((rocket) => {
+				if (rocket !== origin) {
+					distance = origin.mesh.position.distanceTo(rocket.mesh.position);
+
+					if (distance < gameConfig.rocketBoundingRadius) {
+						rocket.onCollision();
+					}
+				}
+			});
+		});
 	}
 
 	_dispose() {
 		disposeMesh(this);
 		this.clear();
 		Path.dispose();
+		this.currentRocket.dispose();
 	}
 
 	onAttach() {
@@ -44,5 +74,7 @@ export default class Game extends stateMixin(Group) {
 
 	onTick() {}
 
-	onRender() {}
+	onRender() {
+		this._checkCollisions([this.currentRocket]);
+	}
 }

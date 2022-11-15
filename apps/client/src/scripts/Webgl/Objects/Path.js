@@ -17,6 +17,7 @@ export default class Path extends stateMixin(Group) {
 		this.pathScale = scale;
 		this.spline = spline;
 		this.original = original;
+		this.spacedPoints = [];
 
 		this.raycaster = new Raycaster();
 		this.raycaster.params.Line.threshold = 0.001;
@@ -120,6 +121,8 @@ export default class Path extends stateMixin(Group) {
 		this.material = new PathMaterial();
 		this.mesh = new Mesh(this.geometry, this.material);
 		this.add(this.mesh);
+
+		this.spacedPoints = this.curve.getSpacedPoints(trackConfig.laneDivide);
 	}
 
 	onAttach() {}

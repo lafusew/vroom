@@ -20,6 +20,7 @@ export default function (pane, instance, name) {
 		.on('change', () => instance._createGame());
 
 	folder.addInput(gameConfig, 'numberOfPlayers', { min: 1, max: 10, step: 1 }).on('change', () => instance._createGame());
+	folder.addInput(gameConfig, 'ejectionThreshold', { min: 0, max: 1 });
 
 	return folder;
 }
