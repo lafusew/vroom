@@ -25,30 +25,38 @@ class Sockets {
     this.rooms = {};
 
     this.send = (id: string, payload: StatePayload) => {
-      this.io.to(id).emit('data', payload)
+      this.io.to(id).emit('tick', payload)
     };
 
     this.io.on('connection', (socket) => {
       socket.on('join', (id: string) => {
         const instance = this.joinRoom(id, socket);
-        this.startGameInstance(instance);
       });
 
-      socket.on('data', (id: string, payload: InputPayload) => {
+      socket.on('start', (id: string) => {
+        const instance = this.rooms[id];
+        if (instance) {
+          this.start(instance);
+        }
+      });
+
+      socket.on('tick', (id: string, payload: InputPayload) => {
         this.rooms[id].onClientInput(payload)
       });
     });
   }
 
-  public start(): void {
+  public init(): void {
     this.http.listen(this.port, () => {
       console.log(`listening on *:${this.port}`);
     })
   }
 
-  private startGameInstance(instance: GameInstance): void {
-    const instanceId = instance.getId();
-    console.log(`Starting game instance ${instanceId} in 5s`);
+  private start(instance: GameInstance): void {
+    const instanceId = instance.getRoomId();
+
+    console.log(`Starting instance ${instanceId} in 3s`);
+
     setTimeout(() => {
       this.io.to(instanceId).emit('start');
 

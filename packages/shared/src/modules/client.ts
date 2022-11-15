@@ -1,10 +1,10 @@
-import { BaseTicker } from "./ticker.js";
-import { StatePayload, InputPayload, Ticker } from "../types/index.js";
+import { Ticker } from "./ticker.js";
+import { StatePayload, InputPayload, Game } from "../types/index.js";
 
 import { DEFAULT_STATE_PAYLOAD } from "../types/index.js";
 import { deepEqual, isDistanceDifferenceAcceptable } from "../utils/index.js";
 
-class Client extends BaseTicker implements Ticker {
+class Client extends Ticker implements Game {
   private static _: Client;
 
   private inputBuffer: InputPayload[] = [];
@@ -17,36 +17,36 @@ class Client extends BaseTicker implements Ticker {
 
   private send: (payload: InputPayload) => void;
 
-  private constructor(id: string, send: (payload: InputPayload) => void) {
-    super(id);
+  private constructor(roomId: string, send: (payload: InputPayload) => void) {
+    super(roomId);
     this.send = send
     this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
   }
 
   update() {
-    this.horizontalInput = Math.random() > 0.5 ? 1 : -1;
-    this.verticalInput = Math.random() > 0.5 ? 1 : -1;
+    this.onTick(
+      (dt: number, serverTick: boolean) => {
+        this.horizontalInput = Math.random() > 0.5 ? 1 : -1;
+        this.verticalInput = Math.random() > 0.5 ? 1 : -1;
 
-    this.tickUpdate();
-  }
+        if (this.shouldReconcile()) {
+          this.reconcile(dt);
+        }
 
-  protected processTick() {
-    if (this.shouldReconcile()) {
-      this.reconcile();
-    }
+        const bufferIndex = this.currentTick % this.BUFFER_SIZE;
 
-    const bufferIndex = this.currentTick % this.BUFFER_SIZE;
+        const inputPaylaod: InputPayload = {
+          tick: this.currentTick,
+          inputVector: [this.horizontalInput, this.verticalInput]
+        }
 
-    const inputPaylaod: InputPayload = {
-      tick: this.currentTick,
-      inputVector: [this.horizontalInput, this.verticalInput]
-    }
+        this.inputBuffer[bufferIndex] = inputPaylaod;
 
-    this.inputBuffer[bufferIndex] = inputPaylaod;
+        this.stateBuffer[bufferIndex] = this.processState(inputPaylaod, dt);
 
-    this.stateBuffer[bufferIndex] = this.processState(inputPaylaod);
-
-    this.dispatch(inputPaylaod);
+        if (serverTick) this.send(inputPaylaod)
+      },
+    );
   }
 
   private shouldReconcile(): boolean {
@@ -64,13 +64,13 @@ class Client extends BaseTicker implements Ticker {
     return false;
   }
 
-  private reconcile() {
+  private reconcile(dt: number) {
     this.lastProcessedState = this.latestServerState;
 
     const serverStateBufferIndex = this.latestServerState.tick % this.BUFFER_SIZE;
 
     const isPositionCorrect = isDistanceDifferenceAcceptable(
-      0.001,
+      100,
       this.latestServerState.position,
       this.stateBuffer[serverStateBufferIndex].position
     );
@@ -86,7 +86,7 @@ class Client extends BaseTicker implements Ticker {
 
       while (tickToProcess < this.currentTick) {
         // Process new state with reconciled state
-        const state = this.processState(this.inputBuffer[tickToProcess])
+        const state = this.processState(this.inputBuffer[tickToProcess], dt)
 
         // udate buffer with reprocessed state
         const bufferIndex = tickToProcess % this.BUFFER_SIZE;
@@ -97,14 +97,11 @@ class Client extends BaseTicker implements Ticker {
     }
   }
 
-  private dispatch(payload: InputPayload) {
-    this.send(payload);
-  }
-
   public onServerState(state: StatePayload) {
     this.latestServerState = state;
   }
 
+  // For testing purposes
   public getLatestServerState(): StatePayload {
     return this.latestServerState;
   }

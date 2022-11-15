@@ -10,9 +10,9 @@ interface StatePayload {
   // currentLane: number;
 }
 
-interface Ticker {
+interface Game {
   // PROCRESS STATE METHODS
-  update(): void;
+  update(...args: any): void;
 
   // GETTERS TO ACCESS STATE
   getPosition(): [number, number];
@@ -28,5 +28,5 @@ const DEFAULT_STATE_PAYLOAD: StatePayload = {
   position: [0, 0]
 }
 
-export type { InputPayload, StatePayload, Ticker };
+export type { InputPayload, StatePayload, Game };
 export { DEFAULT_STATE_PAYLOAD, DEFAUT_INPUT_PAYLOAD };

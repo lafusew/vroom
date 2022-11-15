@@ -16,4 +16,4 @@ app.use(cors({
 
 Sockets
   .getInstance(HTTP_SERVER, PORT)
-  .start();
+  .init();
