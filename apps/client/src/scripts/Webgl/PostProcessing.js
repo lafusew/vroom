@@ -26,7 +26,7 @@ export default class {
 				uRatio: { value: app.tools.viewport.ratio },
 
 				// Pixelation
-				uPixelSize: { value: 1 },
+				uPixelSize: { value: 7 },
 			},
 		});
 

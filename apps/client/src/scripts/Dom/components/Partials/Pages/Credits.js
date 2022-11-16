@@ -1,6 +1,6 @@
 import Component from 'Dom/Abstract/Component.js';
 
-export default class JoinRoom extends Component {
+export default class Credits extends Component {
 	constructor(el) {
 		super(el);
 	}

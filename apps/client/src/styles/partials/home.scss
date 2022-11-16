@@ -1,15 +1,34 @@
+@use '../tools/mixins';
+
 .home {
 	width: 100%;
 	height: 100%;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	flex-direction: column;
-	padding: 50px 0;
+	justify-content: space-around;
+	padding: 50px;
 
 	.btns {
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
+	}
+
+	.welcome {
+		@include mixins.flex-center;
+		width: 237px;
+		height: 159px;
+		flex-direction: column;
+		gap: 10px;
+		padding-top: 15px;
+		background: url('/assets/images/home-window.png') no-repeat center center;
+		background-size: contain;
+
+		#home-name {
+			font-size: 50px;
+			letter-spacing: 15px;
+			margin-left: 15px;
+			text-align: center;
+		}
 	}
 }
