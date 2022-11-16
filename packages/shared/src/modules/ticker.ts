@@ -1,4 +1,4 @@
-import { Vector3 } from "three/src/math/Vector3.js";
+import { Vector3 } from "three";
 import { Rocket } from "../entities/Rocket.js";
 import { Track } from "../main.js";
 import { InputPayload, Players, State, StatesPayload } from "../types/index.js";
@@ -14,7 +14,7 @@ class Ticker {
 
     protected lastUpdate = 0;
 
-    protected readonly SERVER_TICK_RATE = 60;
+    protected readonly SERVER_TICK_RATE = 120;
     protected readonly BUFFER_SIZE = 1024;
 
     protected stateBuffer: StatesPayload[] = [];
@@ -39,10 +39,12 @@ class Ticker {
         this.track = track;
 
         Object.keys(this.players).forEach((id, i) => {
-            this.states[id] = {
-                position: [0, 0, 0],
-            };
             this.rockets[id] = new Rocket(i, track.paths);
+
+            this.states[id] = {
+                position: this.rockets[id].position.toArray(),
+                speed: this.rockets[id].speed,
+            };
         });
     }
 
@@ -112,7 +114,7 @@ class Ticker {
             tick: input.tick,
             states: {
                 ...this.states,
-                [input.playerId]: { position: newPosition },
+                [input.playerId]: { position: newPosition, speed: this.rockets[input.playerId].speed },
             },
         };
     }
