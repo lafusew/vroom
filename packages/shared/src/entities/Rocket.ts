@@ -5,6 +5,7 @@ import { Path } from "./Path.js";
 
 class Rocket {
     public progress: number = 0;
+    public speed = 0;
     private paths: Path[];
     private laneNumber: number;
     public position = new Vector3();
@@ -15,6 +16,8 @@ class Rocket {
     constructor(laneNumber: number, paths: Path[]) {
         this.laneNumber = laneNumber;
         this.paths = paths;
+
+        this.updatePosition(0);
     }
 
     public changeLane(direction: number) {
@@ -55,8 +58,8 @@ class Rocket {
         this.progress = nearestIndex / this.paths[this.laneNumber].spacedPoints.length;
     }
 
-    private updatePosition(speedInput: number) {
-        this.progress += 0.01 * speedInput;
+    private updatePosition(speed: number) {
+        this.progress += 0.01 * speed;
         this.position.copy(this.paths[this.laneNumber].curve.getPointAt(this.progress % 1));
         this.target = this.paths[this.laneNumber].curve.getPointAt((this.progress + 0.001) % 1);
     }
@@ -73,15 +76,16 @@ class Rocket {
         // this.add(this.centrifugalHelper);
     }
 
-    private checkEjection(speedInput: number) {
-        const ejected = Math.abs(this.dot) * speedInput * 1000 > gameConfig.ejectionThreshold;
+    private checkEjection(speed: number) {
+        const ejected = Math.abs(this.dot) * speed * 1000 > gameConfig.ejectionThreshold;
         if (ejected) console.log("Ejected");
     }
 
     public tick(speedInput: number, dt: number) {
-        this.updatePosition(speedInput * dt);
+        this.speed = speedInput * dt;
+        this.updatePosition(this.speed);
         this.computeCentrifugal();
-        this.checkEjection(speedInput * dt);
+        this.checkEjection(this.speed);
     }
 }
 

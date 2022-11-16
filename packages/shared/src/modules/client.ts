@@ -64,7 +64,7 @@ class Client extends Ticker implements Game {
         //   return true;
         // }
 
-        if (!deepEqual(this.latestServerState, this.lastProcessedState)) {
+        if (!deepEqual(this.latestServerState.states[this.playerId], this.lastProcessedState.states[this.playerId])) {
             return true;
         }
 
@@ -80,8 +80,12 @@ class Client extends Ticker implements Game {
             return;
         }
 
+        // console.log("latestServerState", this.latestServerState);
+        // console.log("stateBuffer", this.stateBuffer);
+
         const isPositionCorrect = isDistanceDifferenceAcceptable(
-            1,
+            // TODO: Define a coef
+            1 * Math.max(this.stateBuffer[serverStateBufferIndex].states[this.playerId].speed, 1),
             this.latestServerState.states[this.playerId].position,
             this.stateBuffer[serverStateBufferIndex].states[this.playerId].position
         );
@@ -90,17 +94,21 @@ class Client extends Ticker implements Game {
             console.log("Time to reconcile");
 
             this.states[this.playerId].position = this.latestServerState.states[this.playerId].position;
+            this.states[this.playerId].speed = this.latestServerState.states[this.playerId].speed;
 
             this.stateBuffer[serverStateBufferIndex] = this.latestServerState;
 
             let tickToProcess = this.latestServerState.tick + 1;
+            console.log("latestServerState.tick", this.latestServerState.tick);
 
             while (tickToProcess < this.currentTick) {
                 // Process new state with reconciled state
-                const state = this.processState(this.inputBuffer[tickToProcess], dt);
+                console.log("WHILE LOOOOOOP");
+
+                const bufferIndex = tickToProcess % this.BUFFER_SIZE;
+                const state = this.processState(this.inputBuffer[bufferIndex], dt);
 
                 // udate buffer with reprocessed state
-                const bufferIndex = tickToProcess % this.BUFFER_SIZE;
                 this.stateBuffer[bufferIndex] = state;
 
                 tickToProcess++;
@@ -119,7 +127,7 @@ class Client extends Ticker implements Game {
 
     public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (input: InputPayload) => void): Client {
         if (!Client._) {
-            Client._ = new Client(roomId, playerId, allPlayers, send, TRACKS.bone);
+            Client._ = new Client(roomId, playerId, allPlayers, send, TRACKS["triangle 3D"]);
         }
 
         return Client._;

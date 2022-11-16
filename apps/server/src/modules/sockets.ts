@@ -39,7 +39,7 @@ class Sockets {
             roomId,
             this.rooms[roomId].players,
             (id: string, payload: StatesPayload) => this.emit(id, "tick", payload),
-            TRACKS.bone
+            TRACKS["triangle 3D"]
         ));
 
         instance.setIsGameRunning(true);

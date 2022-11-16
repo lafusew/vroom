@@ -1,8 +1,7 @@
-import Client from "./client.js";
 
-import { Ticker } from "./ticker.js";
-import { StatesPayload, InputPayload, Game, Players } from "../types/index.js";
 import { Track } from "../main.js";
+import { Game, InputPayload, Players, StatesPayload } from "../types/index.js";
+import { Ticker } from "./ticker.js";
 
 class Server extends Ticker implements Game {
   private inputQueue: InputPayload[] = [];
@@ -26,10 +25,10 @@ class Server extends Ticker implements Game {
         let bufferIndex = -1;
 
         while (this.inputQueue.length > 0) {
-          const inputPaylaod = this.inputQueue.shift() as InputPayload;
-          bufferIndex = inputPaylaod.tick % this.BUFFER_SIZE;
+          const inputPayload = this.inputQueue.shift() as InputPayload;
+          bufferIndex = inputPayload.tick % this.BUFFER_SIZE;
 
-          let statePayload = this.processState(inputPaylaod, dt);
+          let statePayload = this.processState(inputPayload, dt);
           this.stateBuffer[bufferIndex] = statePayload;
         }
 

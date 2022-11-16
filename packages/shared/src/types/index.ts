@@ -15,6 +15,7 @@ interface StatesPayload {
 
 interface State {
     position: [number, number, number];
+    speed: number;
 }
 
 type Player = string;
