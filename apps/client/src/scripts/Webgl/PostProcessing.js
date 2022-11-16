@@ -24,6 +24,9 @@ export default class {
 				// Viewport
 				uResolution: { value: new Vector2() },
 				uRatio: { value: app.tools.viewport.ratio },
+
+				// Pixelation
+				uPixelSize: { value: 1 },
 			},
 		});
 
@@ -45,7 +48,9 @@ export default class {
 		return renderTarget;
 	}
 
-	onAttach() {}
+	onAttach() {
+		app.debug?.pane.add(this, 'PostProcessing', 0);
+	}
 
 	onResize({ width, height, dpr, ratio }) {
 		this._material.uniforms.uResolution.value.set(width * dpr, height * dpr);
