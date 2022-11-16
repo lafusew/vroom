@@ -1,0 +1,45 @@
+.landing {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: column;
+	padding: 50px 0;
+
+	.login {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.inputs {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 20px;
+
+		input {
+			font-size: 50px;
+			background-color: transparent;
+			border: none;
+			padding-left: 10px;
+			border-bottom: 2px solid white;
+			width: 50px;
+			text-align: center;
+			color: white;
+			text-transform: uppercase;
+			opacity: .3;
+			outline: none;
+			border-radius: 0px;
+			-webkit-border-radius:0px;
+
+			&.active {
+				opacity: 1;
+			}
+		}
+	}
+
+}
