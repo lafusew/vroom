@@ -1,8 +1,9 @@
+import { Track } from "./entities/Track.js";
 import Client from "./modules/client.js";
 import Server from "./modules/server.js";
 import { Event, InputPayload, Players, StatesPayload } from "./types/index.js";
 
-export { Client, Server };
+export { Client, Server, Track };
 export type { InputPayload, StatesPayload, Players, Event };
 
 // const server = Server.getInstance();

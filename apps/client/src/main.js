@@ -1,16 +1,16 @@
-import { Client } from '@vroom/shared';
-import { io } from 'socket.io-client';
-// import app from 'scripts/App.js';
-import { nanoid } from 'nanoid';
+// import { Client } from '@vroom/shared';
+// import { io } from 'socket.io-client';
+import app from 'scripts/App.js';
+// import { nanoid } from 'nanoid';
 import 'styles/app.scss';
 
-const socket = io('http://localhost:8888');
+// const socket = io('http://localhost:8888');
 
 console.log("😎 I'm the vite client");
 
-// app.init();
+app.init();
 
-// /* TESTS TICKS GAME LOOP SERVER CLIENT
+/* TESTS TICKS GAME LOOP SERVER CLIENT
 let roomId = 'okokok';
 const playerId = nanoid(10);
 const playerName = 'JUL';
@@ -107,4 +107,4 @@ socket.on('start', () => {
 	test();
 });
 
-// */
+*/
