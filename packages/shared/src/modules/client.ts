@@ -81,7 +81,7 @@ class Client extends Ticker implements Game {
         }
 
         const isPositionCorrect = isDistanceDifferenceAcceptable(
-            100,
+            1,
             this.latestServerState.states[this.playerId].position,
             this.stateBuffer[serverStateBufferIndex].states[this.playerId].position
         );

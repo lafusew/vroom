@@ -24,6 +24,8 @@ class Ticker {
     protected rockets: { [playerId: string]: Rocket } = {};
     protected track: Track;
 
+    protected isGameRunning: boolean = false;
+
     constructor(roomId: string, players: Players, track: Track) {
         this.roomId = roomId;
         this.stateBuffer = new Array<StatesPayload>(this.BUFFER_SIZE);
@@ -63,6 +65,14 @@ class Ticker {
         // NEED TO STORE IN BETWEEN TICKS INPUTS ARRAYS AND SEND THEM TO SERVER ON TICK
         // OTW CLIENT WILL DESYNC TOO EASILY
         // processTick(delta, false);
+    }
+
+    public getIsGameRunning() {
+        return this.isGameRunning;
+    }
+
+    public setIsGameRunning(isGameRunning: boolean) {
+        this.isGameRunning = isGameRunning;
     }
 
     public getStates() {

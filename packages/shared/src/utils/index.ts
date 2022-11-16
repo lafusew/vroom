@@ -1,4 +1,4 @@
-import { Vector3 } from 'three/src/math/Vector3.js';
+import { Vector3 } from "three/src/math/Vector3.js";
 const VEC1 = new Vector3();
 const VEC2 = new Vector3();
 
@@ -14,7 +14,9 @@ function deepEqual(x: Record<string, any>, y: Record<string, any>): boolean {
 }
 
 function isDistanceDifferenceAcceptable(threshold: number, v1: [number, number, number], v2: [number, number, number]): boolean {
-    return VEC1.fromArray(v1).distanceTo(VEC2.fromArray(v2)) > threshold
+    console.log("DISTANCE ACCEPTABLE", VEC1.fromArray(v1).distanceTo(VEC2.fromArray(v2)));
+
+    return VEC1.fromArray(v1).distanceTo(VEC2.fromArray(v2)) < threshold;
 }
 
 function mod(n: number, m: number) {
