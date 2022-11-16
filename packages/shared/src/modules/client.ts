@@ -93,6 +93,10 @@ class Client extends Ticker implements Game {
 
     const serverStateBufferIndex = this.latestServerState.tick % this.BUFFER_SIZE;
 
+    if (!this.stateBuffer[serverStateBufferIndex]) {
+      return;
+    }
+
     const isPositionCorrect = isDistanceDifferenceAcceptable(
       100,
       this.latestServerState.states[this.playerId].position,
