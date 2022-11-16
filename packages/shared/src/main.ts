@@ -1,12 +1,9 @@
-import { Track } from "./entities/Track.js";
 import Client from "./modules/client.js";
 import Server from "./modules/server.js";
-import { InputPayload, StatePayload } from "./types/index.js";
+import { Event, InputPayload, Players, StatesPayload } from "./types/index.js";
 
-// console.log(new Game("bone", ["0", "1", "2"]));
-
-export { Client, Server, Track };
-export type { InputPayload, StatePayload };
+export { Client, Server };
+export type { InputPayload, StatesPayload, Players, Event };
 
 // const server = Server.getInstance();
 // const client = Client.getInstance();

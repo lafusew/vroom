@@ -1,7 +1,7 @@
-import { InputPayload, StatePayload } from "../types/index.js";
+import { InputPayload, Players, State, StatesPayload } from "../types/index.js";
 
-class BaseTicker {
-    protected id: string;
+class Ticker {
+    protected roomId: string;
 
     protected timer: number;
     protected currentTick = 0;
@@ -9,62 +9,83 @@ class BaseTicker {
 
     protected lastUpdate = 0;
 
-    protected readonly SERVER_TICK_RATE = 60;
+    protected readonly SERVER_TICK_RATE = 40;
     protected readonly BUFFER_SIZE = 1024;
 
-    protected stateBuffer: StatePayload[] = [];
+    protected stateBuffer: StatesPayload[] = [];
 
-    protected position: [number, number] = [0, 0];
+    protected states: { [playerId: string]: State } = {};
+    protected players: Players;
 
-    constructor(id: string) {
-        this.id = id;
-        this.stateBuffer = new Array<StatePayload>(this.BUFFER_SIZE);
+    constructor(roomId: string, players: Players) {
+        this.roomId = roomId;
+        this.stateBuffer = new Array<StatesPayload>(this.BUFFER_SIZE);
 
         this.minTimeBetweenTicks = 1 / this.SERVER_TICK_RATE;
         this.timer = 0;
 
         this.lastUpdate = Date.now();
+
+        this.players = players;
+
+        Object.keys(this.players).forEach((id) => {
+            this.states[id] = {
+                position: [0, 0],
+            };
+        });
     }
 
-    protected tickUpdate() {
+    protected onTick(processTick: (dt: number, serverTick: boolean) => void, ...args: any) {
         const now = Date.now();
         const delta = (now - this.lastUpdate) / 1000;
         this.lastUpdate = now;
 
         this.timer += delta;
+
         if (this.timer >= this.minTimeBetweenTicks) {
             this.timer -= this.minTimeBetweenTicks;
-            this.processTick();
+            processTick(this.minTimeBetweenTicks, true);
 
             this.currentTick++;
+
+            return;
         }
+
+        // NEED TO STORE IN BETWEEN TICKS INPUTS ARRAYS AND SEND THEM TO SERVER ON TICK
+        // OTW CLIENT WILL DESYNC TOO EASILY
+        // processTick(delta, false);
     }
 
-    protected processTick() {
-        throw "Not implemented";
+    public getStates() {
+        return this.states;
     }
 
-    public getPosition() {
-        return this.position;
+    public getRoomId() {
+        return this.roomId;
     }
 
-    public getId() {
-        return this.id;
+    public getPlayers() {
+        return this.players;
     }
 
-    protected processState(input: InputPayload): StatePayload {
-        const [x, y] = this.position;
+    protected processState(input: InputPayload, dt: number): StatesPayload {
+        const [x, y] = this.states[input.playerId].position;
         const [horizontalInput, verticalInput] = input.inputVector;
 
-        const newPosition: [number, number] = [x + horizontalInput * 5 * this.minTimeBetweenTicks, y + verticalInput * 5 * this.minTimeBetweenTicks];
+        const newPosition: [number, number] = [
+            x + horizontalInput * 30 * dt, // * this.minTimeBetweenTicks,
+            y + verticalInput * 30 * dt, // * this.minTimeBetweenTicks
+        ];
 
-        this.position = newPosition;
+        this.states[input.playerId].position = newPosition;
 
         return {
             tick: input.tick,
-            position: newPosition,
+            states: {
+                ...this.states,
+                [input.playerId]: { position: newPosition },
+            },
         };
     }
 }
-
-export { BaseTicker };
+export { Ticker };

@@ -22,6 +22,7 @@ importers:
       eslint-plugin-prettier: ^4.2.1
       gsap: ^3.11.3
       husky: ^8.0.2
+      nanoid: ^4.0.0
       prettier: ^2.7.1
       sass: ^1.56.1
       socket.io-client: ^4.5.3
@@ -33,6 +34,7 @@ importers:
     dependencies:
       '@vroom/shared': link:../../packages/shared
       gsap: 3.11.3
+      nanoid: 4.0.0
       socket.io-client: 4.5.3
       stats-js: 1.0.1
       three: 0.146.0
@@ -1687,6 +1689,12 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
+
+  /nanoid/4.0.0:
+    resolution: {integrity: sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==}
+    engines: {node: ^14 || ^16 || >=18}
+    hasBin: true
+    dev: false
 
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
