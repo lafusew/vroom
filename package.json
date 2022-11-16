@@ -2,12 +2,15 @@
   "name": "vroom",
   "version": "1.0.0",
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "prebuild": "[[ $CI = true ]] && npx pnpm install -r --store=node_modules/.pnpm-store || echo skiping pnpm install"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^2.0.20",
+    "pnpm": "^7.16.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.8.4"
   },
