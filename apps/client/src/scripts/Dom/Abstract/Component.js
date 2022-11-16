@@ -1,4 +1,4 @@
-import app from "scripts/App.js";
+import app from 'scripts/App.js';
 
 export default class Component {
 	/** @param {HTMLElement} el */
@@ -19,6 +19,7 @@ export default class Component {
 	}
 
 	_handleOrientationChange = (e) => {
+		console.log(e);
 		if (e.matches) {
 			app.dom.pageComponentsManager.get('index').setRotateMode(true);
 		}

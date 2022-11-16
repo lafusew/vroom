@@ -1,45 +1,44 @@
 import Client from "./client.js";
 
-import { BaseTicker } from "./ticker.js";
-import { StatePayload, InputPayload, Ticker } from "../types/index.js";
+import { Ticker } from "./ticker.js";
+import { StatesPayload, InputPayload, Game, Players } from "../types/index.js";
+import { Track } from "../main.js";
 
-class Server extends BaseTicker implements Ticker {
+class Server extends Ticker implements Game {
   private inputQueue: InputPayload[] = [];
 
-  private send: (id: string, payload: StatePayload) => void;
+  private send: (id: string, payload: StatesPayload) => void;
 
-  constructor(id: string, send: (id: string, payload: StatePayload) => void) {
-    super(id);
-    this.send = send
+  constructor(
+    id: string,
+    players: Players,
+    send: (id: string, payload: StatesPayload) => void,
+    track: Track
+  ) {
+    super(id, players, track);
+    this.send = send;
   }
 
   update() {
-    this.tickUpdate();
-  }
+    this.onTick(
+      (dt: number) => {
+        console.log('SERVER TICK');
+        let bufferIndex = -1;
 
-  processTick() {
-    let bufferIndex = -1;
+        while (this.inputQueue.length > 0) {
+          const inputPaylaod = this.inputQueue.shift() as InputPayload;
+          bufferIndex = inputPaylaod.tick % this.BUFFER_SIZE;
 
-    while (this.inputQueue.length > 0) {
-      const inputPaylaod = this.inputQueue.shift() as InputPayload;
-      bufferIndex = inputPaylaod.tick % this.BUFFER_SIZE;
+          let statePayload = this.processState(inputPaylaod, dt);
+          this.stateBuffer[bufferIndex] = statePayload;
+        }
 
-      let statePayload = this.processState(inputPaylaod);
-      this.stateBuffer[bufferIndex] = statePayload;
-    }
-
-    if (bufferIndex !== -1) {
-      this.dispatch(this.stateBuffer[bufferIndex]);
-    }
-  }
-
-  private async fakeAsync(): Promise<unknown> {
-    return new Promise((resolve) => setTimeout(() => resolve({}), 200));
-  }
-
-  async dispatch(payload: StatePayload) {
-    console.log("SENDING STATE: ", payload);
-    this.send(this.id, payload);
+        if (bufferIndex !== -1) {
+          console.log("SENDING STATE: ", this.stateBuffer[bufferIndex]);
+          this.send(this.roomId, this.stateBuffer[bufferIndex]);
+        }
+      },
+    );
   }
 
   public async onClientInput(input: InputPayload) {

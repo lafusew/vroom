@@ -14,6 +14,9 @@ const EVENTS = {
 	SWITCH_LEFT: i++,
 	SWITCH_RIGHT: i++,
 
+	GAME_READY: i++,
+	GAME_START: i++,
+
 	TICK: i++,
 	RENDER: i++,
 
