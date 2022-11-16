@@ -1,5 +1,5 @@
 import { Ticker } from "./ticker.js";
-import { StatesPayload, InputPayload, Game } from "../types/index.js";
+import { StatesPayload, InputPayload, Game, Players } from "../types/index.js";
 
 import { deepEqual, isDistanceDifferenceAcceptable } from "../utils/index.js";
 
@@ -13,7 +13,7 @@ class Client extends Ticker implements Game {
   private latestServerState: StatesPayload;
   private lastProcessedState: StatesPayload;
 
-  private DEFAULT_STATE_PAYLOAD: StatesPayload;
+  private readonly DEFAULT_STATE_PAYLOAD: StatesPayload;
 
   private horizontalInput: number = 0
   private verticalInput: number = 0;
@@ -23,21 +23,25 @@ class Client extends Ticker implements Game {
   private constructor(
     roomId: string,
     currentPlayerId: string,
-    otherPlayersIds: string[],
+    allPlayers: { [playerId: string]: string },
     send: (payload: InputPayload) => void,
   ) {
-    super(roomId, otherPlayersIds);
+    super(roomId, allPlayers);
 
     this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
 
     this.playerId = currentPlayerId;
-    this.states[this.playerId] = {
-      position: [0, 0],
-    }
 
     this.latestServerState = { tick: 0, states: this.states };
     this.lastProcessedState = { tick: 0, states: this.states };
     this.DEFAULT_STATE_PAYLOAD = { tick: 0, states: this.states };
+
+    console.log('CLIENT INITIALIZED',
+      this.states,
+      this.latestServerState,
+      this.lastProcessedState,
+      this.DEFAULT_STATE_PAYLOAD
+    );
 
     this.send = send;
   }
@@ -70,12 +74,12 @@ class Client extends Ticker implements Game {
   }
 
   private shouldReconcile(): boolean {
-    if (
-      !deepEqual(this.latestServerState, this.DEFAULT_STATE_PAYLOAD) &&
-      deepEqual(this.lastProcessedState, this.DEFAULT_STATE_PAYLOAD)
-    ) {
-      return true;
-    }
+    // if (
+    //   !deepEqual(this.latestServerState, this.DEFAULT_STATE_PAYLOAD) &&
+    //   deepEqual(this.lastProcessedState, this.DEFAULT_STATE_PAYLOAD)
+    // ) {
+    //   return true;
+    // }
 
     if (!deepEqual(this.latestServerState, this.lastProcessedState)) {
       return true;
@@ -117,19 +121,6 @@ class Client extends Ticker implements Game {
     }
   }
 
-  // IDEALLY THIS SHOULD NOT BE USED AND GAME MUST BE CREATED
-  // WHEN LOBBY IS READY AND ALL PLAYERS ARE CONNECTED AND FIXED
-  addPlayer(playerId: string) {
-    this.states[playerId] = {
-      position: [0, 0],
-    }
-
-    this.latestServerState = { tick: 0, states: this.states };
-    this.lastProcessedState = { tick: 0, states: this.states };
-    this.DEFAULT_STATE_PAYLOAD = { tick: 0, states: this.states };
-  }
-
-
   public onServerState(state: StatesPayload) {
     this.latestServerState = state;
   }
@@ -139,9 +130,9 @@ class Client extends Ticker implements Game {
     return this.latestServerState;
   }
 
-  public static getInstance(roomId: string, playerId: string, send: (input: InputPayload) => void): Client {
+  public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (input: InputPayload) => void): Client {
     if (!Client._) {
-      Client._ = new Client(roomId, playerId, [], send);
+      Client._ = new Client(roomId, playerId, allPlayers, send);
     }
 
     return Client._;

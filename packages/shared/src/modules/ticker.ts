@@ -1,4 +1,4 @@
-import { StatesPayload, InputPayload, State } from "../types/index.js";
+import { StatesPayload, InputPayload, State, Players } from "../types/index.js";
 
 class Ticker {
   protected roomId: string;
@@ -9,14 +9,15 @@ class Ticker {
 
   protected lastUpdate = 0;
 
-  protected readonly SERVER_TICK_RATE = 2;
+  protected readonly SERVER_TICK_RATE = 40;
   protected readonly BUFFER_SIZE = 1024;
 
   protected stateBuffer: StatesPayload[] = [];
 
   protected states: { [playerId: string]: State } = {};
+  protected players: Players;
 
-  constructor(roomId: string, playersIds: string[]) {
+  constructor(roomId: string, players: Players) {
     this.roomId = roomId;
     this.stateBuffer = new Array<StatesPayload>(this.BUFFER_SIZE);
 
@@ -25,7 +26,9 @@ class Ticker {
 
     this.lastUpdate = Date.now();
 
-    playersIds.forEach((id) => {
+    this.players = players;
+
+    Object.keys(this.players).forEach((id) => {
       this.states[id] = {
         position: [0, 0],
       }
@@ -53,12 +56,16 @@ class Ticker {
     // processTick(delta, false);
   }
 
-  getStates() {
+  public getStates() {
     return this.states;
   }
 
   public getRoomId() {
     return this.roomId;
+  }
+
+  public getPlayers() {
+    return this.players;
   }
 
   protected processState(input: InputPayload, dt: number): StatesPayload {

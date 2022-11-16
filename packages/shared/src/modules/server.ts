@@ -1,7 +1,7 @@
 import Client from "./client.js";
 
 import { Ticker } from "./ticker.js";
-import { StatesPayload, InputPayload, Game } from "../types/index.js";
+import { StatesPayload, InputPayload, Game, Players } from "../types/index.js";
 
 class Server extends Ticker implements Game {
   private inputQueue: InputPayload[] = [];
@@ -10,16 +10,17 @@ class Server extends Ticker implements Game {
 
   constructor(
     id: string,
-    playersIds: string[],
+    players: Players,
     send: (id: string, payload: StatesPayload) => void
   ) {
-    super(id, playersIds);
+    super(id, players);
     this.send = send;
   }
 
   update() {
     this.onTick(
       (dt: number) => {
+        console.log('SERVER TICK');
         let bufferIndex = -1;
 
         while (this.inputQueue.length > 0) {
@@ -36,14 +37,6 @@ class Server extends Ticker implements Game {
         }
       },
     );
-  }
-
-  // IDEALLY THIS SHOULD NOT BE USED AND GAME MUST BE CREATED
-  // WHEN LOBBY IS READY AND ALL PLAYERS ARE CONNECTED AND FIXED
-  addPlayer(playerId: string) {
-    this.states[playerId] = {
-      position: [0, 0],
-    }
   }
 
   public async onClientInput(input: InputPayload) {

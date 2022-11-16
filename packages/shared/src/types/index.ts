@@ -15,6 +15,16 @@ interface State {
   position: [number, number];
 }
 
+type PlayerName = string;
+type PlayerId = string;
+type RoomId = string;
+
+interface Players {
+  [id: PlayerId]: PlayerName;
+}
+
+type Event<T> = [string, T]
+
 interface Game {
   // PROCRESS STATE METHODS
   update(...args: any): void;
@@ -23,4 +33,4 @@ interface Game {
   getStates(): { [playerId: string]: State };
 }
 
-export type { InputPayload, State, StatesPayload, Game };
+export type { Players, InputPayload, State, StatesPayload, Event, Game };
