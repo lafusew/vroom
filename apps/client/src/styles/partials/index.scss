@@ -4,8 +4,12 @@
 
 @use './landing';
 @use './home';
-// @use './create-room';
-@use './join-room';
+@use './skin';
+@use './multiplayer';
+@use './track';
+@use './lobby';
+@use './credits';
+@use './join';
 
 @use './components/button';
 @use './components/back';
