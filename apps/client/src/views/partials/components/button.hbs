@@ -1,9 +1,9 @@
 {{#if disabled}}
-<button class="btn {{ type }}" id="{{ id }}" disabled>
+<button data-component="Button" class="btn {{ type }}" id="{{ id }}" disabled>
     {{ text }}
 </button>
 {{else}}
-<button class="btn {{ type }}" id="{{ id }}">
+<button data-component="Button" class="btn {{ type }}" id="{{ id }}">
     {{ text }}
 </button>
 {{/if}}
