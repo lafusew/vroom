@@ -81,7 +81,6 @@ class Sockets {
     socket.join(config.roomId);
 
     this.rooms[config.roomId] = {
-      playerCount: 1,
       players: {
         [config.playerId]: config.playerName,
       }
@@ -105,7 +104,6 @@ class Sockets {
         return room;
       }
       room.players[config.playerId] = config.playerName;
-      room.playerCount++;
       this.sendEvent(config.roomId, 'updatedPlayerList', room.players);
     } else {
       room = this.createRoom(config, socket);
@@ -121,14 +119,13 @@ class Sockets {
     console.log(`Player ${playerId} disconnected from room ${roomId}`);
     this.removePlayerFromRoom(roomId, playerId);
 
-    if (this.rooms[roomId].playerCount === 0) {
+    if ((Object.keys(this.rooms[roomId].players).length) === 0) {
       this.deleteEmptyRoom(roomId);
     }
   }
 
   private removePlayerFromRoom(roomId: string, playerId: string): void {
     delete this.rooms[roomId].players[playerId];
-    this.rooms[roomId].playerCount--;
     this.sendEvent(roomId, 'updatedPlayerList', this.rooms[roomId].players);
   }
 

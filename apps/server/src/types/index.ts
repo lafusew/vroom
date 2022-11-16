@@ -7,7 +7,6 @@ interface Rooms {
 }
 
 interface Room {
-  playerCount: number;
   players: Players
   game?: Server
 }
