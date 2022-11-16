@@ -74,12 +74,7 @@ class Client extends Ticker implements Game {
   }
 
   private shouldReconcile(): boolean {
-    // if (
-    //   !deepEqual(this.latestServerState, this.DEFAULT_STATE_PAYLOAD) &&
-    //   deepEqual(this.lastProcessedState, this.DEFAULT_STATE_PAYLOAD)
-    // ) {
-    //   return true;
-    // }
+    // if (!deepEqual(this.latestServerState, this.DEFAULT_STATE_PAYLOAD) && deepEqual(this.lastProcessedState, this.DEFAULT_STATE_PAYLOAD)) return true;
 
     if (!deepEqual(this.latestServerState, this.lastProcessedState)) {
       return true;
