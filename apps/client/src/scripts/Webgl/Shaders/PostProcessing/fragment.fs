@@ -5,10 +5,11 @@ uniform sampler2D tDepth;
 
 uniform float uRatio;
 uniform float uTime;
+uniform float uPixelSize;
 
-#ifdef USE_FXAA
 uniform vec2 uResolution;
 
+#ifdef USE_FXAA
 varying vec2 vRgbNW;
 varying vec2 vRgbNE;
 varying vec2 vRgbSW;
@@ -49,6 +50,9 @@ void main() {
 		vec3 scene = texture2D(tDiffuse, vUv).rgb;
 	#endif
 
-	gl_FragColor = vec4(scene, 1.);
+	// PIXELATION
+	vec2 dxy = uPixelSize / uResolution;
+	vec2 coord = dxy * floor(vUv / dxy);
 
+	gl_FragColor = texture2D(tDiffuse, coord);
 }

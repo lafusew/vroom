@@ -1,7 +1,6 @@
 import app from 'scripts/App.js';
 import { Scene } from 'three';
 import stateMixin from 'utils/stateMixin.js';
-import RocketCamera from './Objects/RocketCamera.js';
 import RocketMesh from './Objects/RocketMesh.js';
 import Stars from './Objects/Stars.js';
 import TrackGroup from './Objects/TrackGroup.js';
@@ -31,7 +30,7 @@ export default class extends stateMixin(Scene) {
 		});
 
 		// const rocketCamera = new RocketCamera(rockets[0]);
-		this.rocketCamera = new RocketCamera(this._currentRocketMesh);
+		// this.rocketCamera = new RocketCamera();
 
 		this.add(trackMesh, ...this._rockets.values(), this._currentRocketMesh);
 	}

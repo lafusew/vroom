@@ -2,4 +2,13 @@
 	position: absolute;
 	top: 30px;
 	left: 30px;
+	width: 45px;
+	height: 30px;
+	background: url('/assets/images/back-arrow-default.png') no-repeat center center;
+	background-size: contain;
+
+	&.pressed {
+		background: url('/assets/images/back-arrow-pressed.png') no-repeat center center;
+		background-size: contain;
+	}
 }

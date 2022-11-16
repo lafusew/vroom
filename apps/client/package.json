@@ -25,6 +25,7 @@
     "@vroom/shared": "workspace:*",
     "gsap": "^3.11.3",
     "nanoid": "^4.0.0",
+    "howler": "^2.2.3",
     "socket.io-client": "^4.5.3",
     "stats-js": "^1.0.1",
     "three": "^0.146.0",

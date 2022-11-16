@@ -9,9 +9,18 @@
 	left: 0;
 	z-index: 1;
 	pointer-events: all;
-	background: url('/assets/images/bg.png') no-repeat center center fixed;
-	background-size: cover;
 	@include mixins.flex-center;
+	
+	@media (orientation: portrait) {
+		background: url('/assets/images/bg-portrait.png') no-repeat center center;
+		background-size: cover;
+	}
+	
+	@media (orientation: landscape) {
+		background: url('/assets/images/bg-landscape.png') no-repeat center center;
+		background-size: cover;
+	}
+	
 
 	@include breakpoints.desktop {
 		display: none;
