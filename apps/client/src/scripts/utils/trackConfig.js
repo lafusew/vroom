@@ -65,7 +65,6 @@ const trackConfig = {
 		},
 		{
 			name: 'intern',
-			default: true,
 			points: [
 				new Vector3(0.685, 0, 0.62500000000001),
 				new Vector3(0.635, 0, 0.39500000000001),
@@ -246,6 +245,7 @@ const trackConfig = {
 		},
 		{
 			name: 'triangle 3D',
+			default: true,
 			points: [
 				new Vector3(0.335, 0, -0.455),
 				new Vector3(0.335, 0.09754516100806, -0.745),
