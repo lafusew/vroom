@@ -12,7 +12,7 @@ app.init();
 // /* TESTS TICKS GAME LOOP SERVER CLIENT
 
 const client = Client.getInstance('test', (input) => {
-	console.log('OUTCOMING INPUT: ', input);
+	// console.log('OUTCOMING INPUT: ', input);
 	socket.emit('data', 'test', input);
 });
 
@@ -42,7 +42,7 @@ serverDiv.style.zIndex = '99';
 document.body.appendChild(serverDiv);
 
 socket.on('data', (state) => {
-	console.log('INCOMING STATE:', state);
+	// console.log('INCOMING STATE:', state);
 	client.onServerState(state);
 });
 

@@ -13,10 +13,10 @@ class Path {
     private pathScale: number;
     private spline: Spline;
     private original: Boolean;
-    private spacedPoints: Vector3[] = [];
+    public spacedPoints: Vector3[] = [];
     private raycaster = new Raycaster();
     private intersects: { origin: number; target: Intersection<Object3D<Event>> }[] = [];
-    private curve: CatmullRomCurve3;
+    public curve: CatmullRomCurve3;
 
     constructor(scale: number = 1, spline: Spline, original: boolean = false) {
         this.pathScale = scale;

@@ -9,7 +9,7 @@ class BaseTicker {
 
     protected lastUpdate = 0;
 
-    protected readonly SERVER_TICK_RATE = 1;
+    protected readonly SERVER_TICK_RATE = 60;
     protected readonly BUFFER_SIZE = 1024;
 
     protected stateBuffer: StatePayload[] = [];
