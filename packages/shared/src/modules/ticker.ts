@@ -9,13 +9,15 @@ class Ticker {
 
   protected lastUpdate = 0;
 
-  protected readonly SERVER_TICK_RATE = 40;
+  protected readonly SERVER_TICK_RATE = 5;
   protected readonly BUFFER_SIZE = 1024;
 
   protected stateBuffer: StatesPayload[] = [];
 
   protected states: { [playerId: string]: State } = {};
   protected players: Players;
+
+  protected isGameRunning: boolean = false;
 
   constructor(roomId: string, players: Players) {
     this.roomId = roomId;
@@ -66,6 +68,14 @@ class Ticker {
 
   public getPlayers() {
     return this.players;
+  }
+
+  public getIsGameRunning() {
+    return this.isGameRunning;
+  }
+
+  public setIsGameRunning(isGameRunning: boolean) {
+    this.isGameRunning = isGameRunning;
   }
 
   protected processState(input: InputPayload, dt: number): StatesPayload {
