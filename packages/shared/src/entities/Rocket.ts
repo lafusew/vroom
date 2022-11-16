@@ -8,6 +8,7 @@ class Rocket {
     private paths: Path[];
     private laneNumber: number;
     public position = new Vector3();
+    public directionV3 = new Vector3();
     private target = new Vector3();
     private dot = 0;
 
@@ -55,15 +56,15 @@ class Rocket {
     }
 
     private updatePosition(speedInput: number) {
-        this.progress += 0.001 * speedInput;
+        this.progress += 0.01 * speedInput;
         this.position.copy(this.paths[this.laneNumber].curve.getPointAt(this.progress % 1));
         this.target = this.paths[this.laneNumber].curve.getPointAt((this.progress + 0.001) % 1);
     }
 
     private computeCentrifugal() {
-        const directionV3 = this.target.clone().sub(this.position);
+        this.directionV3 = this.target.clone().sub(this.position);
         const angleV3 = this.paths[this.laneNumber].curve.getPointAt((this.progress + 0.01) % 1).sub(this.position);
-        this.dot = directionV3.x * -angleV3.z + directionV3.z * angleV3.x;
+        this.dot = this.directionV3.x * -angleV3.z + this.directionV3.z * angleV3.x;
 
         // const centrifugalV3 = this.target.clone().sub(this.position).cross(new Vector3(0, 1, 0).sub(this.position)).multiplyScalar(this.dot);
 
@@ -77,10 +78,10 @@ class Rocket {
         if (ejected) console.log("Ejected");
     }
 
-    public tick(speedInput: number) {
-        this.updatePosition(speedInput);
+    public tick(speedInput: number, dt: number) {
+        this.updatePosition(speedInput * dt);
         this.computeCentrifugal();
-        this.checkEjection(speedInput);
+        this.checkEjection(speedInput * dt);
     }
 }
 

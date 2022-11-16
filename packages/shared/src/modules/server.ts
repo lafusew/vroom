@@ -2,6 +2,7 @@ import Client from "./client.js";
 
 import { Ticker } from "./ticker.js";
 import { StatesPayload, InputPayload, Game, Players } from "../types/index.js";
+import { Track } from "../main.js";
 
 class Server extends Ticker implements Game {
   private inputQueue: InputPayload[] = [];
@@ -11,9 +12,10 @@ class Server extends Ticker implements Game {
   constructor(
     id: string,
     players: Players,
-    send: (id: string, payload: StatesPayload) => void
+    send: (id: string, payload: StatesPayload) => void,
+    track: Track
   ) {
-    super(id, players);
+    super(id, players, track);
     this.send = send;
   }
 

@@ -7,7 +7,7 @@ const BASE_FOV = 45;
 export default class RocketCamera extends PerspectiveCamera {
 	/**
 	 *
-	 * @param {import("./Rocket.js").default} rocket
+	 * @param {import("./RocketMesh.js").default} rocket
 	 */
 	constructor(rocket) {
 		super(BASE_FOV, app.tools.viewport.ratio, 1, 20);
@@ -26,6 +26,6 @@ export default class RocketCamera extends PerspectiveCamera {
 
 	onTick() {
 		// this.position.copy(this._rocket.mesh.position);
-		this.lookAt(this._rocket.mesh.position);
+		this.lookAt(this._rocket.position);
 	}
 }

@@ -1,6 +1,6 @@
 import * as IO from 'socket.io';
 import { RoomConfig, Room, Rooms } from '../types/index.js';
-import { Server as GameInstance, InputPayload, StatesPayload, Event } from '@vroom/shared';
+import { Server as GameInstance, InputPayload, StatesPayload, Event, TRACKS } from '@vroom/shared';
 import http from 'http';
 
 class Sockets {
@@ -58,7 +58,7 @@ class Sockets {
     this.sendEvent(roomId, 'start');
     const instance =
       this.rooms[roomId].game =
-      new GameInstance(roomId, this.rooms[roomId].players, this.send);
+      new GameInstance(roomId, this.rooms[roomId].players, this.send, TRACKS.bone);
 
     setInterval(instance.update.bind(instance), 1000 / 60);
   }
