@@ -32,6 +32,7 @@ export default class GameServer {
 		this.instance.on(SERVER_EVENTS.TICK, this._serverTick);
 		this.instance.on(SERVER_EVENTS.PLAYER_LANE_CHANGE, this._playerLineChange);
 		this.instance.on(SERVER_EVENTS.UPDATE_ROOM_CONFIG, this._updatePlayerList);
+		this.instance.on(SERVER_EVENTS.UPDATE_LEADERBOARD, this._updateLeaderboard);
 
 		// TODO: Remove
 		const handleInputs = (e) => {
@@ -88,6 +89,10 @@ export default class GameServer {
 	_playerLineChange = (payload) => {
 		this.client.changeLane(payload);
 		console.log(payload.playerId + ' changed line', payload.direction);
+	};
+
+	_updateLeaderboard = (names) => {
+		console.log(names);
 	};
 
 	onTick() {
