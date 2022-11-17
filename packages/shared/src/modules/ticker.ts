@@ -1,9 +1,6 @@
-import { Vector3 } from "three";
 import { Rocket } from "../entities/Rocket.js";
 import { Track } from "../main.js";
-import { InputPayload, Players, State, StatesPayload } from "../types/index.js";
-
-const VEC3 = new Vector3();
+import { ChangeLanePayload, InputPayload, Players, State, StatesPayload } from "../types/index.js";
 
 class Ticker {
   protected roomId: string;
@@ -119,7 +116,7 @@ class Ticker {
     };
   }
 
-  public changeLane(payload: { playerId: string; direction: number }) {
+  public changeLane(payload: ChangeLanePayload) {
     this.rockets[payload.playerId].changeLane(payload.direction);
   }
 }

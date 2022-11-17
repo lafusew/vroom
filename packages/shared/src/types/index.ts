@@ -6,6 +6,11 @@ interface InputPayload {
     playerId: string;
 }
 
+interface ChangeLanePayload {
+    playerId: string;
+    direction: number;
+}
+
 interface StatesPayload {
     tick: number;
     states: { [playerId: string]: State };
@@ -43,4 +48,4 @@ interface Spline {
     default?: boolean;
 }
 
-export type { Players, InputPayload, State, StatesPayload, Event, Game, Spline };
+export type { Players, InputPayload, State, StatesPayload, ChangeLanePayload, Event, Game, Spline };
