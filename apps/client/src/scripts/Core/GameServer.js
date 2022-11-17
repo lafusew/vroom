@@ -62,9 +62,9 @@ export default class GameServer {
 		state.emit(EVENTS.GAME_START, this._playerId);
 	};
 
-	_send = (input) => {
+	_send = (eventName, input) => {
 		// console.log('OUTCOMING INPUT: ', input);
-		this.instance.emit(CLIENT_EVENTS.PLAYER_TICK, this.client.getRoomId(), input);
+		this.instance.emit(eventName, this.client.getRoomId(), input);
 	};
 
 	_updatePlayerList = (playersMap) => {
