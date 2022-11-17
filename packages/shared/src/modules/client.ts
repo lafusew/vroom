@@ -1,4 +1,4 @@
-import { Game, InputPayload, Players, StatesPayload } from "../types/index.js";
+import { CLIENT_EVENTS, Game, InputPayload, Players, StatesPayload } from "../types/index.js";
 import { Ticker } from "./ticker.js";
 
 import { Track, TRACKS } from "../main.js";
@@ -16,9 +16,9 @@ class Client extends Ticker implements Game {
 
     private readonly DEFAULT_STATE_PAYLOAD: StatesPayload;
 
-    private send: (payload: InputPayload) => void;
+    private send: (eventName: CLIENT_EVENTS, payload: InputPayload) => void;
 
-    private constructor(roomId: string, currentPlayerId: string, allPlayers: { [playerId: string]: string }, send: (payload: InputPayload) => void, track: Track) {
+    private constructor(roomId: string, currentPlayerId: string, allPlayers: { [playerId: string]: string }, send: (eventName: CLIENT_EVENTS, payload: InputPayload) => void, track: Track) {
         super(roomId, allPlayers, track);
 
         this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
@@ -52,7 +52,7 @@ class Client extends Ticker implements Game {
 
             this.stateBuffer[bufferIndex] = this.processState(inputPayload, dt);
 
-            if (serverTick) this.send(inputPayload);
+            if (serverTick) this.send(CLIENT_EVENTS.PLAYER_TICK, inputPayload);
         });
     }
 
@@ -131,7 +131,7 @@ class Client extends Ticker implements Game {
         return this.latestServerState;
     }
 
-    public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (input: InputPayload) => void): Client {
+    public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (eventName: CLIENT_EVENTS, input: InputPayload) => void): Client {
         if (!Client._) {
             Client._ = new Client(roomId, playerId, allPlayers, send, TRACKS["triangle 3D"]);
         }

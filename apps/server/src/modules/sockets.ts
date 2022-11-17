@@ -2,6 +2,7 @@ import { InputPayload, ChangeLanePayload, Server as GameInstance, StatesPayload,
 import http from "http";
 import * as IO from "socket.io";
 import { RoomConfig, Rooms } from "../types/index.js";
+import { SERVER_EVENTS, CLIENT_EVENTS } from "@vroom/shared";
 
 class Sockets {
   private static _instance: Sockets;
@@ -33,12 +34,12 @@ class Sockets {
   private startGameInstance(roomId: string, trackName: string): void {
     console.log(this.rooms[roomId]);
 
-    this.emit(roomId, "start");
+    this.emit(roomId, SERVER_EVENTS.GAME_START, trackName);
 
     const instance = (this.rooms[roomId].game = new GameInstance(
       roomId,
       this.rooms[roomId].players,
-      (id: string, payload: StatesPayload) => this.emit(id, "tick", payload),
+      (id: string, eventName: SERVER_EVENTS, payload: StatesPayload) => this.emit(id, eventName, payload),
       TRACKS[trackName]
     ));
 
@@ -76,7 +77,7 @@ class Sockets {
 
     if (room) {
       room.players[config.playerId] = config.playerName;
-      this.emit(config.roomId, "updatedPlayerList", room.players);
+      this.emit(config.roomId, SERVER_EVENTS.UPDATE_PLAYER_LIST, room.players);
     } else {
       this.rooms[config.roomId] = {
         players: {
@@ -89,7 +90,7 @@ class Sockets {
   }
 
   private handleGameStart(socket: IO.Socket): void {
-    socket.on("ready", (id: string, trackName: string) => {
+    socket.on(CLIENT_EVENTS.READY, (id: string, trackName: string) => {
       console.log(`Room ${id} just started a game on track ${trackName}`);
 
       this.startGameInstance(id, trackName);
@@ -97,15 +98,15 @@ class Sockets {
   }
 
   private handleTick(socket: IO.Socket): void {
-    socket.on("tick", (id: string, payload: InputPayload) => {
+    socket.on(CLIENT_EVENTS.PLAYER_TICK, (id: string, payload: InputPayload) => {
       this.rooms[id].game?.onClientInput(payload);
     });
   }
 
   private handleLaneChange(socket: IO.Socket): void {
-    socket.on("inputLane", (id: string, payload: ChangeLanePayload) => {
+    socket.on(CLIENT_EVENTS.INPUT_LANE_CHANGE, (id: string, payload: ChangeLanePayload) => {
       this.rooms[id].game?.changeLane(payload);
-      this.emit(id, "playerLaneChange", payload);
+      this.emit(id, SERVER_EVENTS.PLAYER_LANE_CHANGE, payload);
     });
   }
 
@@ -116,6 +117,7 @@ class Sockets {
         this.removePlayerFromRoom(roomId, playerId);
 
         if (Object.keys(this.rooms[roomId].players).length === 0) {
+          this.rooms[roomId].game?.setIsGameRunning(false);
           this.deleteEmptyRoom(roomId);
         }
       }
@@ -124,7 +126,7 @@ class Sockets {
 
   private removePlayerFromRoom(roomId: string, playerId: string): void {
     delete this.rooms[roomId].players[playerId];
-    this.emit(roomId, "updatedPlayerList", this.rooms[roomId].players);
+    this.emit(roomId, SERVER_EVENTS.UPDATE_PLAYER_LIST, this.rooms[roomId].players);
   }
 
   private deleteEmptyRoom(roomId: string): void {
