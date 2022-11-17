@@ -15,8 +15,8 @@ export default class Inputs {
 	onAttach() {
 		this._speedSlider.addEventListener('touchmove', this._touchMove, { passive: true });
 
-		this._leftLaneSwitchBtn.addEventListener('click', this._clickButton);
-		this._rightLaneSwitchBtn.addEventListener('click', this._clickButton);
+		this._leftLaneSwitchBtn.addEventListener('touchstart', this._clickButton, { passive: true });
+		this._rightLaneSwitchBtn.addEventListener('touchstart', this._clickButton, { passive: true });
 	}
 
 	_touchMove = (e) => {

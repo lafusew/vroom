@@ -1,7 +1,11 @@
 import Component from 'Dom/Abstract/Component.js';
 import app from 'scripts/App.js';
 import store from 'scripts/Store.js';
+import { DEBUG } from 'utils/config.js';
 import { STORE_KEYS } from 'utils/constants.js';
+
+const doc = window.document;
+const docEl = doc.documentElement;
 
 export default class Landing extends Component {
 	constructor(el) {
@@ -69,6 +73,13 @@ export default class Landing extends Component {
 		if (this.pseudo) {
 			store.set(STORE_KEYS.PSEUDO, this.pseudo.toUpperCase());
 			app.dom.pageComponentsManager.get('index').showPage('Home');
+			if (DEBUG) this._openFullScreen();
 		}
+	};
+
+	_openFullScreen = () => {
+		const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+
+		if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) requestFullScreen.call(docEl).then(() => (this._isFullScreen = true));
 	};
 }
