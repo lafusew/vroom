@@ -33,7 +33,6 @@ export default class extends stateMixin(Scene) {
 				this._currentRocket = rocket;
 			} else {
 				this._rocketsMeshes.set(playerId, rocketMesh);
-				rocketMesh.targetPosition = rocketMesh.position.clone();
 			}
 		});
 
@@ -46,8 +45,10 @@ export default class extends stateMixin(Scene) {
 	onTick({ dt }) {
 		this._rocketsMeshes?.forEach((rocket) => {
 			const rocketToUpdate = app.core.gameManager.gameServer.client.getRockets()[rocket.playerId];
+
 			rocketToUpdate.progress = MathUtils.damp(rocketToUpdate.progress, app.core.gameManager.gameServer.client.getLatestServerStates().states[rocket.playerId].progress, 10, dt);
 			rocketToUpdate.speed = app.core.gameManager.gameServer.client.getLatestServerStates().states[rocket.playerId].speed;
+
 			rocketToUpdate.updatePosition(rocketToUpdate.progress);
 			rocketToUpdate.computeCentrifugal(rocketToUpdate.speed);
 			rocketToUpdate.checkEjection(rocketToUpdate.speed);
