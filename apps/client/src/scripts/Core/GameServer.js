@@ -28,28 +28,21 @@ export default class GameServer {
 		this.instance.on('updatedPlayerList', this._updatePlayerList);
 
 		// TODO: Remove
-		// window.addEventListener('click', this._emitReady);
-		// const handleInputs = (e) => {
-		// 	if (e.code === 'ArrowDown') {
-		// 		this._speedInput -= 0.1;
-		// 	} else if (e.code === 'ArrowUp') {
-		// 		this._speedInput += 0.1;
-		// 	} else if (e.code === 'Space') {
-		// 		this._speedInput = 0;
-		// 	} else if (e.code === 'ArrowLeft') {
-		// 		this.onInputLane(-1);
-		// 	} else if (e.code === 'ArrowRight') {
-		// 		this.onInputLane(1);
-		// 	}
-		// };
-		// window.addEventListener('keydown', handleInputs);
+		const handleInputs = (e) => {
+			if (e.code === 'ArrowDown') {
+				this._speedInput -= 0.1;
+			} else if (e.code === 'ArrowUp') {
+				this._speedInput += 0.1;
+			} else if (e.code === 'Space') {
+				this._speedInput = 0;
+			} else if (e.code === 'ArrowLeft') {
+				this.onInputLane(-1);
+			} else if (e.code === 'ArrowRight') {
+				this.onInputLane(1);
+			}
+		};
+		window.addEventListener('keydown', handleInputs);
 	}
-
-	// TODO: Remove
-	_emitReady = () => {
-		state.emit(EVENTS.GAME_READY);
-		window.removeEventListener('click', this._emitReady);
-	};
 
 	onGameReady() {
 		this.instance.emit('ready', this._roomId, this._trackName);
@@ -64,9 +57,6 @@ export default class GameServer {
 	}
 
 	_gameStart = () => {
-		// TODO: Remove
-		window.removeEventListener('click', this._emitReady);
-
 		this.client = Client.getInstance(this._roomId, this._playerId, this.players, this._send);
 		console.log('Game start', this.client.getPlayers());
 		state.emit(EVENTS.GAME_START, this._playerId);

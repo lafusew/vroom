@@ -1,3 +1,6 @@
+import state from 'scripts/State.js';
+import { EVENTS } from 'utils/constants.js';
+
 const TABS = ['WEBGL', 'DOM', 'GLOBAL'];
 
 /** @type Record<any, any> */
@@ -24,6 +27,7 @@ export default class Pane {
 
 		this._initTabs();
 		this.globalPane.addButton({ title: 'Refresh' }).on('click', () => this.globalPane.refresh());
+		this.globalPane.addButton({ title: 'Room ready' }).on('click', () => state.emit(EVENTS.GAME_READY));
 	}
 
 	_initTabs() {
