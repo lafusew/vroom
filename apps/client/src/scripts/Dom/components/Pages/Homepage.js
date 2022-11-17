@@ -19,7 +19,7 @@ export default class Homepage extends PageComponent {
 		if (this.url.has('skipUI')) {
 			this.el.classList.add('hidden');
 			store.set(STORE_KEYS.PSEUDO, 'Pseudo');
-			store.set(STORE_KEYS.TRACK_NAME, this.url.get('track') || 'triangle 3D');
+			store.set(STORE_KEYS.TRACK_NAME, this.url.get('track') || 'triangle');
 			store.set(STORE_KEYS.ROOM_ID, this.url.get('roomId'));
 			state.emit(EVENTS.JOIN_ROOM);
 		}
