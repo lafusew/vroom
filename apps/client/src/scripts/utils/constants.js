@@ -13,6 +13,7 @@ const EVENTS = {
 	INPUT_SPEED: i++,
 	INPUT_LANE: i++,
 
+	JOIN_ROOM: i++,
 	GAME_READY: i++,
 	GAME_START: i++,
 
@@ -35,7 +36,10 @@ const EVENTS_MAP = Object.fromEntries(
 	]),
 );
 
-const STORE_KEYS = {};
+const STORE_KEYS = {
+	PSEUDO: i++,
+	TRACK_NAME: i++,
+};
 
 const cssColors = classes
 	.trim()

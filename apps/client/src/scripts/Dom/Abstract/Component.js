@@ -19,7 +19,6 @@ export default class Component {
 	}
 
 	_handleOrientationChange = (e) => {
-		console.log(e);
 		if (e.matches) {
 			app.dom.pageComponentsManager.get('index').setRotateMode(true);
 		}
