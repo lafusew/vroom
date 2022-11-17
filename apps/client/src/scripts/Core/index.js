@@ -1,14 +1,14 @@
-import GameServer from './GameServer.js';
+import GameManager from './GameManager.js';
 import Loader from './Loader.js';
 import Ticker from './Ticker.js';
 
 export default function () {
-	const gameServer = new GameServer();
+	const gameManager = new GameManager();
 	const loader = new Loader();
 	const ticker = new Ticker();
 
 	return {
-		gameServer,
+		gameManager,
 		loader,
 		ticker,
 	};

@@ -1,6 +1,7 @@
 import Component from 'Dom/Abstract/Component.js';
 import app from 'scripts/App.js';
 import store from 'scripts/Store.js';
+import { STORE_KEYS } from 'utils/constants.js';
 
 export default class Home extends Component {
 	constructor(el) {
@@ -15,7 +16,7 @@ export default class Home extends Component {
 		this.multiplayerButton.addEventListener('click', this._goSkin);
 		this.toggleSoundButton.addEventListener('click', this._toggleSound);
 		this.creditsButton.addEventListener('click', this._goCredits);
-		this.homeNameH1.innerHTML = store.get('pseudo');
+		this.homeNameH1.innerHTML = store.get(STORE_KEYS.PSEUDO);
 
 		/// #if DEBUG
 		const url = new URLSearchParams(location.search);

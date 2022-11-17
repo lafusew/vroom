@@ -1,5 +1,6 @@
 import Component from 'Dom/Abstract/Component.js';
-import app from 'scripts/App.js';
+import state from 'scripts/State.js';
+import { EVENTS } from 'utils/constants.js';
 
 export default class Lobby extends Component {
 	constructor(el) {
@@ -21,5 +22,6 @@ export default class Lobby extends Component {
 
 	_startGame() {
 		console.log('Game started 🕹');
+		state.emit(EVENTS.GAME_READY);
 	}
 }

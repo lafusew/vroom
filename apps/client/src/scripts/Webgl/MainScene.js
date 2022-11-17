@@ -19,8 +19,8 @@ export default class extends stateMixin(Scene) {
 	}
 
 	onGameStart(currentPlayerId) {
-		const trackMesh = new TrackGroup(app.core.gameServer.client.getTrack());
-		Object.entries(app.core.gameServer.client.getRockets()).forEach(([playerId, rocket]) => {
+		const trackMesh = new TrackGroup(app.core.gameManager.gameServer.client.getTrack());
+		Object.entries(app.core.gameManager.gameServer.client.getRockets()).forEach(([playerId, rocket]) => {
 			const isCurrentPlayer = playerId === currentPlayerId;
 			const rocketMesh = new RocketMesh(playerId, isCurrentPlayer ? 0x00ff00 : 0xff0000);
 			// rocketMesh.position.copy(rocket.position);
@@ -37,8 +37,8 @@ export default class extends stateMixin(Scene) {
 
 	onTick() {
 		this._rockets?.forEach((rocket) => {
-			rocket.position.fromArray(app.core.gameServer.client.getLatestServerStates().states[rocket.playerId].position);
+			rocket.position.fromArray(app.core.gameManager.gameServer.client.getLatestServerStates().states[rocket.playerId].position);
 		});
-		this._currentRocketMesh?.position.fromArray(app.core.gameServer.client.getStates()[this._currentRocketMesh.playerId].position);
+		this._currentRocketMesh?.position.fromArray(app.core.gameManager.gameServer.client.getStates()[this._currentRocketMesh.playerId].position);
 	}
 }
