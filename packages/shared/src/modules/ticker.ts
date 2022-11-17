@@ -56,15 +56,22 @@ class Ticker {
         if (this.timer >= this.minTimeBetweenTicks) {
             this.timer -= this.minTimeBetweenTicks;
             processTick(this.minTimeBetweenTicks, true);
-
+            
             this.currentTick++;
 
+            console.log(this.getRanking());
+            
             return;
         }
 
         // NEED TO STORE IN BETWEEN TICKS INPUTS ARRAYS AND SEND THEM TO SERVER ON TICK
         // OTW CLIENT WILL DESYNC TOO EASILY
         // processTick(delta, false);
+    }
+
+    protected getRanking() {
+        this.rockets
+        return Object.values(this.rockets).sort((a, b) => b.relativeProgress - a.relativeProgress);
     }
 
     public getIsGameRunning() {
