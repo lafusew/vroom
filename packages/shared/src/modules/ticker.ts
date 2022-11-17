@@ -106,7 +106,7 @@ class Ticker {
 
         // console.log(this.rockets[input.playerId].speed);
 
-        this.rockets[input.playerId].tick(input.inputSpeed, dt, ejectionCallback);
+        this.rockets[input.playerId].tick(input.inputSpeed, this.rockets, dt, ejectionCallback);
 
         // const [x, y] = this.states[input.playerId].position;
 
@@ -129,7 +129,7 @@ class Ticker {
     }
 
     public changeLane(payload: ChangeLanePayload) {
-        this.rockets[payload.playerId].changeLane(payload.direction);
+        this.rockets[payload.playerId].changeLane(payload.direction, this.rockets);
     }
 }
 export { Ticker };
