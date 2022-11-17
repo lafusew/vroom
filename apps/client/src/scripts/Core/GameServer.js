@@ -25,7 +25,7 @@ export default class GameServer {
 		this.instance.on(SERVER_EVENTS.GAME_START, this._gameStart);
 		this.instance.on(SERVER_EVENTS.TICK, this._serverTick);
 		this.instance.on(SERVER_EVENTS.PLAYER_LANE_CHANGE, this._playerLineChange);
-		this.instance.on(SERVER_EVENTS.UPDATE_PLAYER_LIST, this._updatePlayerList);
+		this.instance.on(SERVER_EVENTS.UPDATE_ROOM_CONFIG, this._updatePlayerList);
 
 		// TODO: Remove
 		const handleInputs = (e) => {
@@ -67,8 +67,9 @@ export default class GameServer {
 		this.instance.emit(eventName, this.client.getRoomId(), input);
 	};
 
-	_updatePlayerList = (playersMap) => {
-		this.players = playersMap;
+	_updatePlayerList = ({ players, track }) => {
+		this.players = players;
+		this._trackName = track;
 		console.log(this.players);
 	};
 

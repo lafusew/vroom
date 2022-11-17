@@ -74,6 +74,7 @@ class Sockets {
         players: {
           [config.playerId]: config.playerName,
         },
+        trackName: config.trackName || "triangle 3D",
       };
     } else {
       if (room.game?.getIsGameRunning()) {
@@ -96,6 +97,7 @@ class Sockets {
     }
 
     socket.join(config.roomId);
+    this.emit(config.roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, { players: room.players, track: this.rooms.game });
   }
 
   private handleGameStart(socket: IO.Socket): void {
@@ -135,7 +137,7 @@ class Sockets {
 
   private removePlayerFromRoom(roomId: string, playerId: string): void {
     delete this.rooms[roomId].players[playerId];
-    this.emit(roomId, SERVER_EVENTS.UPDATE_PLAYER_LIST, this.rooms[roomId].players);
+    this.emit(roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, this.rooms[roomId].players);
   }
 
   private deleteEmptyRoom(roomId: string): void {
