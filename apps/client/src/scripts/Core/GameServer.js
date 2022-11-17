@@ -78,6 +78,7 @@ export default class GameServer {
 	};
 
 	_playerLineChange = (payload) => {
+		this.client.changeLane(payload);
 		console.log(payload.playerId + ' changed line', payload.direction);
 	};
 

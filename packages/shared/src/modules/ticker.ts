@@ -6,121 +6,121 @@ import { InputPayload, Players, State, StatesPayload } from "../types/index.js";
 const VEC3 = new Vector3();
 
 class Ticker {
-  protected roomId: string;
+    protected roomId: string;
 
-  protected timer: number;
-  protected currentTick = 0;
-  protected minTimeBetweenTicks: number;
+    protected timer: number;
+    protected currentTick = 0;
+    protected minTimeBetweenTicks: number;
 
-  protected lastUpdate = 0;
+    protected lastUpdate = 0;
 
-  protected readonly SERVER_TICK_RATE = 120;
-  protected readonly BUFFER_SIZE = 1024;
+    protected readonly SERVER_TICK_RATE = 60;
+    protected readonly BUFFER_SIZE = 1024;
 
-  protected stateBuffer: StatesPayload[] = [];
+    protected stateBuffer: StatesPayload[] = [];
 
-  protected states: { [playerId: string]: State } = {};
-  protected players: Players;
-  protected rockets: { [playerId: string]: Rocket } = {};
-  protected track: Track;
+    protected states: { [playerId: string]: State } = {};
+    protected players: Players;
+    protected rockets: { [playerId: string]: Rocket } = {};
+    protected track: Track;
 
-  protected isGameRunning: boolean = false;
+    protected isGameRunning: boolean = false;
 
-  constructor(roomId: string, players: Players, track: Track) {
-    this.roomId = roomId;
-    this.stateBuffer = new Array<StatesPayload>(this.BUFFER_SIZE);
+    constructor(roomId: string, players: Players, track: Track) {
+        this.roomId = roomId;
+        this.stateBuffer = new Array<StatesPayload>(this.BUFFER_SIZE);
 
-    this.minTimeBetweenTicks = 1 / this.SERVER_TICK_RATE;
-    this.timer = 0;
+        this.minTimeBetweenTicks = 1 / this.SERVER_TICK_RATE;
+        this.timer = 0;
 
-    this.lastUpdate = Date.now();
+        this.lastUpdate = Date.now();
 
-    this.players = players;
-    this.track = track;
+        this.players = players;
+        this.track = track;
 
-    Object.keys(this.players).forEach((id, i) => {
-      this.rockets[id] = new Rocket(i, track.paths);
+        Object.keys(this.players).forEach((id, i) => {
+            this.rockets[id] = new Rocket(i, track.paths);
 
-      this.states[id] = {
-        position: this.rockets[id].position.toArray(),
-        speed: this.rockets[id].speed,
-      };
-    });
-  }
-
-  protected onTick(processTick: (dt: number, serverTick: boolean) => void, ...args: any) {
-    const now = Date.now();
-    const delta = (now - this.lastUpdate) / 1000;
-    this.lastUpdate = now;
-
-    this.timer += delta;
-
-    if (this.timer >= this.minTimeBetweenTicks) {
-      this.timer -= this.minTimeBetweenTicks;
-      processTick(this.minTimeBetweenTicks, true);
-
-      this.currentTick++;
-
-      return;
+            this.states[id] = {
+                position: this.rockets[id].position.toArray(),
+                speed: this.rockets[id].speed,
+            };
+        });
     }
 
-    // NEED TO STORE IN BETWEEN TICKS INPUTS ARRAYS AND SEND THEM TO SERVER ON TICK
-    // OTW CLIENT WILL DESYNC TOO EASILY
-    // processTick(delta, false);
-  }
+    protected onTick(processTick: (dt: number, serverTick: boolean) => void, ...args: any) {
+        const now = Date.now();
+        const delta = (now - this.lastUpdate) / 1000;
+        this.lastUpdate = now;
 
-  public getIsGameRunning() {
-    return this.isGameRunning;
-  }
+        this.timer += delta;
 
-  public setIsGameRunning(isGameRunning: boolean) {
-    this.isGameRunning = isGameRunning;
-  }
+        if (this.timer >= this.minTimeBetweenTicks) {
+            this.timer -= this.minTimeBetweenTicks;
+            processTick(this.minTimeBetweenTicks, true);
 
-  public getStates() {
-    return this.states;
-  }
+            this.currentTick++;
 
-  public getRoomId() {
-    return this.roomId;
-  }
+            return;
+        }
 
-  public getPlayers() {
-    return this.players;
-  }
+        // NEED TO STORE IN BETWEEN TICKS INPUTS ARRAYS AND SEND THEM TO SERVER ON TICK
+        // OTW CLIENT WILL DESYNC TOO EASILY
+        // processTick(delta, false);
+    }
 
-  public getRockets() {
-    return this.rockets;
-  }
+    public getIsGameRunning() {
+        return this.isGameRunning;
+    }
 
-  public getTrack() {
-    return this.track;
-  }
+    public setIsGameRunning(isGameRunning: boolean) {
+        this.isGameRunning = isGameRunning;
+    }
 
-  protected processState(input: InputPayload, dt: number): StatesPayload {
-    this.rockets[input.playerId].tick(input.inputSpeed, dt);
+    public getStates() {
+        return this.states;
+    }
 
-    // const [x, y] = this.states[input.playerId].position;
+    public getRoomId() {
+        return this.roomId;
+    }
 
-    // const newPosition: [number, number] = [
-    //     x + horizontalInput * 30 * dt, // * this.minTimeBetweenTicks,
-    //     y + verticalInput * 30 * dt, // * this.minTimeBetweenTicks
-    // ];
-    const newPosition = this.rockets[input.playerId].position.toArray();
+    public getPlayers() {
+        return this.players;
+    }
 
-    this.states[input.playerId].position = newPosition;
+    public getRockets() {
+        return this.rockets;
+    }
 
-    return {
-      tick: input.tick,
-      states: {
-        ...this.states,
-        [input.playerId]: { position: newPosition, speed: this.rockets[input.playerId].speed },
-      },
-    };
-  }
+    public getTrack() {
+        return this.track;
+    }
 
-  public changeLane(payload: { playerId: string; direction: number }) {
-    this.rockets[payload.playerId].changeLane(payload.direction);
-  }
+    protected processState(input: InputPayload, dt: number): StatesPayload {
+        this.rockets[input.playerId].tick(input.inputSpeed, dt);
+
+        // const [x, y] = this.states[input.playerId].position;
+
+        // const newPosition: [number, number] = [
+        //     x + horizontalInput * 30 * dt, // * this.minTimeBetweenTicks,
+        //     y + verticalInput * 30 * dt, // * this.minTimeBetweenTicks
+        // ];
+        const newPosition = this.rockets[input.playerId].position.toArray();
+
+        this.states[input.playerId].position = newPosition;
+
+        return {
+            tick: input.tick,
+            states: {
+                ...this.states,
+                [input.playerId]: { position: newPosition, speed: this.rockets[input.playerId].speed },
+            },
+        };
+    }
+
+    public changeLane(payload: { playerId: string; direction: number }) {
+        this.rockets[payload.playerId].changeLane(payload.direction);
+    }
 }
 export { Ticker };
