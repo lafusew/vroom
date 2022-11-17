@@ -117,6 +117,7 @@ class Sockets {
         this.removePlayerFromRoom(roomId, playerId);
 
         if (Object.keys(this.rooms[roomId].players).length === 0) {
+          this.rooms[roomId].game?.setIsGameRunning(false);
           this.deleteEmptyRoom(roomId);
         }
       }

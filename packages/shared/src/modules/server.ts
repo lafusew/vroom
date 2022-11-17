@@ -8,6 +8,7 @@ class Server extends Ticker implements Game {
 
   private send: (id: string, payload: StatesPayload) => void;
 
+
   constructor(
     id: string,
     players: Players,
@@ -19,9 +20,9 @@ class Server extends Ticker implements Game {
   }
 
   update() {
+    if (!this.isGameRunning) return;
     this.onTick(
       (dt: number) => {
-        console.log('SERVER TICK');
         let bufferIndex = -1;
 
         while (this.inputQueue.length > 0) {
