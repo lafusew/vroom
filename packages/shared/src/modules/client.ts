@@ -2,7 +2,7 @@ import { Game, InputPayload, Players, StatesPayload } from "../types/index.js";
 import { Ticker } from "./ticker.js";
 
 import { Track, TRACKS } from "../main.js";
-import { deepEqual, isDistanceDifferenceAcceptable } from "../utils/index.js";
+import { deepEqual, isProgressDifferenceAcceptable } from "../utils/index.js";
 
 class Client extends Ticker implements Game {
     private static _: Client;
@@ -36,9 +36,9 @@ class Client extends Ticker implements Game {
 
     update(inputSpeed: number) {
         this.onTick((dt: number, serverTick: boolean) => {
-            if (this.shouldReconcile()) {
-                this.reconcile(dt);
-            }
+            // if (this.shouldReconcile()) {
+            //     this.reconcile(dt);
+            // }
 
             const bufferIndex = this.currentTick % this.BUFFER_SIZE;
 
@@ -83,17 +83,23 @@ class Client extends Ticker implements Game {
         // console.log("latestServerState", this.latestServerState);
         // console.log("stateBuffer", this.stateBuffer);
 
-        const isPositionCorrect = isDistanceDifferenceAcceptable(
-            // TODO: Define a coef
-            1 * Math.max(this.stateBuffer[serverStateBufferIndex].states[this.playerId].speed, 1),
-            this.latestServerState.states[this.playerId].position,
-            this.stateBuffer[serverStateBufferIndex].states[this.playerId].position
+        // const isPositionCorrect = isDistanceDifferenceAcceptable(
+        //     // TODO: Define a coef
+        //     1 * Math.max(this.stateBuffer[serverStateBufferIndex].states[this.playerId].speed, 1),
+        //     this.latestServerState.states[this.playerId].position,
+        //     this.stateBuffer[serverStateBufferIndex].states[this.playerId].position
+        // );
+
+        const isProgressCorrect = isProgressDifferenceAcceptable(
+            1 * Math.max(this.stateBuffer[serverStateBufferIndex].states[this.playerId].speed, 0.01),
+            this.latestServerState.states[this.playerId].progress,
+            this.stateBuffer[serverStateBufferIndex].states[this.playerId].progress
         );
 
-        if (!isPositionCorrect) {
+        if (!isProgressCorrect) {
             console.log("Time to reconcile");
 
-            this.states[this.playerId].position = this.latestServerState.states[this.playerId].position;
+            this.states[this.playerId].progress = this.latestServerState.states[this.playerId].progress;
             this.states[this.playerId].speed = this.latestServerState.states[this.playerId].speed;
 
             this.stateBuffer[serverStateBufferIndex] = this.latestServerState;

@@ -21,6 +21,10 @@ export default class RocketMesh extends stateMixin(Group) {
 	// onAttach() {}
 
 	onTick() {
+		// if (!this.targetPosition) return;
+		// this.position.x = MathUtils.damp(this.position.x, this.targetPosition.x, 10, dt);
+		// this.position.y = MathUtils.damp(this.position.y, this.targetPosition.y, 10, dt);
+		// this.position.z = MathUtils.damp(this.position.z, this.targetPosition.z, 10, dt);
 		// this.position.fromArray(app.core.gameServer.client.getLatestServerStates().states[this.playerId].position);
 	}
 

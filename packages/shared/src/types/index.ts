@@ -20,7 +20,8 @@ interface StatesPayload {
 }
 
 interface State {
-    position: [number, number, number];
+    // position: [number, number, number];
+    progress: number;
     speed: number;
 }
 

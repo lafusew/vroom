@@ -14,13 +14,17 @@ function deepEqual(x: Record<string, any>, y: Record<string, any>): boolean {
 }
 
 function isDistanceDifferenceAcceptable(threshold: number, v1: [number, number, number], v2: [number, number, number]): boolean {
-    console.log("DISTANCE ACCEPTABLE", VEC1.fromArray(v1).distanceTo(VEC2.fromArray(v2)));
+    // console.log("DISTANCE ACCEPTABLE", VEC1.fromArray(v1).distanceTo(VEC2.fromArray(v2)));
 
     return VEC1.fromArray(v1).distanceTo(VEC2.fromArray(v2)) < threshold;
+}
+
+function isProgressDifferenceAcceptable(threshold: number, s1: number, s2: number) {
+    return Math.abs(s1 - s2) < threshold;
 }
 
 function mod(n: number, m: number) {
     return ((n % m) + m) % m;
 }
 
-export { deepEqual, isDistanceDifferenceAcceptable, utility, mod };
+export { deepEqual, isDistanceDifferenceAcceptable, isProgressDifferenceAcceptable, utility, mod };
