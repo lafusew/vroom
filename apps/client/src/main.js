@@ -6,8 +6,6 @@ import 'styles/app.scss';
 
 // const socket = io('http://localhost:8888');
 
-console.log("😎 I'm the vite client");
-
 app.init();
 
 /* TESTS TICKS GAME LOOP SERVER CLIENT

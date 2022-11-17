@@ -42,7 +42,7 @@ class Server extends Ticker implements Game {
   }
 
   public async onClientInput(input: InputPayload) {
-    console.log("RECEIVED INPUT: ", input);
+    // console.log("RECEIVED INPUT: ", input);
     this.inputQueue.push(input);
   }
 }
