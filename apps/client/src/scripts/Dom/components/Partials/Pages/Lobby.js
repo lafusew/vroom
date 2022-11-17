@@ -15,7 +15,7 @@ export default class Lobby extends Component {
 
 	open() {
 		this.startGameButton.addEventListener('click', this._startGame);
-		this.mapNameH1.innerText = 'Map: ' + store.get(STORE_KEYS.TRACK_NAME);
+		this.updateMapName(store.get(STORE_KEYS.TRACK_NAME));
 		this.roomIdH1.innerText = 'Room ID: ' + store.get(STORE_KEYS.ROOM_ID);
 
 		super.lockOrientation();
@@ -25,6 +25,10 @@ export default class Lobby extends Component {
 		this.startGameButton.removeEventListener('click', this._startGame);
 
 		super.unlockOrientation();
+	}
+
+	updateMapName(mapName) {
+		this.mapNameH1.innerText = 'Map: ' + mapName;
 	}
 
 	_startGame() {

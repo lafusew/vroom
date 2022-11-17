@@ -1,5 +1,6 @@
 import { Client, CLIENT_EVENTS, SERVER_EVENTS, TRACKS } from '@vroom/shared';
 import { customAlphabet } from 'nanoid';
+import app from 'scripts/App.js';
 import state from 'scripts/State.js';
 import store from 'scripts/Store.js';
 import { io } from 'socket.io-client';
@@ -75,7 +76,8 @@ export default class GameServer {
 	_updatePlayerList = ({ players, track }) => {
 		this.players = players;
 		this._trackName = track;
-		console.log(this.players);
+		app.dom.pageComponentsManager.get('index').componentsManager.get(document.querySelector('.lobby')).updateMapName(this._trackName);
+		console.log(this.players, this._trackName);
 	};
 
 	_serverTick = (state) => {

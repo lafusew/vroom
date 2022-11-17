@@ -1,8 +1,7 @@
-import { InputPayload, ChangeLanePayload, Server as GameInstance, StatesPayload, TRACKS } from "@vroom/shared";
+import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, Server as GameInstance, SERVER_EVENTS, StatesPayload, TRACKS } from "@vroom/shared";
 import http from "http";
 import * as IO from "socket.io";
 import { RoomConfig, Rooms } from "../types/index.js";
-import { SERVER_EVENTS, CLIENT_EVENTS } from "@vroom/shared";
 
 class Sockets {
   private static _instance: Sockets;
@@ -97,7 +96,7 @@ class Sockets {
     }
 
     socket.join(config.roomId);
-    this.emit(config.roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, { players: room.players, track: this.rooms.game });
+    this.emit(config.roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, { players: room.players, track: room.trackName });
   }
 
   private handleGameStart(socket: IO.Socket): void {
