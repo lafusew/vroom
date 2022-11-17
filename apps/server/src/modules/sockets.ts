@@ -1,8 +1,7 @@
-import { InputPayload, ChangeLanePayload, Server as GameInstance, StatesPayload, TRACKS } from "@vroom/shared";
+import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, LeaderboardPayload, Server as GameInstance, SERVER_EVENTS, StatesPayload, TRACKS } from "@vroom/shared";
 import http from "http";
 import * as IO from "socket.io";
 import { RoomConfig, Rooms } from "../types/index.js";
-import { SERVER_EVENTS, CLIENT_EVENTS } from "@vroom/shared";
 
 class Sockets {
   private static _instance: Sockets;
@@ -39,7 +38,7 @@ class Sockets {
     const instance = (this.rooms[roomId].game = new GameInstance(
       roomId,
       this.rooms[roomId].players,
-      (id: string, eventName: SERVER_EVENTS, payload: StatesPayload) => this.emit(id, eventName, payload),
+      (id: string, eventName: SERVER_EVENTS, payload: StatesPayload | LeaderboardPayload) => this.emit(id, eventName, payload),
       TRACKS[trackName]
     ));
 
@@ -68,25 +67,36 @@ class Sockets {
   private joinRoom(config: RoomConfig, socket: IO.Socket) {
     let room = this.rooms[config.roomId];
 
-    if (room && room.game?.getIsGameRunning()) {
-      console.log(`Player ${config.playerName} with id ${config.playerId} tryied joined room ${config.roomId} but was rejected because the game is already running`);
-      return;
-    }
-
-    socket.join(config.roomId);
-
-    if (room) {
-      room.players[config.playerId] = config.playerName;
-      this.emit(config.roomId, SERVER_EVENTS.UPDATE_PLAYER_LIST, room.players);
-    } else {
-      this.rooms[config.roomId] = {
+    if (!room) {
+      console.log(`Player ${config.playerName} with id ${config.playerId} created room ${config.roomId} and joined it`);
+      room = this.rooms[config.roomId] = {
         players: {
           [config.playerId]: config.playerName,
         },
+        trackName: config.trackName || "triangle 3D",
       };
+    } else {
+      if (room.game?.getIsGameRunning()) {
+        console.log(`Player ${config.playerName} with id ${config.playerId} tryied joined room ${config.roomId} but was rejected because the game is already running`);
+        return;
+      }
+
+      if (Object.keys(room.players).length >= 6) {
+        console.log(`Player ${config.playerName} with id ${config.playerId} tryied joined room ${config.roomId} but was rejected because the room is full`);
+        return;
+      }
+
+      if (room.players[config.playerId]) {
+        console.log(`Player ${config.playerName} with id ${config.playerId} tryied joined room ${config.roomId} but was already in the room`);
+        return;
+      }
+
+      room.players[config.playerId] = config.playerName;
+      console.log(`Player ${config.playerName} with id ${config.playerId} joined room ${config.roomId}`);
     }
 
-    console.log(`Player ${config.playerName} with id ${config.playerId} joined room ${config.roomId}`);
+    socket.join(config.roomId);
+    this.emit(config.roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, { players: room.players, track: room.trackName });
   }
 
   private handleGameStart(socket: IO.Socket): void {
@@ -126,7 +136,7 @@ class Sockets {
 
   private removePlayerFromRoom(roomId: string, playerId: string): void {
     delete this.rooms[roomId].players[playerId];
-    this.emit(roomId, SERVER_EVENTS.UPDATE_PLAYER_LIST, this.rooms[roomId].players);
+    this.emit(roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, this.rooms[roomId].players);
   }
 
   private deleteEmptyRoom(roomId: string): void {

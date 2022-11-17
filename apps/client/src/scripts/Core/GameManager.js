@@ -8,7 +8,7 @@ export default class GameManager {
 		state.register(this);
 	}
 
-	onJoinRoom(roomId) {
-		this.gameServer = new GameServer({ roomId, playerName: store.get(STORE_KEYS.PSEUDO), trackName: store.get(STORE_KEYS.TRACK_NAME) });
+	onJoinRoom() {
+		this.gameServer = new GameServer({ roomId: store.get(STORE_KEYS.ROOM_ID), playerName: store.get(STORE_KEYS.PSEUDO), trackName: store.get(STORE_KEYS.TRACK_NAME) });
 	}
 }

@@ -15,8 +15,8 @@ export default class Inputs {
 	onAttach() {
 		this._speedSlider.addEventListener('touchmove', this._touchMove, { passive: true });
 
-		this._leftLaneSwitchBtn.addEventListener('click', this._clickButton);
-		this._rightLaneSwitchBtn.addEventListener('click', this._clickButton);
+		this._leftLaneSwitchBtn.addEventListener('touchstart', this._clickButton, { passive: true });
+		this._rightLaneSwitchBtn.addEventListener('touchstart', this._clickButton, { passive: true });
 	}
 
 	_touchMove = (e) => {
@@ -25,10 +25,10 @@ export default class Inputs {
 	};
 
 	_speedMove = (y) => {
-		state.emit(EVENTS.FINGER_SPEED, MathUtils.mapLinear(MathUtils.clamp((app.tools.viewport.height - y) / app.tools.viewport.height, 0.3, 0.7), 0.3, 0.7, 0, 1));
+		state.emit(EVENTS.INPUT_SPEED, MathUtils.mapLinear(MathUtils.clamp((app.tools.viewport.height - y) / app.tools.viewport.height, 0.3, 0.7), 0.3, 0.7, 0, 1));
 	};
 
 	_clickButton = (e) => {
-		state.emit(EVENTS.SWITCH_LANE, e.target === this._leftLaneSwitchBtn ? -1 : 1);
+		state.emit(EVENTS.INPUT_LANE, e.target === this._leftLaneSwitchBtn ? -1 : 1);
 	};
 }

@@ -21,12 +21,13 @@ class Rocket {
         this.updatePosition(0);
     }
 
-    public changeLane(direction: number) {
+    public changeLane(direction: number, rockets: { [playerId: string]: Rocket }) {
         const newLane = this.laneNumber + direction;
         if (newLane >= 0 && newLane < gameConfig.numberOfPlayers) {
             this.laneNumber += direction;
             this.laneNumber = Math.min(Math.max(this.laneNumber, 0), gameConfig.numberOfPlayers - 1);
             this.checkNeighbourLanes(direction);
+            this.checkLateralCollision(rockets);
         }
     }
 
@@ -111,24 +112,31 @@ class Rocket {
             if (rocket.obj !== this) {
                 distance = this.position.distanceTo(rocket.obj.position);
 
-                console.log(distance);
-                
                 if (distance < gameConfig.rocketBoundingRadius) {
-                    // console.log(selfID, " collided with ", rocket.id);
-                    
                     if (Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < .1) {
-                        if (this.laneNumber === rocket.obj.laneNumber) {
-                            if ((this.relativeProgress % 1) > (rocket.obj.relativeProgress % 1)) {
-                                console.log(`COLLISION - Same lane / Front - ${selfID} x ${rocket.id}`);
-                            } else {
-                                console.log(`COLLISION - Same lane / Back - ${selfID} x ${rocket.id}`);
-                            }
-                        } else {
-                            console.log(`COLLISION - Lane change - ${selfID} x ${rocket.id}`);
+                        if ((this.relativeProgress % 1) < (rocket.obj.relativeProgress % 1)) {
+                            console.log(`COLLISION - Same lane / Back - ${selfID} x ${rocket.id}`);
                         }
                     } else {
                         console.log(`COLLISION - Intersection - ${selfID} x ${rocket.id}`);
                     }
+                }
+            }
+        });
+    }
+
+    protected checkLateralCollision(rockets: { [playerId: string]: Rocket }) {
+        let distance;
+
+        let otherRockets = Object.entries(rockets).filter(([id, rocket]) => rocket != this).map(([id, rocket]) => ({ id, obj: rocket }));
+        let selfID = Object.entries(rockets).filter(([id, rocket]) => rocket == this).map(([id, rocket]) => id)[0];
+
+        otherRockets.forEach((rocket) => {
+            if (rocket.obj.laneNumber === this.laneNumber) {
+                distance = this.position.distanceTo(rocket.obj.position);
+
+                if (distance < gameConfig.lateralCollisionThreshold && Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < .1) {
+                    console.log(`COLLISION - Lane change - ${selfID} x ${rocket.id}`);
                 }
             }
         });
@@ -140,7 +148,7 @@ class Rocket {
     }
 
     public tick(speedInput: number, rockets: { [playerId: string]: Rocket }, dt: number) {
-        this.speed = speedInput * dt;
+        this.speed = speedInput * dt * 10;
         this.progress += 0.01 * this.speed;
 
         this.updatePosition(this.progress);

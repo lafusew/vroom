@@ -124,7 +124,7 @@ class Ticker {
     }
 
     public changeLane(payload: ChangeLanePayload) {
-        this.rockets[payload.playerId].changeLane(payload.direction);
+        this.rockets[payload.playerId].changeLane(payload.direction, this.rockets);
     }
 }
 export { Ticker };
