@@ -5,6 +5,7 @@ import { Path } from "./Path.js";
 
 class Rocket {
     public progress = 0;
+    public relativeProgress = 0;
     public speed = 0;
     private paths: Path[];
     private laneNumber: number;
@@ -58,6 +59,31 @@ class Rocket {
         this.progress = nearestIndex / this.paths[this.laneNumber].spacedPoints.length;
     }
 
+    public getRelativeProgress() {
+        const rightDir = this.target.clone().sub(this.position).cross(new Vector3(0, 1, 0).sub(this.position));
+        rightDir.y = this.position.y;
+        rightDir.normalize();
+
+        let newPos = this.position.clone().add(rightDir.clone().multiplyScalar(trackConfig.spaceBetweenPaths * -(this.laneNumber + 1)));
+
+        let nearestDistance = Infinity;
+        let nearestIndex = 0;
+
+        let distance, progressDiff;
+
+        this.paths[0].spacedPoints.forEach((point, index) => {
+            distance = point.distanceTo(newPos);
+            progressDiff = Math.abs((this.progress % 1) - index / this.paths[0].spacedPoints.length);
+
+            if (distance < nearestDistance && progressDiff < gameConfig.progressDifferenceThreshold) {
+                nearestDistance = distance;
+                nearestIndex = index;
+            }
+        });
+
+        this.relativeProgress = nearestIndex / this.paths[0].spacedPoints.length + Math.floor(this.progress);
+    }
+
     public computeCentrifugal(progress: number) {
         this.directionV3 = this.target.clone().sub(this.position);
         const angleV3 = this.paths[this.laneNumber].curve.getPointAt((progress + 0.01) % 1).sub(this.position);
@@ -87,6 +113,7 @@ class Rocket {
         this.updatePosition(this.progress);
         this.computeCentrifugal(this.speed);
         this.checkEjection(this.speed);
+        this.getRelativeProgress();
     }
 }
 

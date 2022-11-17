@@ -34,7 +34,7 @@ class Server extends Ticker implements Game {
         }
 
         if (bufferIndex !== -1) {
-          console.log("SENDING STATE: ", this.stateBuffer[bufferIndex]);
+          // console.log("SENDING STATE: ", this.stateBuffer[bufferIndex]);
           this.send(this.roomId, SERVER_EVENTS.TICK, this.stateBuffer[bufferIndex]);
         }
       },
