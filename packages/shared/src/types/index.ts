@@ -25,6 +25,8 @@ interface State {
     speed: number;
 }
 
+type ServerPayload = StatesPayload | ChangeLanePayload | LeaderboardPayload | string;
+
 type Player = string;
 type PlayerId = string;
 
@@ -52,4 +54,4 @@ interface Spline {
 }
 
 export { SERVER_EVENTS, CLIENT_EVENTS };
-export type { Players, InputPayload, State, StatesPayload, ChangeLanePayload, Event, Game, Spline, LeaderboardPayload };
+export type { Players, InputPayload, State, StatesPayload, ServerPayload, ChangeLanePayload, Event, Game, Spline, LeaderboardPayload };

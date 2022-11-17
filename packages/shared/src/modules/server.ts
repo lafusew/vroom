@@ -1,18 +1,18 @@
 
 import { Track } from "../main.js";
-import { Game, InputPayload, LeaderboardPayload, Players, SERVER_EVENTS, StatesPayload } from "../types/index.js";
+import { Game, InputPayload, LeaderboardPayload, Players, ServerPayload, SERVER_EVENTS, StatesPayload } from "../types/index.js";
 import { Ticker } from "./ticker.js";
 
 class Server extends Ticker implements Game {
   private inputQueue: InputPayload[] = [];
   private leaderboard: string[];
 
-  private send: (id: string, eventName: SERVER_EVENTS, payload: StatesPayload | LeaderboardPayload) => void;
+  private send: (id: string, eventName: SERVER_EVENTS, payload: ServerPayload) => void;
 
   constructor(
     id: string,
     players: Players,
-    send: (id: string, eventName: SERVER_EVENTS, payload: StatesPayload | LeaderboardPayload) => void,
+    send: (id: string, eventName: SERVER_EVENTS, payload: ServerPayload) => void,
     track: Track
   ) {
     super(id, players, track);
@@ -32,6 +32,10 @@ class Server extends Ticker implements Game {
 
           let statePayload = this.processState(inputPayload, dt);
           this.stateBuffer[bufferIndex] = statePayload;
+
+          if (this.stateBuffer[bufferIndex].states[inputPayload.playerId].progress >= 3) {
+            this.send(this.roomId, SERVER_EVENTS.GAME_STOP, inputPayload.playerId);
+          }
         }
 
         if (bufferIndex !== -1) {
@@ -46,7 +50,7 @@ class Server extends Ticker implements Game {
     );
   }
 
-  public async onClientInput(input: InputPayload) {
+  public onClientInput(input: InputPayload) {
     // console.log("RECEIVED INPUT: ", input);
     this.inputQueue.push(input);
   }
