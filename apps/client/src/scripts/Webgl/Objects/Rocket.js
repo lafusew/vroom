@@ -1,5 +1,6 @@
 import store from 'scripts/Store.js';
 import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { STORE_KEYS } from 'utils/constants.js';
 import gameConfig from 'utils/gameConfig.js';
 import stateMixin from 'utils/stateMixin.js';
 import trackConfig from 'utils/trackConfig.js';
@@ -13,7 +14,7 @@ export default class Rocket extends stateMixin(Group) {
 		this.name = name;
 
 		this.laneNumber = laneNumber;
-		this.curve = store.get('currentTrack').paths[this.laneNumber].curve;
+		this.curve = store.get(STORE_KEYS.CURRENT_TRACK).paths[this.laneNumber].curve;
 		this.speed = Math.random() * 0.1 + 0.1;
 		this.target = new Vector3();
 		this.progress = 0;
@@ -22,7 +23,7 @@ export default class Rocket extends stateMixin(Group) {
 		this.centrifugalHelper = null;
 		this.angleHelper = null;
 
-		this.paths = store.get('currentTrack').paths;
+		this.paths = store.get(STORE_KEYS.CURRENT_TRACK).paths;
 
 		this._init();
 	}
@@ -58,7 +59,7 @@ export default class Rocket extends stateMixin(Group) {
 		if (newLane >= 0 && newLane < gameConfig.numberOfPlayers) {
 			this.laneNumber += direction;
 			this.laneNumber = Math.min(Math.max(this.laneNumber, 0), gameConfig.numberOfPlayers - 1);
-			this.curve = store.get('currentTrack').paths[this.laneNumber].curve;
+			this.curve = store.get(STORE_KEYS.CURRENT_TRACK).paths[this.laneNumber].curve;
 			this._checkNeighbourLanes(direction);
 		}
 	}

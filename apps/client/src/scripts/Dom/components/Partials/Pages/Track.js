@@ -4,17 +4,17 @@ import app from 'scripts/App.js';
 export default class Track extends Component {
 	constructor(el) {
 		super(el);
-		this.selectTrackButton = this.el.querySelector('#select-track-button');
+		this.createRoomButton = this.el.querySelector('#create-room-button');
 	}
 
 	open() {
-		this.selectTrackButton.addEventListener('click', this._goLobby);
+		this.createRoomButton.addEventListener('click', this._goLobby);
 
 		super.lockOrientation();
 	}
 
 	close() {
-		this.selectTrackButton.removeEventListener('click', this._goLobby);
+		this.createRoomButton.removeEventListener('click', this._goLobby);
 
 		super.unlockOrientation();
 	}

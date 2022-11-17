@@ -33,7 +33,11 @@ const EVENTS_MAP = Object.fromEntries(
 	]),
 );
 
-const STORE_KEYS = {};
+const STORE_KEYS = {
+	PSEUDO: i++,
+	TRACK_NAME: i++,
+	CURRENT_TRACK: i++,
+};
 
 const cssColors = classes
 	.trim()

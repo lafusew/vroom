@@ -1,5 +1,6 @@
 import store from 'scripts/Store.js';
 import { Group, Vector3 } from 'three';
+import { STORE_KEYS } from 'utils/constants.js';
 import gameConfig from 'utils/gameConfig.js';
 import { disposeMesh, mod } from 'utils/misc.js';
 import stateMixin from 'utils/stateMixin.js';
@@ -14,7 +15,7 @@ export default class Track extends stateMixin(Group) {
 		this.splineName = splineName;
 		this.paths = [];
 
-		store.set('currentTrack', this);
+		store.set(STORE_KEYS.CURRENT_TRACK, this);
 
 		this._createPaths();
 	}
