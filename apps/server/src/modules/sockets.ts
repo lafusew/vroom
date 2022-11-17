@@ -39,7 +39,7 @@ class Sockets {
     const instance = (this.rooms[roomId].game = new GameInstance(
       roomId,
       this.rooms[roomId].players,
-      (id: string, payload: StatesPayload) => this.emit(id, "tick", payload),
+      (id: string, eventName: SERVER_EVENTS, payload: StatesPayload) => this.emit(id, eventName, payload),
       TRACKS[trackName]
     ));
 

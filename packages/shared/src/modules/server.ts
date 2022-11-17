@@ -1,18 +1,18 @@
 
 import { Track } from "../main.js";
-import { Game, InputPayload, Players, StatesPayload } from "../types/index.js";
+import { Game, InputPayload, Players, SERVER_EVENTS, StatesPayload } from "../types/index.js";
 import { Ticker } from "./ticker.js";
 
 class Server extends Ticker implements Game {
   private inputQueue: InputPayload[] = [];
 
-  private send: (id: string, payload: StatesPayload) => void;
+  private send: (id: string, eventName: SERVER_EVENTS, payload: StatesPayload) => void;
 
 
   constructor(
     id: string,
     players: Players,
-    send: (id: string, payload: StatesPayload) => void,
+    send: (id: string, eventName: SERVER_EVENTS, payload: StatesPayload) => void,
     track: Track
   ) {
     super(id, players, track);
@@ -35,7 +35,7 @@ class Server extends Ticker implements Game {
 
         if (bufferIndex !== -1) {
           console.log("SENDING STATE: ", this.stateBuffer[bufferIndex]);
-          this.send(this.roomId, this.stateBuffer[bufferIndex]);
+          this.send(this.roomId, SERVER_EVENTS.TICK, this.stateBuffer[bufferIndex]);
         }
       },
     );
