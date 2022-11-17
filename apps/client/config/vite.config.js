@@ -70,6 +70,7 @@ export default ({ mode }) => {
 			],
 			// extensions: ['.cjs', '.mjs', '.js', '.ts', '.json'],
 		},
+		assetsInclude: ['**/*.mp3'],
 		build: {
 			rollupOptions,
 		},
