@@ -1,4 +1,4 @@
-import { InputPayload, Server as GameInstance, StatesPayload, TRACKS } from "@vroom/shared";
+import { InputPayload, ChangeLanePayload, Server as GameInstance, StatesPayload, TRACKS } from "@vroom/shared";
 import http from "http";
 import * as IO from "socket.io";
 import { RoomConfig, Rooms } from "../types/index.js";
@@ -90,15 +90,9 @@ class Sockets {
 
   private handleGameStart(socket: IO.Socket): void {
     socket.on("ready", (id: string, trackName: string) => {
-      console.log(`Room ${id} is ready, starting game in 3 seconds`);
+      console.log(`Room ${id} just started a game on track ${trackName}`);
 
-      setTimeout(
-        () => {
-          this.startGameInstance(id, trackName);
-        },
-        3000,
-        id
-      );
+      this.startGameInstance(id, trackName);
     });
   }
 
@@ -109,7 +103,7 @@ class Sockets {
   }
 
   private handleLaneChange(socket: IO.Socket): void {
-    socket.on("inputLane", (id: string, payload: { direction: number, playerId: string }) => {
+    socket.on("inputLane", (id: string, payload: ChangeLanePayload) => {
       this.rooms[id].game?.changeLane(payload);
       this.emit(id, "playerLaneChange", payload);
     });
