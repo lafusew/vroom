@@ -107,7 +107,7 @@ class Rocket {
     }
 
     public tick(speedInput: number, dt: number) {
-        this.speed = speedInput * dt;
+        this.speed = speedInput * dt * 10;
         this.progress += 0.01 * this.speed;
 
         this.updatePosition(this.progress);
