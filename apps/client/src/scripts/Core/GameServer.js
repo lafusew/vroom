@@ -1,4 +1,4 @@
-import { Client } from '@vroom/shared';
+import { Client, CLIENT_EVENTS, SERVER_EVENTS } from '@vroom/shared';
 import { nanoid } from 'nanoid';
 import state from 'scripts/State.js';
 import { io } from 'socket.io-client';
@@ -22,10 +22,10 @@ export default class GameServer {
 		this.instance = io(import.meta.env.VITE_SERVER_URL);
 		this.instance.emit('join', { roomId, playerId: this._playerId, playerName });
 
-		this.instance.on('start', this._gameStart);
-		this.instance.on('tick', this._serverTick);
-		this.instance.on('playerLaneChange', this._playerLineChange);
-		this.instance.on('updatedPlayerList', this._updatePlayerList);
+		this.instance.on(SERVER_EVENTS.GAME_START, this._gameStart);
+		this.instance.on(SERVER_EVENTS.TICK, this._serverTick);
+		this.instance.on(SERVER_EVENTS.PLAYER_LANE_CHANGE, this._playerLineChange);
+		this.instance.on(SERVER_EVENTS.UPDATE_PLAYER_LIST, this._updatePlayerList);
 
 		// TODO: Remove
 		// window.addEventListener('click', this._emitReady);
@@ -52,7 +52,7 @@ export default class GameServer {
 	};
 
 	onGameReady() {
-		this.instance.emit('ready', this._roomId, this._trackName);
+		this.instance.emit(CLIENT_EVENTS.READY, this._roomId, this._trackName);
 	}
 
 	onInputSpeed(speedInput) {
@@ -60,7 +60,7 @@ export default class GameServer {
 	}
 
 	onInputLane(direction) {
-		this.instance.emit('inputLane', this.client.getRoomId(), { direction, playerId: this._playerId });
+		this.instance.emit(CLIENT_EVENTS.INPUT_LANE_CHANGE, this.client.getRoomId(), { direction, playerId: this._playerId });
 	}
 
 	_gameStart = () => {
@@ -74,7 +74,7 @@ export default class GameServer {
 
 	_send = (input) => {
 		// console.log('OUTCOMING INPUT: ', input);
-		this.instance.emit('tick', this.client.getRoomId(), input);
+		this.instance.emit(CLIENT_EVENTS.PLAYER_TICK, this.client.getRoomId(), input);
 	};
 
 	_updatePlayerList = (playersMap) => {
