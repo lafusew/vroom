@@ -1,7 +1,7 @@
+import { trackConfig } from '@vroom/shared';
 import Component from 'Dom/Abstract/Component.js';
 import store from 'scripts/Store.js';
 import { STORE_KEYS } from 'utils/constants.js';
-import trackConfig from 'utils/trackConfig.js';
 
 export default class TrackButton extends Component {
 	static activeTrackName = null;

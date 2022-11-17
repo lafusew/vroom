@@ -11,6 +11,8 @@ export default class RocketMesh extends stateMixin(Group) {
 		const geometry = new BoxGeometry(0.03, 0.03, 0.03);
 		const material = new MeshBasicMaterial({ color });
 		this.add(new Mesh(geometry, material));
+
+		this.centrifugalHelper = null;
 	}
 
 	_dispose() {

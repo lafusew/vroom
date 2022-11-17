@@ -73,7 +73,7 @@ export default class Landing extends Component {
 		if (this.pseudo) {
 			store.set(STORE_KEYS.PSEUDO, this.pseudo.toUpperCase());
 			app.dom.pageComponentsManager.get('index').showPage('Home');
-			if (DEBUG) this._openFullScreen();
+			if (!DEBUG) this._openFullScreen();
 		}
 	};
 
