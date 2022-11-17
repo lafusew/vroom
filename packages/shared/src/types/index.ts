@@ -27,7 +27,8 @@ interface State {
 
 type Player = string;
 type PlayerId = string;
-type RoomId = string;
+
+type LeaderboardPayload = Array<string>;
 
 interface Players {
     [id: PlayerId]: Player;
@@ -51,4 +52,4 @@ interface Spline {
 }
 
 export { SERVER_EVENTS, CLIENT_EVENTS };
-export type { Players, InputPayload, State, StatesPayload, ChangeLanePayload, Event, Game, Spline };
+export type { Players, InputPayload, State, StatesPayload, ChangeLanePayload, Event, Game, Spline, LeaderboardPayload };
