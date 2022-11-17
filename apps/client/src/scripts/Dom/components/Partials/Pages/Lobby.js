@@ -1,4 +1,5 @@
 import Component from 'Dom/Abstract/Component.js';
+import app from 'scripts/App.js';
 import store from 'scripts/Store.js';
 import { STORE_KEYS } from 'utils/constants.js';
 
@@ -24,5 +25,6 @@ export default class Lobby extends Component {
 
 	_startGame() {
 		console.log('Game started 🕹');
+		app.dom.pageComponentsManager.get('index').close();
 	}
 }
