@@ -29,6 +29,6 @@ export default class Inputs {
 	};
 
 	_clickButton = (e) => {
-		state.emit(e.target === this._leftLaneSwitchBtn ? EVENTS.SWITCH_LEFT : EVENTS.SWITCH_RIGHT);
+		state.emit(EVENTS.SWITCH_LANE, e.target === this._leftLaneSwitchBtn ? -1 : 1);
 	};
 }

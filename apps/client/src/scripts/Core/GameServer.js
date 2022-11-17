@@ -2,13 +2,14 @@ import { Client } from '@vroom/shared';
 import { nanoid } from 'nanoid';
 import state from 'scripts/State.js';
 import { io } from 'socket.io-client';
+import { MathUtils } from 'three';
 import { EVENTS } from 'utils/constants.js';
 
 const url = new URLSearchParams(window.location.search);
 
 const roomId = url.has('roomId') ? url.get('roomId') : 'test';
 const playerId = nanoid(10);
-const playerName = 'JUL';
+const playerName = 'Player ' + MathUtils.randInt(1, 10);
 
 export default class GameServer {
 	constructor() {
@@ -26,11 +27,11 @@ export default class GameServer {
 
 		this.instance.on('start', this._gameStart);
 		this.instance.on('tick', this._serverTick);
+		this.instance.on('playerLaneChange', this._playerLineChange);
 		this.instance.on('updatedPlayerList', this._updatePlayerList);
 
 		// TODO: Remove
 		window.addEventListener('click', this._emitReady);
-
 		const handleInputs = (e) => {
 			if (e.code === 'ArrowDown') {
 				this._speedInput -= 0.1;
@@ -38,14 +39,12 @@ export default class GameServer {
 				this._speedInput += 0.1;
 			} else if (e.code === 'Space') {
 				this._speedInput = 0;
+			} else if (e.code === 'ArrowLeft') {
+				this.onInputLane(-1);
+			} else if (e.code === 'ArrowRight') {
+				this.onInputLane(1);
 			}
-			//  else if (e.code === 'ArrowLeft') {
-			// 	this._changeLane(-1);
-			// } else if (e.code === 'ArrowRight') {
-			// 	this._changeLane(1);
-			// }
 		};
-
 		window.addEventListener('keydown', handleInputs);
 	}
 
@@ -59,8 +58,12 @@ export default class GameServer {
 		this.instance.emit('ready', roomId);
 	}
 
-	onFingerSpeed(speedInput) {
+	onInputSpeed(speedInput) {
 		this._speedInput = speedInput;
+	}
+
+	onInputLane(direction) {
+		this.instance.emit('inputLane', this.client.getRoomId(), direction);
 	}
 
 	_gameStart = () => {
@@ -85,6 +88,10 @@ export default class GameServer {
 	_serverTick = (state) => {
 		// console.log('INCOMING STATE: ', state);
 		this.client?.onServerState(state);
+	};
+
+	_playerLineChange = (playerId, direction) => {
+		console.log(playerId + ' changed line', direction);
 	};
 
 	onTick() {
