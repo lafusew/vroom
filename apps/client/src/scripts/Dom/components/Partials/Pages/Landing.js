@@ -1,6 +1,7 @@
 import Component from 'Dom/Abstract/Component.js';
 import app from 'scripts/App.js';
 import store from 'scripts/Store.js';
+import { DEBUG } from 'utils/config.js';
 import { STORE_KEYS } from 'utils/constants.js';
 
 const doc = window.document;
@@ -72,7 +73,7 @@ export default class Landing extends Component {
 		if (this.pseudo) {
 			store.set(STORE_KEYS.PSEUDO, this.pseudo.toUpperCase());
 			app.dom.pageComponentsManager.get('index').showPage('Home');
-			this._openFullScreen();
+			if (DEBUG) this._openFullScreen();
 		}
 	};
 
