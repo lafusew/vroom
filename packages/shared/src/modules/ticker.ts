@@ -101,7 +101,7 @@ class Ticker {
     }
 
     protected processState(input: InputPayload, dt: number): StatesPayload {
-        this.rockets[input.playerId].tick(input.inputSpeed, dt);
+        this.rockets[input.playerId].tick(input.inputSpeed, this.rockets, dt);
 
         // const [x, y] = this.states[input.playerId].position;
 

@@ -133,7 +133,7 @@ class Client extends Ticker implements Game {
 
     public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (eventName: CLIENT_EVENTS, input: InputPayload) => void): Client {
         if (!Client._) {
-            Client._ = new Client(roomId, playerId, allPlayers, send, TRACKS["triangle 3D"]);
+            Client._ = new Client(roomId, playerId, allPlayers, send, TRACKS["triangle"]);
         }
 
         return Client._;
