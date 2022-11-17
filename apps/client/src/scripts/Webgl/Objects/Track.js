@@ -1,10 +1,10 @@
+import { trackConfig } from '@vroom/shared';
 import store from 'scripts/Store.js';
 import { Group, Vector3 } from 'three';
 import { STORE_KEYS } from 'utils/constants.js';
 import gameConfig from 'utils/gameConfig.js';
 import { disposeMesh, mod } from 'utils/misc.js';
 import stateMixin from 'utils/stateMixin.js';
-import trackConfig from 'utils/trackConfig.js';
 import Path from './Path.js';
 
 /** @extends Group */
