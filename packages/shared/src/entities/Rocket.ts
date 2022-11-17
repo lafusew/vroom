@@ -81,7 +81,7 @@ class Rocket {
             }
         });
 
-        this.relativeProgress = nearestIndex / this.paths[0].spacedPoints.length;
+        this.relativeProgress = nearestIndex / this.paths[0].spacedPoints.length + Math.floor(this.progress);
     }
 
     public computeCentrifugal(progress: number) {

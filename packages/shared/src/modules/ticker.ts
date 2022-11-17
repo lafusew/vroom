@@ -59,7 +59,6 @@ class Ticker {
             
             this.currentTick++;
 
-            console.log(this.getRanking());
             
             return;
         }
@@ -70,8 +69,7 @@ class Ticker {
     }
 
     protected getRanking() {
-        this.rockets
-        return Object.values(this.rockets).sort((a, b) => b.relativeProgress - a.relativeProgress);
+        return Object.entries(this.rockets).sort((a, b) => b[1].relativeProgress - a[1].relativeProgress).map(([id]) => id);
     }
 
     public getIsGameRunning() {
