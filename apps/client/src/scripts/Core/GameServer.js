@@ -60,7 +60,7 @@ export default class GameServer {
 	}
 
 	onInputLane(direction) {
-		this.instance.emit('inputLane', this.client.getRoomId(), direction);
+		this.instance.emit('inputLane', this.client.getRoomId(), { direction, playerId: this._playerId });
 	}
 
 	_gameStart = () => {
@@ -87,8 +87,8 @@ export default class GameServer {
 		this.client?.onServerState(state);
 	};
 
-	_playerLineChange = (playerId, direction) => {
-		console.log(playerId + ' changed line', direction);
+	_playerLineChange = (payload) => {
+		console.log(payload.playerId + ' changed line', payload.direction);
 	};
 
 	onTick() {
