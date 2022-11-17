@@ -97,7 +97,7 @@ class Sockets {
     }
 
     socket.join(config.roomId);
-    this.emit(config.roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, { players: room.players, track: this.rooms.game });
+    this.emit(config.roomId, SERVER_EVENTS.UPDATE_ROOM_CONFIG, { players: room.players, track: room.trackName });
   }
 
   private handleGameStart(socket: IO.Socket): void {
