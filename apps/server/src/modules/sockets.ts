@@ -30,7 +30,7 @@ class Sockets {
         });
     }
 
-    private startGameInstance(roomId: string): void {
+    private startGameInstance(roomId: string, trackName: string): void {
         console.log(this.rooms[roomId]);
 
         this.emit(roomId, "start");
@@ -39,7 +39,7 @@ class Sockets {
             roomId,
             this.rooms[roomId].players,
             (id: string, payload: StatesPayload) => this.emit(id, "tick", payload),
-            TRACKS["triangle 3D"]
+            TRACKS[trackName]
         ));
 
         instance.setIsGameRunning(true);
@@ -88,12 +88,12 @@ class Sockets {
     }
 
     private handleGameStart(socket: IO.Socket): void {
-        socket.on("ready", (id: string) => {
+        socket.on("ready", (id: string, trackName: string) => {
             console.log(`Room ${id} is ready, starting game in 3 seconds`);
 
             setTimeout(
                 () => {
-                    this.startGameInstance(id);
+                    this.startGameInstance(id, trackName);
                 },
                 3000,
                 id
