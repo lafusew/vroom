@@ -7,7 +7,6 @@ const BASE_FOV = 45;
 export default class RocketCamera extends PerspectiveCamera {
 	/**
 	 *
-	 * @param {import("./Rocket.js").default} rocket
 	 */
 	constructor(rocket) {
 		super(BASE_FOV, app.tools.viewport.ratio, 1, 20);
@@ -18,10 +17,12 @@ export default class RocketCamera extends PerspectiveCamera {
 		this._rocket = rocket;
 		this.attached = false;
 		this.directionHelper = null;
+
+		app.debug?.pane.add(this, 'RocketCamera', 0);
 	}
 
 	_updatePosition() {
-		this.newPos = this._rocket.directionV3.clone().negate().normalize().multiplyScalar(0.5).add(this._rocket.mesh.position);
+		this.newPos = this._rocket.directionV3.clone().negate().normalize().multiplyScalar(0.5).add(this._rocket.position);
 		this.newPos.y += 0.3;
 
 		this.position.copy(this.newPos);
@@ -30,16 +31,8 @@ export default class RocketCamera extends PerspectiveCamera {
 		// app.webgl.scene.add(this.directionHelper);
 	}
 
-	onAttach() {
-		app.webgl.camera.targetCamera = this;
-		app.debug?.pane.add(this, 'RocketCamera', 0);
-		this.attached = true;
-	}
-
 	onTick() {
-		if (this.attached) {
-			this._updatePosition();
-			this.lookAt(this._rocket.position);
-		}
+		this._updatePosition();
+		this.lookAt(this._rocket.position);
 	}
 }

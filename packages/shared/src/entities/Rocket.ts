@@ -4,7 +4,7 @@ import trackConfig from "../utils/trackConfig.js";
 import { Path } from "./Path.js";
 
 class Rocket {
-    public progress: number = 0;
+    public progress = 0;
     public speed = 0;
     private paths: Path[];
     private laneNumber: number;
@@ -58,15 +58,9 @@ class Rocket {
         this.progress = nearestIndex / this.paths[this.laneNumber].spacedPoints.length;
     }
 
-    private updatePosition(speed: number) {
-        this.progress += 0.01 * speed;
-        this.position.copy(this.paths[this.laneNumber].curve.getPointAt(this.progress % 1));
-        this.target = this.paths[this.laneNumber].curve.getPointAt((this.progress + 0.001) % 1);
-    }
-
-    private computeCentrifugal() {
+    public computeCentrifugal(progress: number) {
         this.directionV3 = this.target.clone().sub(this.position);
-        const angleV3 = this.paths[this.laneNumber].curve.getPointAt((this.progress + 0.01) % 1).sub(this.position);
+        const angleV3 = this.paths[this.laneNumber].curve.getPointAt((progress + 0.01) % 1).sub(this.position);
         this.dot = this.directionV3.x * -angleV3.z + this.directionV3.z * angleV3.x;
 
         // const centrifugalV3 = this.target.clone().sub(this.position).cross(new Vector3(0, 1, 0).sub(this.position)).multiplyScalar(this.dot);
@@ -76,15 +70,22 @@ class Rocket {
         // this.add(this.centrifugalHelper);
     }
 
-    private checkEjection(speed: number) {
+    public checkEjection(speed: number) {
         const ejected = Math.abs(this.dot) * speed * 1000 > gameConfig.ejectionThreshold;
         if (ejected) console.log("Ejected");
     }
 
+    public updatePosition(progress: number) {
+        this.position.copy(this.paths[this.laneNumber].curve.getPointAt(progress % 1));
+        this.target = this.paths[this.laneNumber].curve.getPointAt((progress + 0.001) % 1);
+    }
+
     public tick(speedInput: number, dt: number) {
         this.speed = speedInput * dt;
-        this.updatePosition(this.speed);
-        this.computeCentrifugal();
+        this.progress += 0.01 * this.speed;
+
+        this.updatePosition(this.progress);
+        this.computeCentrifugal(this.speed);
         this.checkEjection(this.speed);
     }
 }

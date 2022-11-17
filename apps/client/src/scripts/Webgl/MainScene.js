@@ -1,6 +1,7 @@
 import app from 'scripts/App.js';
-import { Scene } from 'three';
+import { MathUtils, Scene } from 'three';
 import stateMixin from 'utils/stateMixin.js';
+import RocketCamera from './Objects/RocketCamera.js';
 import RocketMesh from './Objects/RocketMesh.js';
 import Stars from './Objects/Stars.js';
 import TrackGroup from './Objects/TrackGroup.js';
@@ -11,8 +12,10 @@ export default class extends stateMixin(Scene) {
 		super();
 
 		/** @type Map<string, RocketMesh> */
-		this._rockets = new Map();
+		this._rocketsMeshes = new Map();
 		this._currentRocketMesh = null;
+
+		this._currentRocket = null;
 
 		// this.add(new Game());
 		this.add(new Stars());
@@ -25,20 +28,31 @@ export default class extends stateMixin(Scene) {
 			const rocketMesh = new RocketMesh(playerId, isCurrentPlayer ? 0x00ff00 : 0xff0000);
 			// rocketMesh.position.copy(rocket.position);
 
-			if (isCurrentPlayer) this._currentRocketMesh = rocketMesh;
-			else this._rockets.set(playerId, rocketMesh);
+			if (isCurrentPlayer) {
+				this._currentRocketMesh = rocketMesh;
+				this._currentRocket = rocket;
+			} else {
+				this._rocketsMeshes.set(playerId, rocketMesh);
+				rocketMesh.targetPosition = rocketMesh.position.clone();
+			}
 		});
 
-		// const rocketCamera = new RocketCamera(rockets[0]);
-		// this.rocketCamera = new RocketCamera();
+		this.rocketCamera = new RocketCamera(this._currentRocket);
+		app.webgl.camera.targetCamera = this.rocketCamera;
 
-		this.add(trackMesh, ...this._rockets.values(), this._currentRocketMesh);
+		this.add(trackMesh, ...this._rocketsMeshes.values(), this._currentRocketMesh);
 	}
 
-	onTick() {
-		this._rockets?.forEach((rocket) => {
-			rocket.position.fromArray(app.core.gameManager.gameServer.client.getLatestServerStates().states[rocket.playerId].position);
+	onTick({ dt }) {
+		this._rocketsMeshes?.forEach((rocket) => {
+			const rocketToUpdate = app.core.gameManager.gameServer.client.getRockets()[rocket.playerId];
+			rocketToUpdate.progress = MathUtils.damp(rocketToUpdate.progress, app.core.gameManager.gameServer.client.getLatestServerStates().states[rocket.playerId].progress, 10, dt);
+			rocketToUpdate.speed = app.core.gameManager.gameServer.client.getLatestServerStates().states[rocket.playerId].speed;
+			rocketToUpdate.updatePosition(rocketToUpdate.progress);
+			rocketToUpdate.computeCentrifugal(rocketToUpdate.speed);
+			rocketToUpdate.checkEjection(rocketToUpdate.speed);
+			rocket.position.copy(rocketToUpdate.position);
 		});
-		this._currentRocketMesh?.position.fromArray(app.core.gameManager.gameServer.client.getStates()[this._currentRocketMesh.playerId].position);
+		this._currentRocketMesh?.position.copy(app.core.gameManager.gameServer.client.getRockets()[this._currentRocketMesh.playerId].position);
 	}
 }

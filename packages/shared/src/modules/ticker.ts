@@ -14,7 +14,7 @@ class Ticker {
 
     protected lastUpdate = 0;
 
-    protected readonly SERVER_TICK_RATE = 60;
+    protected readonly SERVER_TICK_RATE = 120;
     protected readonly BUFFER_SIZE = 1024;
 
     protected stateBuffer: StatesPayload[] = [];
@@ -42,7 +42,8 @@ class Ticker {
             this.rockets[id] = new Rocket(i, track.paths);
 
             this.states[id] = {
-                position: this.rockets[id].position.toArray(),
+                // position: this.rockets[id].position.toArray(),
+                progress: this.rockets[id].progress,
                 speed: this.rockets[id].speed,
             };
         });
@@ -106,15 +107,16 @@ class Ticker {
         //     x + horizontalInput * 30 * dt, // * this.minTimeBetweenTicks,
         //     y + verticalInput * 30 * dt, // * this.minTimeBetweenTicks
         // ];
-        const newPosition = this.rockets[input.playerId].position.toArray();
+        // const newPosition = this.rockets[input.playerId].position.toArray();
+        const newProgress = this.rockets[input.playerId].progress;
 
-        this.states[input.playerId].position = newPosition;
+        this.states[input.playerId].progress = newProgress;
 
         return {
             tick: input.tick,
             states: {
                 ...this.states,
-                [input.playerId]: { position: newPosition, speed: this.rockets[input.playerId].speed },
+                [input.playerId]: { progress: newProgress, speed: this.rockets[input.playerId].speed },
             },
         };
     }
