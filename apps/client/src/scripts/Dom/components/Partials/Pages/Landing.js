@@ -33,7 +33,7 @@ export default class Landing extends Component {
 	}
 
 	_handleInputChange = (e) => {
-		if (e.target.value.length > 0) {
+		if (e.target.value.length === 1) {
 			this.pseudo += e.target.value;
 			let nextInput = e.target.nextElementSibling;
 			if (nextInput) {
@@ -43,6 +43,8 @@ export default class Landing extends Component {
 				nextInput.focus();
 				this.activeInput = nextInput;
 			}
+		} else if (e.target.value.length === 2) {
+			e.target.value = e.target.value.slice(0, 1);
 		} else {
 			this.pseudo = this.pseudo.slice(0, -1);
 		}

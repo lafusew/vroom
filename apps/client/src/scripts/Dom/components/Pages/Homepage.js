@@ -53,9 +53,13 @@ export default class Homepage extends PageComponent {
 		super.detach();
 	}
 
-	open() {}
+	open() {
+		this.el.classList.remove('hidden');
+	}
 
-	close() {}
+	close() {
+		this.el.classList.add('hidden');
+	}
 
 	showPage(pageName, addToHistory = true) {
 		let nextPage = this.pages.get(pageName);

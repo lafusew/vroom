@@ -1,5 +1,21 @@
 <div class="track page hidden" data-component="Track">
     {{> back}}
-    <h1>Track</h1>
-    {{> button type="secondary" text="Select this track" id="select-track-button" }}
+    <div class="track-selector">
+        <div class="track-list">
+            {{#each splines}}
+                {{> track-button text=this.name}}
+            {{/each}}
+        </div>
+        <button id="create-room-button">Create room</button>
+        <div class="track-infos">
+            <div class="track-cover">
+                <img id="track-cover-img" src="/assets/images/tracks/cover-example.png" alt="">
+                <div class="layout"></div>
+            </div>
+            <div class="track-path">
+                <img id="track-path-img" src="/assets/images/tracks/path-example.png" alt="">
+                <div class="layout"></div>
+            </div>
+        </div>
+    </div>
 </div>

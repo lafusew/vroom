@@ -17,6 +17,7 @@ export default class Home extends Component {
 		this.toggleSoundButton.addEventListener('click', this._toggleSound);
 		this.creditsButton.addEventListener('click', this._goCredits);
 		this.homeNameH1.innerHTML = store.get(STORE_KEYS.PSEUDO);
+		this.toggleSoundButton.innerHTML = app.tools.sound.active ? 'Sound: ON' : 'Sound: OFF';
 
 		/// #if DEBUG
 		const url = new URLSearchParams(location.search);
@@ -40,9 +41,10 @@ export default class Home extends Component {
 		app.dom.pageComponentsManager.get('index').showPage('Skin');
 	}
 
-	_toggleSound() {
-		// app.dom.pageComponentsManager.get('index').showPage('Join');
-	}
+	_toggleSound = () => {
+		app.tools.sound.toggleSound();
+		this.toggleSoundButton.innerHTML = app.tools.sound.active ? 'Sound: ON' : 'Sound: OFF';
+	};
 
 	_goCredits() {
 		app.dom.pageComponentsManager.get('index').showPage('Credits');
