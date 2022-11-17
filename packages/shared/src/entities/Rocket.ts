@@ -11,8 +11,10 @@ class Rocket {
     private laneNumber: number;
     public position = new Vector3();
     public directionV3 = new Vector3();
-    private target = new Vector3();
-    private dot = 0;
+    public target = new Vector3();
+    public dot = 0;
+    public angleV3 = new Vector3();
+    public isEjecting = false;
 
     constructor(laneNumber: number, paths: Path[]) {
         this.laneNumber = laneNumber;
@@ -86,8 +88,11 @@ class Rocket {
 
     public computeCentrifugal(progress: number) {
         this.directionV3 = this.target.clone().sub(this.position);
-        const angleV3 = this.paths[this.laneNumber].curve.getPointAt((progress + 0.01) % 1).sub(this.position);
-        this.dot = this.directionV3.x * -angleV3.z + this.directionV3.z * angleV3.x;
+        this.angleV3 = this.paths[this.laneNumber].curve.getPointAt((progress + 0.01) % 1).sub(this.position);
+
+        // this.angleV3 = this.curve.getPointAt((this.progress + 0.01) % 1).sub(this.mesh.position);
+
+        this.dot = this.directionV3.x * -this.angleV3.z + this.directionV3.z * this.angleV3.x;
 
         // const centrifugalV3 = this.target.clone().sub(this.position).cross(new Vector3(0, 1, 0).sub(this.position)).multiplyScalar(this.dot);
 
@@ -96,9 +101,18 @@ class Rocket {
         // this.add(this.centrifugalHelper);
     }
 
-    public checkEjection(speed: number) {
-        const ejected = Math.abs(this.dot) * speed * 1000 > gameConfig.ejectionThreshold;
-        if (ejected) console.log("Ejected");
+    public checkEjection(speed: number, callback?: (direction: number) => void) {
+        if (this.isEjecting) return;
+
+        const ejected = Math.abs(this.dot) * speed * 100000 > gameConfig.ejectionThreshold;
+
+        if (ejected) {
+            console.log("Ejection");
+            this.isEjecting = true;
+            this.progress -= 0.025;
+            setTimeout(() => (this.isEjecting = false), 2000);
+            callback?.(Math.sign(this.dot));
+        }
     }
 
     public updatePosition(progress: number) {
@@ -106,13 +120,14 @@ class Rocket {
         this.target = this.paths[this.laneNumber].curve.getPointAt((progress + 0.001) % 1);
     }
 
-    public tick(speedInput: number, dt: number) {
-        this.speed = speedInput * dt * 10;
+    public tick(speedInput: number, dt: number, ejectionCallback?: (direction: number) => void) {
+        this.speed = speedInput * dt * 20;
         this.progress += 0.01 * this.speed;
 
         this.updatePosition(this.progress);
-        this.computeCentrifugal(this.speed);
-        this.checkEjection(this.speed);
+        this.computeCentrifugal(this.progress);
+
+        this.checkEjection(this.speed, ejectionCallback);
         this.getRelativeProgress();
     }
 }

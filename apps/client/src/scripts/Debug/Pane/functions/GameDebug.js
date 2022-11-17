@@ -4,8 +4,8 @@
  * @param {import('Webgl/Objects/Game.js').default} instance
  */
 
+import { trackConfig } from '@vroom/shared';
 import gameConfig from 'utils/gameConfig.js';
-import trackConfig from 'utils/trackConfig.js';
 
 export default function (pane, instance, name) {
 	const folder = pane.addFolder({ title: name, expanded: true });

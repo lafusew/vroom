@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { SERVER_EVENTS, CLIENT_EVENTS } from "./events.js";
+import { CLIENT_EVENTS, SERVER_EVENTS } from "./events.js";
 
 interface InputPayload {
     tick: number;
@@ -11,6 +11,8 @@ interface ChangeLanePayload {
     playerId: string;
     direction: number;
 }
+
+interface EjectionPayload extends ChangeLanePayload {}
 
 interface StatesPayload {
     tick: number;
@@ -52,4 +54,4 @@ interface Spline {
 }
 
 export { SERVER_EVENTS, CLIENT_EVENTS };
-export type { Players, InputPayload, State, StatesPayload, ChangeLanePayload, Event, Game, Spline, LeaderboardPayload };
+export type { Players, InputPayload, State, StatesPayload, ChangeLanePayload, EjectionPayload, Event, Game, Spline, LeaderboardPayload };
