@@ -90,15 +90,9 @@ class Sockets {
 
   private handleGameStart(socket: IO.Socket): void {
     socket.on("ready", (id: string, trackName: string) => {
-      console.log(`Room ${id} is ready, starting game in 3 seconds`);
+      console.log(`Room ${id} just started a game on track ${trackName}`);
 
-      setTimeout(
-        () => {
-          this.startGameInstance(id, trackName);
-        },
-        3000,
-        id
-      );
+      this.startGameInstance(id, trackName);
     });
   }
 
