@@ -1,4 +1,7 @@
 import PageComponent from 'Dom/Abstract/PageComponent.js';
+import state from 'scripts/State.js';
+import store from 'scripts/Store.js';
+import { EVENTS, STORE_KEYS } from 'utils/constants.js';
 
 export default class Homepage extends PageComponent {
 	/** @param {HTMLElement} el */
@@ -15,6 +18,9 @@ export default class Homepage extends PageComponent {
 		this.url = new URLSearchParams(location.search);
 		if (this.url.has('skipUI')) {
 			this.el.classList.add('hidden');
+			store.set(STORE_KEYS.PSEUDO, 'Pseudo');
+			store.set(STORE_KEYS.TRACK_NAME, 'triangle 3D');
+			state.emit(EVENTS.JOIN_ROOM, this.url.get('roomId'));
 		}
 		/// #endif
 	}

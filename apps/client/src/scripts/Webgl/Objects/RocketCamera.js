@@ -1,6 +1,6 @@
 import app from 'scripts/App.js';
 import state from 'scripts/State.js';
-import { ArrowHelper, MathUtils, PerspectiveCamera } from 'three';
+import { PerspectiveCamera } from 'three';
 
 const BASE_FOV = 45;
 
@@ -39,7 +39,7 @@ export default class RocketCamera extends PerspectiveCamera {
 	onTick() {
 		if (this.attached) {
 			this._updatePosition();
-			this.lookAt(this._rocket.mesh.position);
+			this.lookAt(this._rocket.position);
 		}
 	}
 }

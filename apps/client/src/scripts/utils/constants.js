@@ -10,9 +10,12 @@ const EVENTS = {
 	ROUTE_CHANGE: i++,
 	SCROLL_TOP: i++,
 
-	FINGER_SPEED: i++,
-	SWITCH_LEFT: i++,
-	SWITCH_RIGHT: i++,
+	INPUT_SPEED: i++,
+	INPUT_LANE: i++,
+
+	JOIN_ROOM: i++,
+	GAME_READY: i++,
+	GAME_START: i++,
 
 	TICK: i++,
 	RENDER: i++,

@@ -1,4 +1,4 @@
-import app from "scripts/App.js";
+import app from 'scripts/App.js';
 
 export default class Component {
 	/** @param {HTMLElement} el */

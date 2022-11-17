@@ -1,121 +1,137 @@
-import { BaseTicker } from "./ticker.js";
-import { StatePayload, InputPayload, Ticker } from "../types/index.js";
+import { Game, InputPayload, Players, StatesPayload } from "../types/index.js";
+import { Ticker } from "./ticker.js";
 
-import { DEFAULT_STATE_PAYLOAD } from "../types/index.js";
+import { Track, TRACKS } from "../main.js";
 import { deepEqual, isDistanceDifferenceAcceptable } from "../utils/index.js";
 
-class Client extends BaseTicker implements Ticker {
-  private static _: Client;
+class Client extends Ticker implements Game {
+    private static _: Client;
 
-  private inputBuffer: InputPayload[] = [];
+    private playerId: string;
 
-  private latestServerState: StatePayload = DEFAULT_STATE_PAYLOAD;
-  private lastProcessedState: StatePayload = DEFAULT_STATE_PAYLOAD;
+    private inputBuffer: InputPayload[] = [];
 
-  private horizontalInput: number = 0
-  private verticalInput: number = 0;
+    private latestServerState: StatesPayload;
+    private lastProcessedState: StatesPayload;
 
-  private send: (payload: InputPayload) => void;
+    private readonly DEFAULT_STATE_PAYLOAD: StatesPayload;
 
-  private constructor(id: string, send: (payload: InputPayload) => void) {
-    super(id);
-    this.send = send
-    this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
-  }
+    private send: (payload: InputPayload) => void;
 
-  update() {
-    this.horizontalInput = Math.random() > 0.5 ? 1 : -1;
-    this.verticalInput = Math.random() > 0.5 ? 1 : -1;
+    private constructor(roomId: string, currentPlayerId: string, allPlayers: { [playerId: string]: string }, send: (payload: InputPayload) => void, track: Track) {
+        super(roomId, allPlayers, track);
 
-    this.tickUpdate();
-  }
+        this.inputBuffer = new Array<InputPayload>(this.BUFFER_SIZE);
 
-  protected processTick() {
-    if (this.shouldReconcile()) {
-      this.reconcile();
+        this.playerId = currentPlayerId;
+
+        this.latestServerState = { tick: 0, states: this.states };
+        this.lastProcessedState = { tick: 0, states: this.states };
+        this.DEFAULT_STATE_PAYLOAD = { tick: 0, states: this.states };
+
+        console.log("CLIENT INITIALIZED", this.states, this.latestServerState, this.lastProcessedState, this.DEFAULT_STATE_PAYLOAD);
+
+        this.send = send;
     }
 
-    const bufferIndex = this.currentTick % this.BUFFER_SIZE;
+    update(inputSpeed: number) {
+        this.onTick((dt: number, serverTick: boolean) => {
+            if (this.shouldReconcile()) {
+                this.reconcile(dt);
+            }
 
-    const inputPaylaod: InputPayload = {
-      tick: this.currentTick,
-      inputVector: [this.horizontalInput, this.verticalInput]
+            const bufferIndex = this.currentTick % this.BUFFER_SIZE;
+
+            const inputPayload: InputPayload = {
+                tick: this.currentTick,
+                playerId: this.playerId,
+                inputSpeed,
+            };
+
+            this.inputBuffer[bufferIndex] = inputPayload;
+
+            this.stateBuffer[bufferIndex] = this.processState(inputPayload, dt);
+
+            if (serverTick) this.send(inputPayload);
+        });
     }
 
-    this.inputBuffer[bufferIndex] = inputPaylaod;
+    private shouldReconcile(): boolean {
+        // if (
+        //   !deepEqual(this.latestServerState, this.DEFAULT_STATE_PAYLOAD) &&
+        //   deepEqual(this.lastProcessedState, this.DEFAULT_STATE_PAYLOAD)
+        // ) {
+        //   return true;
+        // }
 
-    this.stateBuffer[bufferIndex] = this.processState(inputPaylaod);
+        if (!deepEqual(this.latestServerState.states[this.playerId], this.lastProcessedState.states[this.playerId])) {
+            return true;
+        }
 
-    this.dispatch(inputPaylaod);
-  }
-
-  private shouldReconcile(): boolean {
-    if (
-      !deepEqual(this.latestServerState, DEFAULT_STATE_PAYLOAD) &&
-      deepEqual(this.lastProcessedState, DEFAULT_STATE_PAYLOAD)
-    ) {
-      return true;
+        return false;
     }
 
-    if (!deepEqual(this.latestServerState, this.lastProcessedState)) {
-      return true;
+    private reconcile(dt: number) {
+        this.lastProcessedState = this.latestServerState;
+
+        const serverStateBufferIndex = this.latestServerState.tick % this.BUFFER_SIZE;
+
+        if (!this.stateBuffer[serverStateBufferIndex]) {
+            return;
+        }
+
+        // console.log("latestServerState", this.latestServerState);
+        // console.log("stateBuffer", this.stateBuffer);
+
+        const isPositionCorrect = isDistanceDifferenceAcceptable(
+            // TODO: Define a coef
+            1 * Math.max(this.stateBuffer[serverStateBufferIndex].states[this.playerId].speed, 1),
+            this.latestServerState.states[this.playerId].position,
+            this.stateBuffer[serverStateBufferIndex].states[this.playerId].position
+        );
+
+        if (!isPositionCorrect) {
+            console.log("Time to reconcile");
+
+            this.states[this.playerId].position = this.latestServerState.states[this.playerId].position;
+            this.states[this.playerId].speed = this.latestServerState.states[this.playerId].speed;
+
+            this.stateBuffer[serverStateBufferIndex] = this.latestServerState;
+
+            let tickToProcess = this.latestServerState.tick + 1;
+            console.log("latestServerState.tick", this.latestServerState.tick);
+
+            while (tickToProcess < this.currentTick) {
+                // Process new state with reconciled state
+                console.log("WHILE LOOOOOOP");
+
+                const bufferIndex = tickToProcess % this.BUFFER_SIZE;
+                const state = this.processState(this.inputBuffer[bufferIndex], dt);
+
+                // udate buffer with reprocessed state
+                this.stateBuffer[bufferIndex] = state;
+
+                tickToProcess++;
+            }
+        }
     }
 
-    return false;
-  }
-
-  private reconcile() {
-    this.lastProcessedState = this.latestServerState;
-
-    const serverStateBufferIndex = this.latestServerState.tick % this.BUFFER_SIZE;
-
-    const isPositionCorrect = isDistanceDifferenceAcceptable(
-      0.001,
-      this.latestServerState.position,
-      this.stateBuffer[serverStateBufferIndex].position
-    );
-
-    if (!isPositionCorrect) {
-      console.log('time to reconcile');
-
-      this.position = this.latestServerState.position;
-
-      this.stateBuffer[serverStateBufferIndex] = this.latestServerState;
-
-      let tickToProcess = this.latestServerState.tick + 1;
-
-      while (tickToProcess < this.currentTick) {
-        // Process new state with reconciled state
-        const state = this.processState(this.inputBuffer[tickToProcess])
-
-        // udate buffer with reprocessed state
-        const bufferIndex = tickToProcess % this.BUFFER_SIZE;
-        this.stateBuffer[bufferIndex] = state;
-
-        tickToProcess++;
-      }
-    }
-  }
-
-  private dispatch(payload: InputPayload) {
-    this.send(payload);
-  }
-
-  public onServerState(state: StatePayload) {
-    this.latestServerState = state;
-  }
-
-  public getLatestServerState(): StatePayload {
-    return this.latestServerState;
-  }
-
-  public static getInstance(id: string, send: (input: InputPayload) => void): Client {
-    if (!Client._) {
-      Client._ = new Client(id, send);
+    public onServerState(state: StatesPayload) {
+        this.latestServerState = state;
     }
 
-    return Client._;
-  }
+    // For testing purposes
+    public getLatestServerStates(): StatesPayload {
+        return this.latestServerState;
+    }
+
+    public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (input: InputPayload) => void): Client {
+        if (!Client._) {
+            Client._ = new Client(roomId, playerId, allPlayers, send, TRACKS["triangle 3D"]);
+        }
+
+        return Client._;
+    }
 }
 
 export default Client;

@@ -1,13 +1,13 @@
 import { Howl, Howler } from 'howler';
 import state from 'scripts/State.js';
 
-const sources = Object.entries(import.meta.glob('../../assets/sounds/music/**.mp3', { as: 'url' }))
-	.map(([key, value]) => {
-		return [key, value.name, 'music'];
+const sources = Object.entries(import.meta.glob('../../assets/sounds/music/**.mp3', { as: 'url', eager: true }))
+	.map(([key, name]) => {
+		return [key, name, 'music'];
 	})
 	.concat(
-		Object.entries(import.meta.glob('../../assets/sounds/ui/**.mp3', { as: 'url' })).map(([key, value]) => {
-			return [key, value.name, 'ui'];
+		Object.entries(import.meta.glob('../../assets/sounds/ui/**.mp3', { as: 'url', eager: true })).map(([key, name]) => {
+			return [key, name, 'ui'];
 		}),
 	)
 	.map(([name, src, type]) => {

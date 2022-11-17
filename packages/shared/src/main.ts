@@ -1,9 +1,13 @@
+import { Track } from "./entities/Track.js";
 import Client from "./modules/client.js";
 import Server from "./modules/server.js";
-import { InputPayload, StatePayload } from "./types/index.js";
+import { Event, InputPayload, Players, StatesPayload } from "./types/index.js";
+import trackConfig from "./utils/trackConfig.js";
 
-export { Client, Server };
-export type { InputPayload, StatePayload };
+const TRACKS = Object.fromEntries(trackConfig.splines.map((spline) => [spline.name, new Track(spline.name)]));
+
+export { Client, Server, TRACKS };
+export type { InputPayload, StatesPayload, Players, Event, Track };
 
 // const server = Server.getInstance();
 // const client = Client.getInstance();

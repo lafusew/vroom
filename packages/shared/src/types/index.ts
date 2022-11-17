@@ -1,32 +1,46 @@
+import { Vector3 } from "three";
+
 interface InputPayload {
-  tick: number;
-  inputVector: [number, number];
+    tick: number;
+    inputSpeed: number;
+    playerId: string;
 }
 
-interface StatePayload {
-  tick: number;
-  position: [number, number];
-  // speed: number;
-  // currentLane: number;
+interface StatesPayload {
+    tick: number;
+    states: { [playerId: string]: State };
+    // speed: number;
+    // currentLane: number;
 }
 
-interface Ticker {
-  // PROCRESS STATE METHODS
-  update(): void;
-
-  // GETTERS TO ACCESS STATE
-  getPosition(): [number, number];
+interface State {
+    position: [number, number, number];
+    speed: number;
 }
 
-const DEFAUT_INPUT_PAYLOAD: InputPayload = {
-  tick: 0,
-  inputVector: [0, 0]
+type Player = string;
+type PlayerId = string;
+type RoomId = string;
+
+interface Players {
+    [id: PlayerId]: Player;
 }
 
-const DEFAULT_STATE_PAYLOAD: StatePayload = {
-  tick: 0,
-  position: [0, 0]
+type Event<T> = [string, T];
+
+interface Game {
+    // PROCRESS STATE METHODS
+    update(...args: any): void;
+
+    // GETTERS TO ACCESS STATE
+    getStates(): { [playerId: string]: State };
 }
 
-export type { InputPayload, StatePayload, Ticker };
-export { DEFAULT_STATE_PAYLOAD, DEFAUT_INPUT_PAYLOAD };
+interface Spline {
+    name: string;
+    points: Vector3[];
+    normals: Vector3[];
+    default?: boolean;
+}
+
+export type { Players, InputPayload, State, StatesPayload, Event, Game, Spline };
