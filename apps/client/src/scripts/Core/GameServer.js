@@ -1,4 +1,4 @@
-import { Client, CLIENT_EVENTS, SERVER_EVENTS, TRACKS } from '@vroom/shared';
+import { Client, CLIENT_EVENTS, gameConfig, SERVER_EVENTS, TRACKS } from '@vroom/shared';
 import { customAlphabet } from 'nanoid';
 import app from 'scripts/App.js';
 import state from 'scripts/State.js';
@@ -23,7 +23,7 @@ export default class GameServer {
 		};
 
 		this.client = null;
-		this._speedInput = 0;
+		this._speedInput = gameConfig.minSpeed;
 
 		this.instance = io(import.meta.env.VITE_SERVER_URL);
 		this.instance.emit('join', { roomId, playerId: this._playerId, playerName, trackName });
@@ -31,7 +31,9 @@ export default class GameServer {
 		this.instance.on(SERVER_EVENTS.GAME_START, this._gameStart);
 		this.instance.on(SERVER_EVENTS.TICK, this._serverTick);
 		this.instance.on(SERVER_EVENTS.PLAYER_LANE_CHANGE, this._playerLineChange);
+		this.instance.on(SERVER_EVENTS.EJECTION, this._playerEjection);
 		this.instance.on(SERVER_EVENTS.UPDATE_ROOM_CONFIG, this._updatePlayerList);
+		this.instance.on(SERVER_EVENTS.UPDATE_LEADERBOARD, this._updateLeaderboard);
 
 		// TODO: Remove
 		const handleInputs = (e) => {
@@ -56,6 +58,7 @@ export default class GameServer {
 
 	onInputSpeed(speedInput) {
 		this._speedInput = speedInput;
+		if (this.client?.getRockets()[this._playerId].isEjecting) this._speedInput = 0;
 	}
 
 	onInputLane(direction) {
@@ -88,6 +91,14 @@ export default class GameServer {
 	_playerLineChange = (payload) => {
 		this.client.changeLane(payload);
 		console.log(payload.playerId + ' changed line', payload.direction);
+	};
+
+	_playerEjection = (payload) => {
+		console.log('Ejection from server', payload.direction, payload.playerId);
+	};
+
+	_updateLeaderboard = (names) => {
+		console.log(names);
 	};
 
 	onTick() {

@@ -50,10 +50,25 @@ export default class extends stateMixin(Scene) {
 			rocketToUpdate.speed = app.core.gameManager.gameServer.client.getLatestServerStates().states[rocket.playerId].speed;
 
 			rocketToUpdate.updatePosition(rocketToUpdate.progress);
-			rocketToUpdate.computeCentrifugal(rocketToUpdate.speed);
-			rocketToUpdate.checkEjection(rocketToUpdate.speed);
+
+			// rocketToUpdate.computeCentrifugal(rocketToUpdate.progress);
+
 			rocket.position.copy(rocketToUpdate.position);
+			rocket.lookAt(rocketToUpdate.target);
 		});
 		this._currentRocketMesh?.position.copy(app.core.gameManager.gameServer.client.getRockets()[this._currentRocketMesh.playerId].position);
+		this._currentRocketMesh?.lookAt(app.core.gameManager.gameServer.client.getRockets()[this._currentRocketMesh.playerId].target);
+
+		// if (this._currentRocketMesh) {
+		// 	const centrifugalV3 = this._currentRocket.target.clone().sub(this._currentRocket.position).cross(new Vector3(0, 1, 0).sub(this._currentRocket.position)).multiplyScalar(this._currentRocket.dot);
+
+		// 	this.remove(this.centrifugalHelper);
+		// 	this.centrifugalHelper = new ArrowHelper(centrifugalV3, this._currentRocket.position, centrifugalV3.length() * 2000000, 0x00ffff);
+		// 	this.add(this.centrifugalHelper);
+
+		// this.remove(this.angleHelper);
+		// this.angleHelper = new ArrowHelper(this._currentRocket.angleV3, this._currentRocket.position, this._currentRocket.angleV3.length() * 2, 0x00ff00);
+		// this.add(this.angleHelper);
+		// }
 	}
 }

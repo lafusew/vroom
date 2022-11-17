@@ -8,6 +8,9 @@ const trackConfig = {
     splines: [
         {
             name: "bone",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example2.png",
+            normals: [],
             points: [
                 new Vector3(-0.235, 0, 0.425),
                 new Vector3(-0.325, 0, 0.535),
@@ -37,10 +40,12 @@ const trackConfig = {
                 new Vector3(-0.185, 0, -0.105),
                 new Vector3(-0.195, 0, 0.175),
             ],
-            normals: [],
         },
         {
             name: "cloud",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(0.62499999999992, 0, -0.0849999999735),
                 new Vector3(0.49500000000889, 0, -0.28499999997934),
@@ -63,11 +68,12 @@ const trackConfig = {
                 new Vector3(0.78499999997971, 0, 0.36500000003369),
                 new Vector3(0.82499999999228, 0, 0.08500000003548),
             ],
-            normals: [],
         },
         {
             name: "intern",
-            default: true,
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(0.685, 0, 0.62500000000001),
                 new Vector3(0.635, 0, 0.39500000000001),
@@ -101,10 +107,12 @@ const trackConfig = {
                 new Vector3(0.435, 0, 0.86500000000001),
                 new Vector3(0.685, 0, 0.76544820707853),
             ],
-            normals: [],
         },
         {
             name: "square",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(0.485, 0, 0.465),
                 new Vector3(0.435, 0, 0.275),
@@ -135,10 +143,12 @@ const trackConfig = {
                 new Vector3(0.655, 0, 0.685),
                 new Vector3(0.615, 0, 0.555),
             ],
-            normals: [],
         },
         {
             name: "square 3D",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(0.535, 0, 0.415),
                 new Vector3(0.485, 0.05598223805165, 0.225),
@@ -169,10 +179,12 @@ const trackConfig = {
                 new Vector3(0.705, 0.11126046697816, 0.635),
                 new Vector3(0.665, 0.05598223805165, 0.505),
             ],
-            normals: [],
         },
         {
             name: "chicane",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(-0.06310570271251, 0, 0.23500056669646),
                 new Vector3(-0.06310570270924, 0, 0.53402671343428),
@@ -191,10 +203,12 @@ const trackConfig = {
                 new Vector3(-0.07392406801731, 0, -0.63499943330428),
                 new Vector3(-0.0739240680151, 0, -0.4327089401642),
             ],
-            normals: [],
         },
         {
             name: "infinity",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(-0.775, 0, -0.295),
                 new Vector3(-0.54272727272727, 0, -0.405),
@@ -210,10 +224,12 @@ const trackConfig = {
                 new Vector3(-0.80334415584415, 0, 0.27487012987013),
                 new Vector3(-0.86, 0, -0.0424025974026),
             ],
-            normals: [],
         },
         {
             name: "infinity 3D",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(0.215, 0, 0.705),
                 new Vector3(0.44727272727273, 0.11965783214378, 0.595),
@@ -229,10 +245,12 @@ const trackConfig = {
                 new Vector3(0.18665584415585, 0.23236158602188, 1.27487012987014),
                 new Vector3(0.13, 0.11965783214378, 0.9575974025974),
             ],
-            normals: [],
         },
         {
             name: "triangle",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(0.285, 0, -0.475),
                 new Vector3(0.285, 0, -0.765),
@@ -251,10 +269,13 @@ const trackConfig = {
                 new Vector3(-0.61500000003372, 0, 0.72499999997531),
                 new Vector3(-0.40500000002833, 0, 0.6549999999807),
             ],
-            normals: [],
         },
         {
             name: "triangle 3D",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            default: true,
+            normals: [],
             points: [
                 new Vector3(0.335, 0, -0.455),
                 new Vector3(0.335, 0.09754516100806, -0.745),
@@ -273,10 +294,12 @@ const trackConfig = {
                 new Vector3(-0.56500000003371, 0.19134171618254, 0.7449999999753),
                 new Vector3(-0.35500000002833, 0.09754516100806, 0.6749999999807),
             ],
-            normals: [],
         },
         {
             name: "original",
+            coverSrc: "cover-example.png",
+            pathGifSrc: "path-example.png",
+            normals: [],
             points: [
                 new Vector3(-0.075, 0, -0.28500000000651),
                 new Vector3(0.255, 0, -0.605),
@@ -297,7 +320,6 @@ const trackConfig = {
                 new Vector3(0.29499999997463, 0, 0.625),
                 new Vector3(-0.08500000001325, 0, 0.33499999999394),
             ],
-            normals: [],
         },
     ],
 };

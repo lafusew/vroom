@@ -1,6 +1,6 @@
 
 import { Track } from "../main.js";
-import { Game, InputPayload, LeaderboardPayload, Players, ServerPayload, SERVER_EVENTS, StatesPayload } from "../types/index.js";
+import { Game, InputPayload, Players, ServerPayload, SERVER_EVENTS } from "../types/index.js";
 import { Ticker } from "./ticker.js";
 
 class Server extends Ticker implements Game {
@@ -30,7 +30,11 @@ class Server extends Ticker implements Game {
           const inputPayload = this.inputQueue.shift() as InputPayload;
           bufferIndex = inputPayload.tick % this.BUFFER_SIZE;
 
-          let statePayload = this.processState(inputPayload, dt);
+          let statePayload = this.processState(
+            inputPayload,
+            dt,
+            (direction) => this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: inputPayload.playerId, direction }),
+          );
           this.stateBuffer[bufferIndex] = statePayload;
 
           if (this.stateBuffer[bufferIndex].states[inputPayload.playerId].progress >= 3) {

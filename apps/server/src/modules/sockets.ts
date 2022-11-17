@@ -1,4 +1,4 @@
-import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, LeaderboardPayload, Server as GameInstance, ServerPayload, SERVER_EVENTS, StatesPayload, TRACKS } from "@vroom/shared";
+import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, LeaderboardPayload, Server as GameInstance, ServerPayload, SERVER_EVENTS, TRACKS } from "@vroom/shared";
 import http from "http";
 import * as IO from "socket.io";
 import { RoomConfig, Rooms } from "../types/index.js";
