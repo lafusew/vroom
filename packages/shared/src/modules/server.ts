@@ -34,7 +34,7 @@ class Server extends Ticker implements Game {
         }
 
         if (bufferIndex !== -1) {
-          console.log("SENDING STATE: ", this.stateBuffer[bufferIndex]);
+          // console.log("SENDING STATE: ", this.stateBuffer[bufferIndex]);
           this.send(this.roomId, SERVER_EVENTS.TICK, this.stateBuffer[bufferIndex]);
         }
       },
@@ -42,7 +42,7 @@ class Server extends Ticker implements Game {
   }
 
   public async onClientInput(input: InputPayload) {
-    console.log("RECEIVED INPUT: ", input);
+    // console.log("RECEIVED INPUT: ", input);
     this.inputQueue.push(input);
   }
 }
