@@ -1,7 +1,7 @@
 import { CLIENT_EVENTS, Game, InputPayload, Players, StatesPayload } from "../types/index.js";
 import { Ticker } from "./ticker.js";
 
-import { Track, TRACKS } from "../main.js";
+import { Track } from "../main.js";
 import { deepEqual, isProgressDifferenceAcceptable } from "../utils/index.js";
 
 class Client extends Ticker implements Game {
@@ -131,9 +131,9 @@ class Client extends Ticker implements Game {
         return this.latestServerState;
     }
 
-    public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (eventName: CLIENT_EVENTS, input: InputPayload) => void): Client {
+    public static getInstance(roomId: string, playerId: string, allPlayers: Players, send: (eventName: CLIENT_EVENTS, input: InputPayload) => void, track: Track): Client {
         if (!Client._) {
-            Client._ = new Client(roomId, playerId, allPlayers, send, TRACKS["triangle 3D"]);
+            Client._ = new Client(roomId, playerId, allPlayers, send, track);
         }
 
         return Client._;

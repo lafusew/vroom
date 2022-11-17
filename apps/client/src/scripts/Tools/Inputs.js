@@ -25,10 +25,10 @@ export default class Inputs {
 	};
 
 	_speedMove = (y) => {
-		state.emit(EVENTS.FINGER_SPEED, MathUtils.mapLinear(MathUtils.clamp((app.tools.viewport.height - y) / app.tools.viewport.height, 0.3, 0.7), 0.3, 0.7, 0, 1));
+		state.emit(EVENTS.INPUT_SPEED, MathUtils.mapLinear(MathUtils.clamp((app.tools.viewport.height - y) / app.tools.viewport.height, 0.3, 0.7), 0.3, 0.7, 0, 1));
 	};
 
 	_clickButton = (e) => {
-		state.emit(EVENTS.SWITCH_LANE, e.target === this._leftLaneSwitchBtn ? -1 : 1);
+		state.emit(EVENTS.INPUT_LANE, e.target === this._leftLaneSwitchBtn ? -1 : 1);
 	};
 }

@@ -39,6 +39,7 @@ const EVENTS_MAP = Object.fromEntries(
 const STORE_KEYS = {
 	PSEUDO: i++,
 	TRACK_NAME: i++,
+	ROOM_ID: i++,
 	// CURRENT_TRACK: i++,
 };
 

@@ -1,16 +1,22 @@
-import { Client, CLIENT_EVENTS, SERVER_EVENTS } from '@vroom/shared';
-import { nanoid } from 'nanoid';
+import { Client, CLIENT_EVENTS, SERVER_EVENTS, TRACKS } from '@vroom/shared';
+import { customAlphabet } from 'nanoid';
+import app from 'scripts/App.js';
 import state from 'scripts/State.js';
+import store from 'scripts/Store.js';
 import { io } from 'socket.io-client';
-import { EVENTS } from 'utils/constants.js';
+import { EVENTS, STORE_KEYS } from 'utils/constants.js';
+
+const nanoid = customAlphabet('1234567890', 4);
 
 export default class GameServer {
-	constructor({ roomId = nanoid(4), playerName = 'Player', trackName = 'triangle 3D' }) {
+	constructor({ roomId = nanoid(), playerName = 'Player', trackName = 'triangle 3D' }) {
 		state.register(this);
 
 		this._roomId = roomId;
+		store.set(STORE_KEYS.ROOM_ID, roomId);
 		this._playerId = nanoid(10);
 		this._trackName = trackName;
+		console.log(trackName);
 
 		this.players = {
 			[this._playerId]: playerName,
@@ -20,7 +26,7 @@ export default class GameServer {
 		this._speedInput = 0;
 
 		this.instance = io(import.meta.env.VITE_SERVER_URL);
-		this.instance.emit('join', { roomId, playerId: this._playerId, playerName });
+		this.instance.emit('join', { roomId, playerId: this._playerId, playerName, trackName });
 
 		this.instance.on(SERVER_EVENTS.GAME_START, this._gameStart);
 		this.instance.on(SERVER_EVENTS.TICK, this._serverTick);
@@ -57,7 +63,7 @@ export default class GameServer {
 	}
 
 	_gameStart = () => {
-		this.client = Client.getInstance(this._roomId, this._playerId, this.players, this._send);
+		this.client = Client.getInstance(this._roomId, this._playerId, this.players, this._send, TRACKS[this._trackName]);
 		console.log('Game start', this.client.getPlayers());
 		state.emit(EVENTS.GAME_START, this._playerId);
 	};
@@ -70,7 +76,8 @@ export default class GameServer {
 	_updatePlayerList = ({ players, track }) => {
 		this.players = players;
 		this._trackName = track;
-		console.log(this.players);
+		app.dom.pageComponentsManager.get('index').componentsManager.get(document.querySelector('.lobby')).updateMapName(this._trackName);
+		console.log(this.players, this._trackName);
 	};
 
 	_serverTick = (state) => {
