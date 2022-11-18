@@ -4,6 +4,7 @@ import { computeEnvmap } from 'utils/misc.js';
 import stateMixin from 'utils/stateMixin.js';
 import RocketCamera from './Objects/RocketCamera.js';
 import RocketMesh from './Objects/RocketMesh.js';
+import Sky from './Objects/Sky.js';
 import Stars from './Objects/Stars.js';
 import TrackGroup from './Objects/TrackGroup.js';
 
@@ -23,6 +24,8 @@ export default class extends stateMixin(Scene) {
 
 		// this.add(new Game());
 		this.add(new Stars());
+		this.sky = new Sky();
+		this.add(this.sky);
 	}
 
 	onGameStart(currentPlayerId) {
@@ -46,6 +49,8 @@ export default class extends stateMixin(Scene) {
 		app.webgl.camera.targetCamera = this.rocketCamera;
 
 		this.add(trackMesh, ...this._rocketsMeshes.values(), this._currentRocketMesh);
+		// TODO: uncomment when each track has its own assets
+		// this.sky.showAssets(trackMesh.track.splineName);
 	}
 
 	onTick({ dt }) {

@@ -14,5 +14,9 @@ void main() {
   opacity *= uRatio;
   opacity -= uRadius;
 
+  if (opacity < .1) {
+    discard;
+  }
+
   gl_FragColor = vec4(vec3(1.), opacity);
 }
