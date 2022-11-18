@@ -121,14 +121,16 @@ export default class GameServer {
 	};
 
 	// TODO: MOOVE THIS
-	_updateLeaderboardUI = (names) => {
+	_updateLeaderboardUI = (ids) => {
 		const leaderboard = document.querySelector('.leaderboard ul');
 		leaderboard.innerHTML = '';
-		names.forEach((name, index) => {
+		ids.forEach((id, index) => {
 			const item = document.createElement('li');
-			item.innerHTML = `${index + 1}. ${name}`;
+			item.innerHTML = `${index + 1}. ${id}`;
 			leaderboard.appendChild(item);
 		});
+		const rank = document.querySelector('.rank');
+		rank.innerHTML = ids.findIndex((id) => id === this._playerId) + 1;
 	};
 
 	onTick() {
