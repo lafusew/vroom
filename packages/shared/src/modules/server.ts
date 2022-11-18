@@ -40,8 +40,7 @@ class Server extends Ticker implements Game {
 						inputPayload,
 						dt,
 						//CENTRIFUGAL EJECTION CALLBACK 
-						(direction) => this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: inputPayload.playerId, direction }),
-						(ids: string[]) => ids.forEach((id) => { this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: id, direction: 0 }) })
+						(id?: string) => this.send(this.roomId, SERVER_EVENTS.EJECTION, id ? id : inputPayload.playerId),
 
 					);
 					this.stateBuffer[bufferIndex] = statePayload;

@@ -101,12 +101,12 @@ class Ticker {
 		return this.track;
 	}
 
-	protected processState(input: InputPayload, dt: number, ejectionCallback?: (direction: number) => void, collisionCallback?: (playersIds: string[]) => void): StatesPayload {
+	protected processState(input: InputPayload, dt: number, ejectionCallback?: (id?: string) => void): StatesPayload {
 		if (this.rockets[input.playerId].isEjecting) input.inputSpeed = 0;
 
 		// console.log(this.rockets[input.playerId].speed);
 
-		this.rockets[input.playerId].tick(input.inputSpeed, this.rockets, dt, ejectionCallback, collisionCallback);
+		this.rockets[input.playerId].tick(input.inputSpeed, this.rockets, dt, ejectionCallback);
 
 		// const [x, y] = this.states[input.playerId].position;
 
