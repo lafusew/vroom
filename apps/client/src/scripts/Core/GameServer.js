@@ -16,6 +16,8 @@ export default class GameServer {
 		store.set(STORE_KEYS.ROOM_ID, roomId);
 		this._playerId = nanoid(10);
 		this._trackName = trackName;
+		this.definitiveLeaderBoard = [];
+
 		console.log(trackName);
 
 		this.players = {
@@ -34,6 +36,7 @@ export default class GameServer {
 		this.instance.on(SERVER_EVENTS.EJECTION, this._playerEjection);
 		this.instance.on(SERVER_EVENTS.UPDATE_ROOM_CONFIG, this._updatePlayerList);
 		this.instance.on(SERVER_EVENTS.UPDATE_LEADERBOARD, this._updateLeaderboard);
+		this.instance.on(SERVER_EVENTS.GAME_STOP, this._handleGameStop);
 
 		// TODO: Remove
 		const handleInputs = (e) => {
@@ -88,6 +91,10 @@ export default class GameServer {
 		this.client?.onServerState(state);
 	};
 
+	_handleGameStop = (finishedPlayerId) => {
+		this.definitiveLeaderBoard.push(finishedPlayerId);
+	};
+
 	_playerLineChange = (payload) => {
 		this.client.changeLane(payload);
 		console.log(payload.playerId + ' changed line', payload.direction);
@@ -97,8 +104,19 @@ export default class GameServer {
 		console.log('Ejection from server', payload.direction, payload.playerId);
 	};
 
-	_updateLeaderboard = (names) => {
-		console.log(names);
+	_updateLeaderboard = (ids) => {
+		this._updateLeaderboardUI(ids);
+	};
+
+	// TODO: MOOVE THIS
+	_updateLeaderboardUI = (names) => {
+		const leaderboard = document.querySelector('.leaderboard ul');
+		leaderboard.innerHTML = '';
+		names.forEach((name, index) => {
+			const item = document.createElement('li');
+			item.innerHTML = `${index + 1}. ${name}`;
+			leaderboard.appendChild(item);
+		});
 	};
 
 	onTick() {

@@ -40,15 +40,14 @@ class Server extends Ticker implements Game {
 						inputPayload,
 						dt,
 						//CENTRIFUGAL EJECTION CALLBACK 
-						(direction) => this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: inputPayload.playerId, direction }),
-						(ids: string[]) => ids.forEach((id) => { this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: id, direction: 0 }) })
+						(id?: string) => this.send(this.roomId, SERVER_EVENTS.EJECTION, id ? id : inputPayload.playerId),
 
 					);
 					this.stateBuffer[bufferIndex] = statePayload;
 
 					if (this.stateBuffer[bufferIndex].states[inputPayload.playerId].progress >= 3) {
 						// TODO EVENT: RECEIPT CETTE EVENT AVEC SON PAYLAOD un array [id, nom] => AJOUTER LE NOM DANS UN TABLEAU DE JOUEUR FINIS POUR POUVOIR POTENTIELLEMENT LIGNORE POUR LES TICKS SUIVANTS
-						this.send(this.roomId, SERVER_EVENTS.GAME_STOP, [inputPayload.playerId, this.players[inputPayload.playerId]]);
+						this.send(this.roomId, SERVER_EVENTS.GAME_STOP, inputPayload.playerId);
 						this.finishNameOrder.push(inputPayload.playerId);
 					}
 				}
