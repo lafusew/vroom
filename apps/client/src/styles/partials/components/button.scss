@@ -12,11 +12,11 @@
 		text-transform: uppercase;
 		width: 264px;
 		height: 75px;
-	
+
 		&:active {
 			background: url('/assets/images/btn-primary-pressed.png') no-repeat center center;
 		}
-	
+
 		&:disabled {
 			background: url('/assets/images/btn-primary-disabled.png') no-repeat center center;
 		}
@@ -26,11 +26,11 @@
 		background: url('/assets/images/btn-secondary-default.png') no-repeat center center;
 		width: 261px;
 		height: 57px;
-	
+
 		&:active {
 			background: url('/assets/images/btn-secondary-pressed.png') no-repeat center center;
 		}
-	
+
 		&:disabled {
 			background: url('/assets/images/btn-secondary-disabled.png') no-repeat center center;
 		}

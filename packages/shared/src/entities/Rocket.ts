@@ -15,6 +15,7 @@ class Rocket {
     public dot = 0;
     public angleV3 = new Vector3();
     public isEjecting = false;
+    public finished = false;
     public ejectionDirection = 0;
 
     constructor(laneNumber: number, paths: Path[]) {
@@ -165,6 +166,8 @@ class Rocket {
     }
 
     public tick(speedInput: number, rockets: { [playerId: string]: Rocket }, dt: number, ejectionCallback?: (ejectedId?: string) => void) {
+        if (this.finished) return;
+
         this.speed = speedInput * dt * 20;
         this.progress += 0.01 * this.speed;
 
