@@ -20,6 +20,8 @@
 }
 
 html {
+	touch-action: none;
+
 	pointer-events: none;
 	color: colors.$white;
 
@@ -63,7 +65,7 @@ body {
 }
 
 .rank {
-	position: absolute;
+	position: fixed;
 	top: 30px;
 	left: 30px;
 	font-size: 50px;
