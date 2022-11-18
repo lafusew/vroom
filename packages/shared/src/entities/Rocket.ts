@@ -98,7 +98,7 @@ class Rocket {
     }
 
     public checkEjection(speed: number, callback?: () => void) {
-        if (this.isEjecting) return;
+        if (this.isEjecting || Math.abs(this.dot) < 0.00001) return;
 
         const ejected = Math.abs(this.dot) * speed * 100000 > gameConfig.ejectionThreshold;
 
