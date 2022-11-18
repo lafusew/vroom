@@ -1,3 +1,4 @@
+import gsap from 'gsap';
 import { Howl, Howler } from 'howler';
 import state from 'scripts/State.js';
 
@@ -41,9 +42,21 @@ export default class Sound {
 		Howler.mute(!this.active);
 	}
 
-	play(name, volume = 1) {
+	play(name, volume = 1, fade = false) {
 		const search = this.sounds.get(name);
-		search?.volume(volume);
+		if (fade) {
+			let volumeObj = { value: 0 };
+			search.volume(0);
+			gsap.to(volumeObj, {
+				value: volume,
+				duration: 3,
+				onUpdate: () => {
+					search.volume(volumeObj.value);
+				},
+			});
+		} else {
+			search.volume(volume);
+		}
 		search?.play();
 
 		const result = search ? search : undefined;

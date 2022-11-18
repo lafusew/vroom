@@ -14,7 +14,7 @@ void main() {
 
     float rotation = 0.0;
 
-    vec3 alignedPosition = position * uScale;
+    vec3 alignedPosition = vec3(position.x, position.y + 0.5, position.z) * uScale * 3.;
 
     vec2 pos = alignedPosition.xy;
 
