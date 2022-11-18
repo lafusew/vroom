@@ -8,7 +8,7 @@ import handlebars from 'vite-plugin-handlebars';
 import hotShaders from './hotShaders/hotShadersRollupPlugin.js';
 import ifdef from './ifdef/ifdefRollupPlugin.js';
 import rollupOptions from './rollup.config.js';
-import trackConfig from '../src/scripts/utils/trackConfig.js';
+import { trackConfig } from '@vroom/shared';
 
 const translation = JSON.parse(fs.readFileSync(resolve(__dirname, '../src/assets/langs/en.json')).toString());
 const partialDirectory = getDirectoriesRecursive(resolve(__dirname, '../src/views'));
