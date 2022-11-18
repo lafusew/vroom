@@ -1,5 +1,6 @@
 import app from 'scripts/App.js';
 import { AmbientLight, MathUtils, Scene } from 'three';
+import globalUniforms from 'utils/globalUniforms.js';
 import { computeEnvmap } from 'utils/misc.js';
 import stateMixin from 'utils/stateMixin.js';
 import RocketCamera from './Objects/RocketCamera.js';
@@ -85,6 +86,7 @@ export default class extends stateMixin(Scene) {
 				this._currentRocketMesh.animation = null;
 				this._currentRocketMesh?.position.copy(app.core.gameManager.gameServer.client.getRockets()[this._currentRocketMesh.playerId].position);
 				this._currentRocketMesh?.lookAt(app.core.gameManager.gameServer.client.getRockets()[this._currentRocketMesh.playerId].target);
+				globalUniforms.uRocketSpeed.value = this._currentRocket.speed;
 			}
 		}
 
