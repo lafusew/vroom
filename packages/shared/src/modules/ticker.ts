@@ -11,7 +11,7 @@ class Ticker {
 
     protected lastUpdate = 0;
 
-    protected readonly SERVER_TICK_RATE = 120;
+    protected readonly SERVER_TICK_RATE = 40;
     protected readonly BUFFER_SIZE = 1024;
 
     protected stateBuffer: StatesPayload[] = [];
