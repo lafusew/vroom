@@ -1,4 +1,4 @@
-import { Client, CLIENT_EVENTS, SERVER_EVENTS, TRACKS } from '@vroom/shared';
+import { Client, CLIENT_EVENTS, gameConfig, SERVER_EVENTS, TRACKS } from '@vroom/shared';
 import { customAlphabet } from 'nanoid';
 import app from 'scripts/App.js';
 import state from 'scripts/State.js';
@@ -16,6 +16,8 @@ export default class GameServer {
 		store.set(STORE_KEYS.ROOM_ID, roomId);
 		this._playerId = nanoid(10);
 		this._trackName = trackName;
+		this.definitiveLeaderBoard = [];
+
 		console.log(trackName);
 
 		this.players = {
@@ -23,7 +25,7 @@ export default class GameServer {
 		};
 
 		this.client = null;
-		this._speedInput = 0;
+		this._speedInput = gameConfig.minSpeed;
 
 		this.instance = io(import.meta.env.VITE_SERVER_URL);
 		this.instance.emit('join', { roomId, playerId: this._playerId, playerName, trackName });
@@ -31,8 +33,13 @@ export default class GameServer {
 		this.instance.on(SERVER_EVENTS.GAME_START, this._gameStart);
 		this.instance.on(SERVER_EVENTS.TICK, this._serverTick);
 		this.instance.on(SERVER_EVENTS.PLAYER_LANE_CHANGE, this._playerLineChange);
+
+		this.instance.on(SERVER_EVENTS.EJECTION, this._playerEjection);
+		this.instance.on(SERVER_EVENTS.EJECTION_END, this._playerEjectionEnd);
+
 		this.instance.on(SERVER_EVENTS.UPDATE_ROOM_CONFIG, this._updatePlayerList);
 		this.instance.on(SERVER_EVENTS.UPDATE_LEADERBOARD, this._updateLeaderboard);
+		this.instance.on(SERVER_EVENTS.GAME_STOP, this._handleGameStop);
 
 		// TODO: Remove
 		const handleInputs = (e) => {
@@ -57,6 +64,7 @@ export default class GameServer {
 
 	onInputSpeed(speedInput) {
 		this._speedInput = speedInput;
+		if (this.client?.getRockets()[this._playerId].isEjecting) this._speedInput = 0;
 	}
 
 	onInputLane(direction) {
@@ -86,13 +94,40 @@ export default class GameServer {
 		this.client?.onServerState(state);
 	};
 
+	_handleGameStop = (finishedPlayerId) => {
+		this.definitiveLeaderBoard.push(finishedPlayerId);
+	};
+
 	_playerLineChange = (payload) => {
 		this.client.changeLane(payload);
 		console.log(payload.playerId + ' changed line', payload.direction);
 	};
 
-	_updateLeaderboard = (names) => {
-		console.log(names);
+	_playerEjection = (playerId) => {
+		// console.log('Ejection from server', payload.direction, payload.playerId);
+		this.client.getRockets()[playerId].isEjecting = true;
+		// this.client.getRockets()[playerId].ejectionDirection = payload.direction;
+	};
+
+	_playerEjectionEnd = (playerId) => {
+		this.client.getRockets()[playerId].isEjecting = false;
+		// this.client.getRockets()[playerId].ejectionDirection = 0;
+		// console.log('Ejection from server ended', payload.direction, payload.playerId);
+	};
+
+	_updateLeaderboard = (ids) => {
+		this._updateLeaderboardUI(ids);
+	};
+
+	// TODO: MOOVE THIS
+	_updateLeaderboardUI = (names) => {
+		const leaderboard = document.querySelector('.leaderboard ul');
+		leaderboard.innerHTML = '';
+		names.forEach((name, index) => {
+			const item = document.createElement('li');
+			item.innerHTML = `${index + 1}. ${name}`;
+			leaderboard.appendChild(item);
+		});
 	};
 
 	onTick() {

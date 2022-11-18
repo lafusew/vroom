@@ -5,6 +5,7 @@ attribute vec2 uv;
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
+uniform vec3 uScale;
 
 varying vec2 vUv;
 
@@ -13,11 +14,13 @@ void main() {
 
     float rotation = 0.0;
 
-    vec2 pos = position.xy;
+    vec3 alignedPosition = position * uScale;
+
+    vec2 pos = alignedPosition.xy;
 
     vec2 rotatedPosition = vec2(
-        cos(rotation) * position.x - sin(rotation) * position.y,
-        sin(rotation) * position.x + cos(rotation) * position.y
+        cos(rotation) * alignedPosition.x - sin(rotation) * alignedPosition.y,
+        sin(rotation) * alignedPosition.x + cos(rotation) * alignedPosition.y
     );
 
     vec4 finalPosition = modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0);

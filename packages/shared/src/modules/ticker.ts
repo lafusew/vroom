@@ -56,10 +56,9 @@ class Ticker {
         if (this.timer >= this.minTimeBetweenTicks) {
             this.timer -= this.minTimeBetweenTicks;
             processTick(this.minTimeBetweenTicks, true);
-            
+
             this.currentTick++;
 
-            
             return;
         }
 
@@ -69,7 +68,9 @@ class Ticker {
     }
 
     protected getRanking() {
-        return Object.entries(this.rockets).sort((a, b) => b[1].relativeProgress - a[1].relativeProgress).map(([id]) => id);
+        return Object.entries(this.rockets)
+            .sort((a, b) => b[1].relativeProgress - a[1].relativeProgress)
+            .map(([id]) => id);
     }
 
     public getIsGameRunning() {
@@ -100,8 +101,12 @@ class Ticker {
         return this.track;
     }
 
-    protected processState(input: InputPayload, dt: number): StatesPayload {
-        this.rockets[input.playerId].tick(input.inputSpeed, this.rockets, dt);
+    protected processState(input: InputPayload, dt: number, ejectionCallback?: (id?: string) => void): StatesPayload {
+        if (this.rockets[input.playerId].isEjecting) input.inputSpeed = 0;
+
+        // console.log(this.rockets[input.playerId].speed);
+
+        this.rockets[input.playerId].tick(input.inputSpeed, this.rockets, dt, ejectionCallback);
 
         // const [x, y] = this.states[input.playerId].position;
 

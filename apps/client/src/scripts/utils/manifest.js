@@ -7,6 +7,7 @@ const skyAssets = Object.fromEntries(
 );
 
 export const manifest = {
-	// scene: { path: '/models/scene.glb', priority: 1 },
 	...skyAssets,
+	rocket: { path: '/models/rocket.glb', priority: 1 },
+	envmap: { path: '/textures/envmap.hdr', priority: 1 },
 };

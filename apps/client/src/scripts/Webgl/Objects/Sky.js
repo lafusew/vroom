@@ -25,24 +25,25 @@ export default class Sky extends stateMixin(Group) {
 
 	showAssets(trackName) {
 		this._dispose();
-		this.assets.get(trackName)?.forEach((asset) => {
-			const texture = app.core.loader.getTexture(asset.name);
-			texture.magFilter = NearestFilter;
+		if (this.assets.get(trackName)) {
+			this.assets.get(trackName)?.forEach((asset) => {
+				const texture = app.core.loader.getTexture(asset.name);
+				texture.magFilter = NearestFilter;
 
-			const material = new SpritesheetMaterial({
-				uniforms: {
-					...globalUniforms,
-					tSpritesheet: { value: texture },
-					uSpritesCount: { value: 50 },
-				},
+				const material = new SpritesheetMaterial({
+					uniforms: {
+						...globalUniforms,
+						tSpritesheet: { value: texture },
+						uSpritesCount: { value: 50 },
+						uScale: { value: asset.scale },
+					},
+				});
+
+				const sprite = new Sprite(material);
+				sprite.position.copy(asset.position);
+				this.add(sprite);
 			});
-
-			const sprite = new Sprite(material);
-			// TODO: remove .multiplyScalar(0.01) when the assets are scaled correctly
-			sprite.position.copy(asset.position).multiplyScalar(0.01);
-			sprite.scale.copy(asset.scale);
-			this.add(sprite);
-		});
+		}
 	}
 
 	_dispose() {

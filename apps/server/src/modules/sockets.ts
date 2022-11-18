@@ -1,4 +1,4 @@
-import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, LeaderboardPayload, Server as GameInstance, SERVER_EVENTS, StatesPayload, TRACKS } from "@vroom/shared";
+import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, LeaderboardPayload, Server as GameInstance, ServerPayload, SERVER_EVENTS, StatesPayload, TRACKS } from "@vroom/shared";
 import http from "http";
 import * as IO from "socket.io";
 import { RoomConfig, Rooms } from "../types/index.js";
@@ -38,7 +38,7 @@ class Sockets {
     const instance = (this.rooms[roomId].game = new GameInstance(
       roomId,
       this.rooms[roomId].players,
-      (id: string, eventName: SERVER_EVENTS, payload: StatesPayload | LeaderboardPayload) => this.emit(id, eventName, payload),
+      (id: string, eventName: SERVER_EVENTS, payload: ServerPayload) => this.emit(id, eventName, payload),
       TRACKS[trackName]
     ));
 

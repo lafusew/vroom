@@ -11,8 +11,11 @@ class Rocket {
     private laneNumber: number;
     public position = new Vector3();
     public directionV3 = new Vector3();
-    private target = new Vector3();
-    private dot = 0;
+    public target = new Vector3();
+    public dot = 0;
+    public angleV3 = new Vector3();
+    public isEjecting = false;
+    public ejectionDirection = 0;
 
     constructor(laneNumber: number, paths: Path[]) {
         this.laneNumber = laneNumber;
@@ -87,56 +90,70 @@ class Rocket {
 
     public computeCentrifugal(progress: number) {
         this.directionV3 = this.target.clone().sub(this.position);
-        const angleV3 = this.paths[this.laneNumber].curve.getPointAt((progress + 0.01) % 1).sub(this.position);
-        this.dot = this.directionV3.x * -angleV3.z + this.directionV3.z * angleV3.x;
-
-        // const centrifugalV3 = this.target.clone().sub(this.position).cross(new Vector3(0, 1, 0).sub(this.position)).multiplyScalar(this.dot);
-
-        // this.remove(this.centrifugalHelper);
-        // this.centrifugalHelper = new ArrowHelper(this.centrifugalV3, this.mesh.position, Math.abs(this.dot) * 2000, 0x00ffff);
-        // this.add(this.centrifugalHelper);
+        this.angleV3 = this.paths[this.laneNumber].curve.getPointAt((progress + 0.01) % 1).sub(this.position);
+        this.dot = this.directionV3.x * -this.angleV3.z + this.directionV3.z * this.angleV3.x;
     }
 
-    public checkEjection(speed: number) {
-        const ejected = Math.abs(this.dot) * speed * 1000 > gameConfig.ejectionThreshold;
-        if (ejected) console.log("Ejected");
+    public checkEjection(speed: number, callback?: () => void) {
+        if (this.isEjecting) return;
+
+        const ejected = Math.abs(this.dot) * speed * 100000 > gameConfig.ejectionThreshold;
+
+        if (ejected) {
+            console.log("Ejection");
+            this.isEjecting = true;
+            this.progress = Math.max(this.progress - 0.025, 0);
+            setTimeout(() => (this.isEjecting = false), gameConfig.animationDuration);
+            callback?.();
+        }
     }
 
-    public checkCollision(rockets: { [playerId: string]: Rocket }) {
+    public checkCollision(rockets: { [playerId: string]: Rocket }, callback?: (ejectedId: string) => void) {
         let distance;
 
-        let otherRockets = Object.entries(rockets).filter(([id, rocket]) => rocket != this).map(([id, rocket]) => ({ id, obj: rocket }));
-        let selfID = Object.entries(rockets).filter(([id, rocket]) => rocket == this).map(([id, rocket]) => id)[0];
+        let otherRockets = Object.entries(rockets)
+            .filter(([id, rocket]) => rocket != this)
+            .map(([id, rocket]) => ({ id, obj: rocket }));
+        let selfID = Object.entries(rockets)
+            .filter(([id, rocket]) => rocket == this)
+            .map(([id, rocket]) => id)[0];
 
         otherRockets.forEach((rocket) => {
             if (rocket.obj !== this) {
                 distance = this.position.distanceTo(rocket.obj.position);
 
                 if (distance < gameConfig.rocketBoundingRadius) {
-                    if (Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < .1) {
-                        if ((this.relativeProgress % 1) < (rocket.obj.relativeProgress % 1)) {
+                    if (Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < 0.1) {
+                        if (this.relativeProgress % 1 < rocket.obj.relativeProgress % 1) {
                             console.log(`COLLISION - Same lane / Back - ${selfID} x ${rocket.id}`);
+                            callback?.(rocket.id);
                         }
                     } else {
-                        console.log(`COLLISION - Intersection - ${selfID} x ${rocket.id}`);
+                        console.log(`COLLISION - Intersection - ${this.speed > rocket.obj.speed ? "GAGNÉ" : "PERDU"} - ${selfID} x ${rocket.id}`);
+                        callback?.(this.speed > rocket.obj.speed ? rocket.id : selfID);
                     }
                 }
             }
         });
     }
 
-    protected checkLateralCollision(rockets: { [playerId: string]: Rocket }) {
+    protected checkLateralCollision(rockets: { [playerId: string]: Rocket }, callback?: (ejectedId: string) => void) {
         let distance;
 
-        let otherRockets = Object.entries(rockets).filter(([id, rocket]) => rocket != this).map(([id, rocket]) => ({ id, obj: rocket }));
-        let selfID = Object.entries(rockets).filter(([id, rocket]) => rocket == this).map(([id, rocket]) => id)[0];
+        let otherRockets = Object.entries(rockets)
+            .filter(([id, rocket]) => rocket != this)
+            .map(([id, rocket]) => ({ id, obj: rocket }));
+        let selfID = Object.entries(rockets)
+            .filter(([id, rocket]) => rocket == this)
+            .map(([id, rocket]) => id)[0];
 
         otherRockets.forEach((rocket) => {
             if (rocket.obj.laneNumber === this.laneNumber) {
                 distance = this.position.distanceTo(rocket.obj.position);
 
-                if (distance < gameConfig.lateralCollisionThreshold && Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < .1) {
+                if (distance < gameConfig.lateralCollisionThreshold && Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < 0.1) {
                     console.log(`COLLISION - Lane change - ${selfID} x ${rocket.id}`);
+                    callback?.(rocket.id);
                 }
             }
         });
@@ -147,15 +164,24 @@ class Rocket {
         this.target = this.paths[this.laneNumber].curve.getPointAt((progress + 0.001) % 1);
     }
 
-    public tick(speedInput: number, rockets: { [playerId: string]: Rocket }, dt: number) {
-        this.speed = speedInput * dt * 10;
+    public tick(speedInput: number, rockets: { [playerId: string]: Rocket }, dt: number, ejectionCallback?: (ejectedId?: string) => void) {
+        this.speed = speedInput * dt * 20;
         this.progress += 0.01 * this.speed;
 
         this.updatePosition(this.progress);
-        this.computeCentrifugal(this.speed);
-        this.checkEjection(this.speed);
+        this.computeCentrifugal(this.progress);
+
+        this.checkEjection(this.speed, ejectionCallback);
         this.getRelativeProgress();
-        this.checkCollision(rockets);
+        this.checkCollision(rockets, ejectionCallback);
+    }
+
+    public getPositionAt(progress: number) {
+        return this.paths[this.laneNumber].curve.getPointAt(progress % 1);
+    }
+
+    public getTargetAt(progress: number) {
+        return this.paths[this.laneNumber].curve.getPointAt((progress + 0.001) % 1);
     }
 }
 

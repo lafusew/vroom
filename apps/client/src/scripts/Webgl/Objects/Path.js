@@ -1,7 +1,7 @@
+import { trackConfig } from '@vroom/shared';
 import { BufferGeometry, CatmullRomCurve3, Group, Line, Mesh, Raycaster, TubeGeometry, Vector3 } from 'three';
 import { mod } from 'utils/misc.js';
 import stateMixin from 'utils/stateMixin.js';
-import trackConfig from 'utils/trackConfig.js';
 import PathMaterial from 'Webgl/Shaders/Path/PathMaterial.js';
 
 export default class Path extends stateMixin(Group) {
