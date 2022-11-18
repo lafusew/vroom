@@ -103,7 +103,7 @@ class Rocket {
         if (ejected) {
             console.log("Ejection");
             this.isEjecting = true;
-            this.progress = Math.max(this.progress - 0.025, 0);
+            this.progress = Math.max(this.progress - 0.035, 0);
             setTimeout(() => (this.isEjecting = false), gameConfig.animationDuration);
             callback?.();
         }

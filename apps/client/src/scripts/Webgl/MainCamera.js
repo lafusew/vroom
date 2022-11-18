@@ -1,5 +1,6 @@
 import app from 'scripts/App.js';
 import { PerspectiveCamera } from 'three';
+import globalUniforms from 'utils/globalUniforms.js';
 import stateMixin from 'utils/stateMixin.js';
 
 const BASE_FOV = 45;
@@ -23,6 +24,9 @@ export default class extends stateMixin(PerspectiveCamera) {
 
 	onTick() {
 		if (this.orbitControls || !this.targetCamera) return;
+
+		this.fov = Math.abs(globalUniforms.uRocketSpeed.value) * 100 + BASE_FOV;
+		this.updateProjectionMatrix();
 
 		this.position.copy(this.targetCamera.position);
 		this.quaternion.copy(this.targetCamera.quaternion);

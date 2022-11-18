@@ -5,9 +5,6 @@ import { MathUtils, PerspectiveCamera, Vector3 } from 'three';
 const BASE_FOV = 45;
 
 export default class RocketCamera extends PerspectiveCamera {
-	/**
-	 *
-	 */
 	constructor(rocket) {
 		super(BASE_FOV, app.tools.viewport.ratio, 1, 20);
 		state.register(this);
