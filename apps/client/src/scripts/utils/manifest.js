@@ -2,7 +2,7 @@
 
 const skyAssets = Object.fromEntries(
 	Object.entries(import.meta.glob('../../../public/assets/images/sky/**.png', { as: 'url', eager: true })).map(([key, value]) => {
-		return [key.split('/').pop().split('.')[0], { path: value.replace('/public/assets', '') }];
+		return [key.split('/').pop().split('.')[0], { path: value.replace('/public/assets', ''), priority: 1 }];
 	}),
 );
 
