@@ -7,6 +7,24 @@ const trackConfig = {
   laneDivide: 1000,
   splines: [
     {
+      name: "Intro",
+      coverSrc: "cover-example.png",
+      pathGifSrc: "path-example2.png",
+      normals: [],
+      points: [
+          
+          new Vector3(-0.74999995538801, 0, 0.43301272733206),
+          new Vector3(-0.37499991091325, 0, 0.6495191036388),
+          new Vector3(0.3749999115536, 0, -0.64951910411415),
+          new Vector3(-4.40631083842291e-8, 0, -0.86602542954119),
+          new Vector3(-0.37499997755682, 0, -0.64951906579592),
+          new Vector3(0.37499997792274, 0, 0.64951906516213),
+          new Vector3(0.75000004497795, 0, 0.43301262430507),
+          new Vector3(0.75000000000002, 0, -1.58470347955131e-10),
+          new Vector3(-0.74999999963407, 0, -1.58452140297527e-10),
+      ],
+    },
+    {
       name: "bone",
       coverSrc: "cover-example.png",
       pathGifSrc: "path-example2.png",
