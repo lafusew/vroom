@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 const trackConfig = {
-    spaceBetweenPaths: 0.04,
+    spaceBetweenPaths: 0.08,
     distanceThreshold: 0.03,
     smoothness: 0.5,
     laneDivide: 1000,

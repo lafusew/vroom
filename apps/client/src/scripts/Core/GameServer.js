@@ -33,7 +33,10 @@ export default class GameServer {
 		this.instance.on(SERVER_EVENTS.GAME_START, this._gameStart);
 		this.instance.on(SERVER_EVENTS.TICK, this._serverTick);
 		this.instance.on(SERVER_EVENTS.PLAYER_LANE_CHANGE, this._playerLineChange);
+
 		this.instance.on(SERVER_EVENTS.EJECTION, this._playerEjection);
+		this.instance.on(SERVER_EVENTS.EJECTION_END, this._playerEjectionEnd);
+
 		this.instance.on(SERVER_EVENTS.UPDATE_ROOM_CONFIG, this._updatePlayerList);
 		this.instance.on(SERVER_EVENTS.UPDATE_LEADERBOARD, this._updateLeaderboard);
 		this.instance.on(SERVER_EVENTS.GAME_STOP, this._handleGameStop);
@@ -100,8 +103,16 @@ export default class GameServer {
 		console.log(payload.playerId + ' changed line', payload.direction);
 	};
 
-	_playerEjection = (payload) => {
-		console.log('Ejection from server', payload.direction, payload.playerId);
+	_playerEjection = (playerId) => {
+		// console.log('Ejection from server', payload.direction, payload.playerId);
+		this.client.getRockets()[playerId].isEjecting = true;
+		// this.client.getRockets()[playerId].ejectionDirection = payload.direction;
+	};
+
+	_playerEjectionEnd = (playerId) => {
+		this.client.getRockets()[playerId].isEjecting = false;
+		// this.client.getRockets()[playerId].ejectionDirection = 0;
+		// console.log('Ejection from server ended', payload.direction, payload.playerId);
 	};
 
 	_updateLeaderboard = (ids) => {
