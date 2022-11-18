@@ -39,16 +39,16 @@ class Server extends Ticker implements Game {
 					let statePayload = this.processState(
 						inputPayload,
 						dt,
-						// CENTRIFUGAL EJECTION CALLBACK
+						//CENTRIFUGAL EJECTION CALLBACK 
 						(direction) => this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: inputPayload.playerId, direction }),
-						// COLLISION EJECTIONS CALLBACK
 						(ids: string[]) => ids.forEach((id) => { this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: id, direction: 0 }) })
 
 					);
 					this.stateBuffer[bufferIndex] = statePayload;
 
 					if (this.stateBuffer[bufferIndex].states[inputPayload.playerId].progress >= 3) {
-						this.send(this.roomId, SERVER_EVENTS.GAME_STOP, [inputPayload.playerId], this.players[inputPayload.playerId]);
+						// TODO EVENT: RECEIPT CETTE EVENT AVEC SON PAYLAOD un array [id, nom] => AJOUTER LE NOM DANS UN TABLEAU DE JOUEUR FINIS POUR POUVOIR POTENTIELLEMENT LIGNORE POUR LES TICKS SUIVANTS
+						this.send(this.roomId, SERVER_EVENTS.GAME_STOP, [inputPayload.playerId, this.players[inputPayload.playerId]]);
 						this.finishNameOrder.push(inputPayload.playerId);
 					}
 				}
@@ -59,6 +59,7 @@ class Server extends Ticker implements Game {
 
 				if (this.leaderboard.toString() !== this.getRanking().toString()) {
 					this.leaderboard = this.getRanking();
+					// TODO EVENT: LIVE LEADERBOARD UPDATE: payload = list des noms dans l'orders
 					this.send(this.roomId, SERVER_EVENTS.UPDATE_LEADERBOARD, this.leaderboard.map((playerId) => this.players[playerId]));
 				}
 			}
