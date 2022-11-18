@@ -26,6 +26,8 @@ class Rocket {
     }
 
     public changeLane(direction: number, rockets: { [playerId: string]: Rocket }) {
+        if (this.isEjecting) return;
+
         const newLane = this.laneNumber + direction;
         if (newLane >= 0 && newLane < gameConfig.numberOfPlayers) {
             this.laneNumber += direction;

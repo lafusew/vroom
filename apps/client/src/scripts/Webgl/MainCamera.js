@@ -1,5 +1,5 @@
 import app from 'scripts/App.js';
-import { PerspectiveCamera } from 'three';
+import { MathUtils, PerspectiveCamera } from 'three';
 import globalUniforms from 'utils/globalUniforms.js';
 import stateMixin from 'utils/stateMixin.js';
 
@@ -22,10 +22,10 @@ export default class extends stateMixin(PerspectiveCamera) {
 		this.updateProjectionMatrix();
 	}
 
-	onTick() {
+	onTick({ dt }) {
 		if (this.orbitControls || !this.targetCamera) return;
 
-		this.fov = Math.abs(globalUniforms.uRocketSpeed.value) * 100 + BASE_FOV;
+		this.fov = MathUtils.damp(this.fov, Math.abs(globalUniforms.uRocketSpeed.value) * 100 + BASE_FOV, 5, dt);
 		this.updateProjectionMatrix();
 
 		this.position.copy(this.targetCamera.position);
