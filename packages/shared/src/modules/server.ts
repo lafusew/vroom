@@ -1,55 +1,75 @@
 
 import { Track } from "../main.js";
-import { EjectionPayload, Game, InputPayload, LeaderboardPayload, Players, SERVER_EVENTS, StatesPayload } from "../types/index.js";
+import { Game, InputPayload, Players, ServerPayload, SERVER_EVENTS } from "../types/index.js";
 import { Ticker } from "./ticker.js";
 
 class Server extends Ticker implements Game {
-  private inputQueue: InputPayload[] = [];
-  private leaderboard: string[];
+	private inputQueue: InputPayload[] = [];
 
-  private send: (id: string, eventName: SERVER_EVENTS, payload: StatesPayload | LeaderboardPayload | EjectionPayload) => void;
+	private leaderboard: string[];
+	private finishNameOrder: string[] = [];
 
-  constructor(
-    id: string,
-    players: Players,
-    send: (id: string, eventName: SERVER_EVENTS, payload: StatesPayload | LeaderboardPayload | EjectionPayload) => void,
-    track: Track
-  ) {
-    super(id, players, track);
-    this.send = send;
-    this.leaderboard = this.getRanking();
-  }
+	private send: (id: string, eventName: SERVER_EVENTS, payload: ServerPayload) => void;
 
-  update() {
-    if (!this.isGameRunning) return;
-    this.onTick(
-      (dt: number) => {
-        let bufferIndex = -1;
+	constructor(
+		id: string,
+		players: Players,
+		send: (id: string, eventName: SERVER_EVENTS, payload: ServerPayload) => void,
+		track: Track
+	) {
+		super(id, players, track);
+		this.send = send;
+		this.leaderboard = this.getRanking();
+	}
 
-        while (this.inputQueue.length > 0) {
-          const inputPayload = this.inputQueue.shift() as InputPayload;
-          bufferIndex = inputPayload.tick % this.BUFFER_SIZE;
+	update() {
+		if (!this.isGameRunning) return;
+		this.onTick(
+			(dt: number) => {
+				let bufferIndex = -1;
 
-          let statePayload = this.processState(inputPayload, dt, (direction) => this.send(this.roomId, SERVER_EVENTS.EJECTION, {playerId: inputPayload.playerId, direction}));
-          this.stateBuffer[bufferIndex] = statePayload;
-        }
+				while (this.inputQueue.length > 0) {
+					const inputPayload = this.inputQueue.shift() as InputPayload;
 
-        if (bufferIndex !== -1) {
-          this.send(this.roomId, SERVER_EVENTS.TICK, this.stateBuffer[bufferIndex]);
-        }
+					// Skip tick for finished clients.
+					if (this.finishNameOrder.includes(inputPayload.playerId)) continue;
 
-        if (this.leaderboard.toString() !== this.getRanking().toString()) {
-          this.leaderboard = this.getRanking();
-          this.send(this.roomId, SERVER_EVENTS.UPDATE_LEADERBOARD, this.leaderboard.map((playerId) => this.players[playerId]));
-        }
-      }
-    );
-  }
+					bufferIndex = inputPayload.tick % this.BUFFER_SIZE;
 
-  public async onClientInput(input: InputPayload) {
-    // console.log("RECEIVED INPUT: ", input);
-    this.inputQueue.push(input);
-  }
+					let statePayload = this.processState(
+						inputPayload,
+						dt,
+						//CENTRIFUGAL EJECTION CALLBACK 
+						(direction) => this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: inputPayload.playerId, direction }),
+						(ids: string[]) => ids.forEach((id) => { this.send(this.roomId, SERVER_EVENTS.EJECTION, { playerId: id, direction: 0 }) })
+
+					);
+					this.stateBuffer[bufferIndex] = statePayload;
+
+					if (this.stateBuffer[bufferIndex].states[inputPayload.playerId].progress >= 3) {
+						// TODO EVENT: RECEIPT CETTE EVENT AVEC SON PAYLAOD un array [id, nom] => AJOUTER LE NOM DANS UN TABLEAU DE JOUEUR FINIS POUR POUVOIR POTENTIELLEMENT LIGNORE POUR LES TICKS SUIVANTS
+						this.send(this.roomId, SERVER_EVENTS.GAME_STOP, [inputPayload.playerId, this.players[inputPayload.playerId]]);
+						this.finishNameOrder.push(inputPayload.playerId);
+					}
+				}
+
+				if (bufferIndex !== -1) {
+					this.send(this.roomId, SERVER_EVENTS.TICK, this.stateBuffer[bufferIndex]);
+				}
+
+				if (this.leaderboard.toString() !== this.getRanking().toString()) {
+					this.leaderboard = this.getRanking();
+					// TODO EVENT: LIVE LEADERBOARD UPDATE: payload = list des noms dans l'orders
+					this.send(this.roomId, SERVER_EVENTS.UPDATE_LEADERBOARD, this.leaderboard.map((playerId) => this.players[playerId]));
+				}
+			}
+		);
+	}
+
+	public onClientInput(input: InputPayload) {
+		// console.log("RECEIVED INPUT: ", input);
+		this.inputQueue.push(input);
+	}
 }
 
 export default Server;
