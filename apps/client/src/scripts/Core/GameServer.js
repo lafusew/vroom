@@ -95,6 +95,7 @@ export default class GameServer {
 	};
 
 	_handleGameStop = (finishedPlayerId) => {
+		this.client.getRockets()[finishedPlayerId].finished = true;
 		this.definitiveLeaderBoard.push(finishedPlayerId);
 	};
 

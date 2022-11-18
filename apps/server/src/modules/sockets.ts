@@ -1,4 +1,4 @@
-import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, LeaderboardPayload, Server as GameInstance, ServerPayload, SERVER_EVENTS, StatesPayload, TRACKS } from "@vroom/shared";
+import { ChangeLanePayload, CLIENT_EVENTS, InputPayload, Server as GameInstance, ServerPayload, SERVER_EVENTS, TRACKS } from "@vroom/shared";
 import http from "http";
 import * as IO from "socket.io";
 import { RoomConfig, Rooms } from "../types/index.js";
@@ -115,6 +115,8 @@ class Sockets {
 
   private handleLaneChange(socket: IO.Socket): void {
     socket.on(CLIENT_EVENTS.INPUT_LANE_CHANGE, (id: string, payload: ChangeLanePayload) => {
+      // if(this.rooms[id].game?.finishNameOrder.includes(this.rooms[id].players[(payload.playerId)])) return;
+      
       this.rooms[id].game?.changeLane(payload);
       this.emit(id, SERVER_EVENTS.PLAYER_LANE_CHANGE, payload);
     });

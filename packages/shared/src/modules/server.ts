@@ -6,7 +6,7 @@ class Server extends Ticker implements Game {
     private inputQueue: InputPayload[] = [];
 
     private leaderboard: string[];
-    private finishNameOrder: string[] = [];
+    public finishNameOrder: string[] = [];
 
     private send: (id: string, eventName: SERVER_EVENTS, payload: ServerPayload) => void;
 
@@ -34,7 +34,7 @@ class Server extends Ticker implements Game {
                     dt,
                     //CENTRIFUGAL EJECTION CALLBACK
                     (id?: string) => {
-                        console.log("playerId", inputPayload.playerId);
+                        // if (this.finishNameOrder.includes(this.players[id || inputPayload.playerId])) return;
 
                         this.send(this.roomId, SERVER_EVENTS.EJECTION, id ? id : inputPayload.playerId);
                         setTimeout(() => this.send(this.roomId, SERVER_EVENTS.EJECTION_END, id ? id : inputPayload.playerId), gameConfig.animationDuration);
