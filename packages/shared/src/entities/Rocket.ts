@@ -92,30 +92,23 @@ class Rocket {
         this.directionV3 = this.target.clone().sub(this.position);
         this.angleV3 = this.paths[this.laneNumber].curve.getPointAt((progress + 0.01) % 1).sub(this.position);
         this.dot = this.directionV3.x * -this.angleV3.z + this.directionV3.z * this.angleV3.x;
-
-        // const centrifugalV3 = this.target.clone().sub(this.position).cross(new Vector3(0, 1, 0).sub(this.position)).multiplyScalar(this.dot);
-
-        // this.remove(this.centrifugalHelper);
-        // this.centrifugalHelper = new ArrowHelper(this.centrifugalV3, this.mesh.position, Math.abs(this.dot) * 2000, 0x00ffff);
-        // this.add(this.centrifugalHelper);
     }
 
-    public checkEjection(speed: number, callback?: (direction: number, animationDuration: number) => void) {
+    public checkEjection(speed: number, callback?: () => void) {
         if (this.isEjecting) return;
 
         const ejected = Math.abs(this.dot) * speed * 100000 > gameConfig.ejectionThreshold;
 
         if (ejected) {
-            // console.log("Ejection");
+            console.log("Ejection");
             this.isEjecting = true;
             this.progress = Math.max(this.progress - 0.025, 0);
-            this.ejectionDirection = Math.sign(this.dot);
-            setTimeout(() => (this.isEjecting = false), 2000);
-            callback?.(this.ejectionDirection, 2000);
+            setTimeout(() => (this.isEjecting = false), gameConfig.animationDuration);
+            callback?.();
         }
     }
 
-    public checkCollision(rockets: { [playerId: string]: Rocket }) {
+    public checkCollision(rockets: { [playerId: string]: Rocket }, callback?: (ejectedId: string) => void) {
         let distance;
 
         let otherRockets = Object.entries(rockets)
@@ -133,16 +126,18 @@ class Rocket {
                     if (Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < 0.1) {
                         if (this.relativeProgress % 1 < rocket.obj.relativeProgress % 1) {
                             console.log(`COLLISION - Same lane / Back - ${selfID} x ${rocket.id}`);
+                            callback?.(rocket.id);
                         }
                     } else {
-                        console.log(`COLLISION - Intersection - ${selfID} x ${rocket.id}`);
+                        console.log(`COLLISION - Intersection - ${this.speed > rocket.obj.speed ? "GAGNÉ" : "PERDU"} - ${selfID} x ${rocket.id}`);
+                        callback?.(this.speed > rocket.obj.speed ? rocket.id : selfID);
                     }
                 }
             }
         });
     }
 
-    protected checkLateralCollision(rockets: { [playerId: string]: Rocket }) {
+    protected checkLateralCollision(rockets: { [playerId: string]: Rocket }, callback?: (ejectedId: string) => void) {
         let distance;
 
         let otherRockets = Object.entries(rockets)
@@ -158,6 +153,7 @@ class Rocket {
 
                 if (distance < gameConfig.lateralCollisionThreshold && Math.abs((this.relativeProgress % 1) - (rocket.obj.relativeProgress % 1)) < 0.1) {
                     console.log(`COLLISION - Lane change - ${selfID} x ${rocket.id}`);
+                    callback?.(rocket.id);
                 }
             }
         });
@@ -168,7 +164,7 @@ class Rocket {
         this.target = this.paths[this.laneNumber].curve.getPointAt((progress + 0.001) % 1);
     }
 
-    public tick(speedInput: number, rockets: { [playerId: string]: Rocket }, dt: number, ejectionCallback?: (direction: number, animationDuration: number) => void) {
+    public tick(speedInput: number, rockets: { [playerId: string]: Rocket }, dt: number, ejectionCallback?: (ejectedId?: string) => void) {
         this.speed = speedInput * dt * 20;
         this.progress += 0.01 * this.speed;
 
@@ -177,7 +173,7 @@ class Rocket {
 
         this.checkEjection(this.speed, ejectionCallback);
         this.getRelativeProgress();
-        this.checkCollision(rockets);
+        this.checkCollision(rockets, ejectionCallback);
     }
 
     public getPositionAt(progress: number) {

@@ -101,7 +101,7 @@ class Ticker {
         return this.track;
     }
 
-    protected processState(input: InputPayload, dt: number, ejectionCallback?: (direction: number, animationDuration: number) => void): StatesPayload {
+    protected processState(input: InputPayload, dt: number, ejectionCallback?: (id?: string) => void): StatesPayload {
         if (this.rockets[input.playerId].isEjecting) input.inputSpeed = 0;
 
         // console.log(this.rockets[input.playerId].speed);
