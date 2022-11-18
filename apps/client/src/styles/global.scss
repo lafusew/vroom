@@ -1,6 +1,7 @@
 @use 'tools/breakpoints';
 @use 'tools/colors';
 @use 'tools/mixins';
+@use 'tools/fonts';
 
 #canvas-wrapper,
 #canvas-wrapper canvas {
@@ -59,4 +60,12 @@ body {
 #root {
 	position: fixed;
 	height: 100%;
+}
+
+.rank {
+	position: absolute;
+	top: 30px;
+	left: 30px;
+	font-size: 50px;
+	@include fonts.superfont;
 }

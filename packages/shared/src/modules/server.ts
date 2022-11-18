@@ -59,8 +59,8 @@ class Server extends Ticker implements Game {
                 this.send(
                     this.roomId,
                     SERVER_EVENTS.UPDATE_LEADERBOARD,
-                    this.leaderboard.map((playerId) => this.players[playerId])
-                );
+                    this.leaderboard
+                    );
             }
         });
     }

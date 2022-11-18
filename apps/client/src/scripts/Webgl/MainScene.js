@@ -50,7 +50,7 @@ export default class extends stateMixin(Scene) {
 
 		this.add(trackMesh, ...this._rocketsMeshes.values(), this._currentRocketMesh);
 		// TODO: uncomment when each track has its own assets
-		// this.sky.showAssets(trackMesh.track.splineName);
+		this.sky.showAssets(trackMesh.track.splineName);
 	}
 
 	onTick({ dt }) {
