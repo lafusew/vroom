@@ -48,7 +48,7 @@ class Server extends Ticker implements Game {
 
 					if (this.stateBuffer[bufferIndex].states[inputPayload.playerId].progress >= 3) {
 						// TODO EVENT: RECEIPT CETTE EVENT AVEC SON PAYLAOD un array [id, nom] => AJOUTER LE NOM DANS UN TABLEAU DE JOUEUR FINIS POUR POUVOIR POTENTIELLEMENT LIGNORE POUR LES TICKS SUIVANTS
-						this.send(this.roomId, SERVER_EVENTS.GAME_STOP, [inputPayload.playerId, this.players[inputPayload.playerId]]);
+						this.send(this.roomId, SERVER_EVENTS.GAME_STOP, inputPayload.playerId);
 						this.finishNameOrder.push(inputPayload.playerId);
 					}
 				}
